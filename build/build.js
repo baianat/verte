@@ -1,18 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
-
 const { rollup } = require('rollup');
 const { paths, inputOptions, banner } = require('./config');
 
 // const isProduction = process.env.MODE === 'production';
 
 async function buildScripts (format) {
-  console.log(chalk.cyan('📦  Generating umd builds...'));
+  console.log(chalk.cyan(`📦  Generating ${format} builds...`));
 
   // get the rollup bundle.
   const bundle = await rollup({
-    input: paths.umd,
+    input: paths[format],
     ...inputOptions
   });
 
