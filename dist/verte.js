@@ -806,8 +806,8 @@ var script$1 = {
     init () {
       this.multiple = this.values.length > 1;
       this.values = this.handlesValue;
-      this.handles = this.handlesValue.map(value => {
-        return { value };
+      this.handles = this.handlesValue.map((value, index) => {
+        return { value, position: 0, color: '#fff' };
       });
       if (this.values.length === 1) {
         this.values[0] = Number(this.el.value) || Number(this.value);
@@ -959,7 +959,11 @@ var script$1 = {
       const closestIndex = this.values.indexOf(closest);
       const closestValue = this.values[closestIndex];
       const newIndex = closestValue <= value ? closestIndex + 1 : closestIndex;
-      this.handles.splice(newIndex, 0, { value });
+      this.handles.splice(newIndex, 0, {
+        value,
+        position: 0,
+        color: '#fff'
+      });
       this.values.splice(newIndex, 0, value);
 
       this.activeHandle = newIndex;
@@ -999,11 +1003,10 @@ var script$1 = {
      */
 
     reloadHandlesColor () {
-      this.handles.forEach((handle) => {
+      this.handles.forEach((handle, index) => {
         const positionPercentage = this.getPositionPercentage(handle.value);
         const color = this.getHandleColor(positionPercentage);
-        handle.color = color.toString();
-        this.$forceUpdate();
+        this.handles[index].color = color.toString();
       });
     },
 
@@ -1036,7 +1039,6 @@ var script$1 = {
 
       // todo: create reactivity and stop force update
       
-      this.$forceUpdate();
       if (mute) return;
       this.el.dispatchEvent(new Event('change')); // eslint-disable-line
       this.el.dispatchEvent(new Event('input'));  // eslint-disable-line
@@ -1127,7 +1129,7 @@ const __vue_template__$1 = typeof __vue_render__$1 !== 'undefined'
 /* style */
 const __vue_inject_styles__$1 = function (inject) {
   if (!inject) return
-  inject("data-v-0c3f6955_0", { source: "\n.slider {\n  position: relative;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  margin-bottom: 10px;\n}\n.slider-input {\n    display: none;\n    margin-bottom: 0;\n    padding: 0.6em;\n    max-width: 70px;\n    width: 20%;\n    border: 1px solid #000;\n    border-radius: 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: text;\n}\n.slider-input:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.slider-track {\n    position: relative;\n    flex: 1;\n    margin: 0.2em;\n    width: auto;\n    height: 0.2em;\n    background: #cccccc;\n    will-change: transfom;\n}\n.slider-handle {\n    position: relative;\n    position: absolute;\n    top: 0;\n    left: 0;\n    will-change: transform;\n    color: #000;\n    margin: -0.1em 0 0 -0.2em;\n    width: 0.4em;\n    height: 0.4em;\n    background-color: currentColor;\n}\n.slider-label {\n    position: absolute;\n    top: -3em;\n    left: 0.4em;\n    z-index: 999;\n    visibility: hidden;\n    padding: 6px;\n    min-width: 3em;\n    border-radius: 0;\n    background-color: #000;\n    color: #fff;\n    text-align: center;\n    font-size: 12px;\n    line-height: 1em;\n    opacity: 0;\n    transform: translate(-50%, 0);\n    white-space: nowrap;\n}\n.slider-label:before {\n      position: absolute;\n      bottom: -0.6em;\n      left: 50%;\n      display: block;\n      width: 0;\n      height: 0;\n      border-width: 0.6em 0.6em 0 0.6em;\n      border-style: solid;\n      border-color: #000 transparent transparent transparent;\n      content: '';\n      transform: translate3d(-50%, 0, 0);\n}\n.slider-fill {\n    width: 100%;\n    height: 100%;\n    background-color: #cccccc;\n    transform-origin: left top;\n}\n.slider:hover .slider-label, .slider.is-dragging .slider-label {\n    visibility: visible;\n    opacity: 1;\n}\n.slider.is-editable .slider-input {\n    display: block;\n}\n.slider.is-reverse {\n    flex-direction: row-reverse;\n}\n\n/*# sourceMappingURL=Slider.vue.map */", map: undefined, media: undefined });
+  inject("data-v-47de55c3_0", { source: "\n.slider {\n  position: relative;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  margin-bottom: 10px;\n}\n.slider-input {\n    display: none;\n    margin-bottom: 0;\n    padding: 0.6em;\n    max-width: 70px;\n    width: 20%;\n    border: 1px solid #000;\n    border-radius: 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: text;\n}\n.slider-input:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.slider-track {\n    position: relative;\n    flex: 1;\n    margin: 0.2em;\n    width: auto;\n    height: 0.2em;\n    background: #cccccc;\n    will-change: transfom;\n}\n.slider-handle {\n    position: relative;\n    position: absolute;\n    top: 0;\n    left: 0;\n    will-change: transform;\n    color: #000;\n    margin: -0.1em 0 0 -0.2em;\n    width: 0.4em;\n    height: 0.4em;\n    background-color: currentColor;\n}\n.slider-label {\n    position: absolute;\n    top: -3em;\n    left: 0.4em;\n    z-index: 999;\n    visibility: hidden;\n    padding: 6px;\n    min-width: 3em;\n    border-radius: 0;\n    background-color: #000;\n    color: #fff;\n    text-align: center;\n    font-size: 12px;\n    line-height: 1em;\n    opacity: 0;\n    transform: translate(-50%, 0);\n    white-space: nowrap;\n}\n.slider-label:before {\n      position: absolute;\n      bottom: -0.6em;\n      left: 50%;\n      display: block;\n      width: 0;\n      height: 0;\n      border-width: 0.6em 0.6em 0 0.6em;\n      border-style: solid;\n      border-color: #000 transparent transparent transparent;\n      content: '';\n      transform: translate3d(-50%, 0, 0);\n}\n.slider-fill {\n    width: 100%;\n    height: 100%;\n    background-color: #cccccc;\n    transform-origin: left top;\n}\n.slider:hover .slider-label, .slider.is-dragging .slider-label {\n    visibility: visible;\n    opacity: 1;\n}\n.slider.is-editable .slider-input {\n    display: block;\n}\n.slider.is-reverse {\n    flex-direction: row-reverse;\n}\n\n/*# sourceMappingURL=Slider.vue.map */", map: undefined, media: undefined });
 
 };
 /* scoped */

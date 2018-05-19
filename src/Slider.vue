@@ -70,8 +70,8 @@ export default {
     init () {
       this.multiple = this.values.length > 1;
       this.values = this.handlesValue;
-      this.handles = this.handlesValue.map(value => {
-        return { value };
+      this.handles = this.handlesValue.map((value, index) => {
+        return { value, position: 0, color: '#fff' };
       });
       if (this.values.length === 1) {
         this.values[0] = Number(this.el.value) || Number(this.value);
@@ -223,7 +223,11 @@ export default {
       const closestIndex = this.values.indexOf(closest);
       const closestValue = this.values[closestIndex];
       const newIndex = closestValue <= value ? closestIndex + 1 : closestIndex;
-      this.handles.splice(newIndex, 0, { value });
+      this.handles.splice(newIndex, 0, {
+        value,
+        position: 0,
+        color: '#fff'
+      });
       this.values.splice(newIndex, 0, value);
 
       this.activeHandle = newIndex;
@@ -263,11 +267,10 @@ export default {
      */
 
     reloadHandlesColor () {
-      this.handles.forEach((handle) => {
+      this.handles.forEach((handle, index) => {
         const positionPercentage = this.getPositionPercentage(handle.value);
         const color = this.getHandleColor(positionPercentage);
-        handle.color = color.toString();
-        this.$forceUpdate();
+        this.handles[index].color = color.toString();
       })
     },
 
@@ -300,7 +303,6 @@ export default {
 
       // todo: create reactivity and stop force update
       
-      this.$forceUpdate();
       if (mute) return;
       this.el.dispatchEvent(new Event('change')); // eslint-disable-line
       this.el.dispatchEvent(new Event('input'));  // eslint-disable-line
