@@ -1,7 +1,14 @@
 <template lang="pug">
   .slider(ref="wrapper")
-    input.slider-input(ref="el")
-    .slider-track(ref="track" @mousedown.native="select")
+    input.slider-input(
+      ref="el"
+      v-on="editable && !colorCode ? {  change: (ev) => update(ev.target.value, true) } : { }"
+      )
+
+    .slider-track(
+      ref="track"
+      v-on="trackSlide ?  { mousedown: select, touchstrat: select } : { }"
+      )
       .slider-fill(v-if="fill" :style="`transform: translate(${fill.translate}px, 0) scale(${fill.scale}, 1)`")
       .slider-handle(
         v-for="handle in handles"
@@ -9,7 +16,7 @@
         @touchstart.native="select"
         :style="`transform: translate(${handle.positoin}px, 0); background-color: ${handle.color};`"
         )
-        .slider-label(v-if="settings.label") {{ handle.value }}
+        .slider-label(v-if="label") {{ handle.value }}
 </template>
 
 <script>
@@ -39,20 +46,20 @@ export default {
       fill: {
         translate: 0,
         scale: 0
-      }
+      },
+      multiple: false,
+      handles: [],
+      values: []
     }
   },
-  computed: {
-    settings: function () {
-      return { ...this.$props };
+  watch: {
+    gradient: function (val) {
+      this.initGradient(val);
+      this.reloadHandlesColor();
     },
     values: function () {
-      return this.handlesValue;
-    },
-    handles: function () {
-      return this.handlesValue.map(value => {
-        return { value };
-      });
+      this.multiple = this.values.length > 1;
+      this.fill = this.multiple ? false : this.fill || {}
     }
   },
   mounted() {
@@ -62,17 +69,21 @@ export default {
   methods: {
     init () {
       this.multiple = this.values.length > 1;
+      this.values = this.handlesValue;
+      this.handles = this.handlesValue.map(value => {
+        return { value };
+      });
       if (this.values.length === 1) {
-        this.values[0] = Number(this.el.value) || Number(this.settings.value);
+        this.values[0] = Number(this.el.value) || Number(this.value);
       }
       this.values.sort();
-      if (this.settings.colorCode) {
+      if (this.colorCode) {
         this.el.type = 'text';
       }
 
       this.initElements();
-      if (this.settings.gradient) {
-        this.initGradient();
+      if (this.gradient) {
+        this.initGradient(this.gradient);
       }
       this.initEvents();
       this.values.forEach((handle, index) => {
@@ -86,41 +97,31 @@ export default {
       this.wrapper = this.$refs.wrapper;
       this.track = this.$refs.track;
 
-      this.wrapper.classList.toggle('is-editable', this.settings.editable);
-      this.wrapper.classList.toggle('is-reverse', this.settings.reverse);
-      if (this.settings.classes) {
-        this.wrapper.classList.add(...this.settings.classes);
+      this.wrapper.classList.toggle('is-editable', this.editable);
+      this.wrapper.classList.toggle('is-reverse', this.reverse);
+      if (this.classes) {
+        this.wrapper.classList.add(...this.classes);
       }
-      call(this.settings.created, this);
+      call(this.created, this);
     },
 
-    initGradient () {
-      if (this.settings.gradient.length > 1) {
-        this.track.style.backgroundImage = `linear-gradient(90deg, ${this.settings.gradient})`;
+    initGradient (gradient) {
+      if (gradient.length > 1) {
+        this.track.style.backgroundImage = `linear-gradient(90deg, ${gradient})`;
         return;
       }
       this.track.style.backgroundImage = '';
-      this.track.style.backgroundColor = this.settings.gradient[0];
+      this.track.style.backgroundColor = gradient[0];
       this.handles.forEach(handle => {
-        handle.style.color = this.settings.gradient[0];
+        handle.style.color = gradient[0];
       });
-      // this.gradient = null;
     },
 
     initEvents () {
       window.addEventListener('resize', () => {
         this.updateWidth();
-        this.update(undefined, true);
+        this.update(this.currentValue, true);
       });
-      if (this.settings.trackSlide) {
-        this.track.addEventListener('mousedown', this.select.bind(this), false);
-        this.track.addEventListener('touchstart', this.select.bind(this), false);
-      }
-      if (this.settings.editable && !this.settings.colorCode) {
-        this.el.addEventListener('change', (evt) => {
-          this.update(this.el.value);
-        }, false);
-      }
     },
 
     /**
@@ -217,31 +218,20 @@ export default {
       return Math.min(Math.max(Number(value), this.min), this.max);
     },
 
-    newGradient (newGradient) {
-      this.settings.gradient = newGradient;
-      this.initGradient();
-      this.update(undefined, true);
-    },
-
     addHandle (value) {
       const closest = getClosestValue(this.values, value);
       const closestIndex = this.values.indexOf(closest);
       const closestValue = this.values[closestIndex];
       const newIndex = closestValue <= value ? closestIndex + 1 : closestIndex;
+      this.handles.splice(newIndex, 0, { value });
       this.values.splice(newIndex, 0, value);
-      this.handles.splice(newIndex, 0, { });
 
-      this.handles[newIndex].addEventListener('mousedown', this.select.bind(this), false);
-      this.handles[newIndex].addEventListener('touchstart', this.select.bind(this), false);
-      this.track.appendChild(this.handles[newIndex]);
       this.activeHandle = newIndex;
       this.currentValue = null;
       this.update(value);
-      return this.handles[newIndex];
     },
 
     removeHandle (index) {
-      this.handles[index].remove();
       this.handles.splice(index, 1);
       this.values.splice(index, 1);
       this.activeHandle = index === 0 ? index + 1 : index - 1;
@@ -271,6 +261,16 @@ export default {
      * update the slider fill, value and color
      * @param {Number} value
      */
+
+    reloadHandlesColor () {
+      this.handles.forEach((handle) => {
+        const positionPercentage = this.getPositionPercentage(handle.value);
+        const color = this.getHandleColor(positionPercentage);
+        handle.color = color.toString();
+        this.$forceUpdate();
+      })
+    },
+
     update (value, mute = false) {
       if (Number(value) === this.value) return;
 
@@ -293,18 +293,18 @@ export default {
       if (this.gradient) {
         const color = this.getHandleColor(positionPercentage);
         this.handles[this.activeHandle].color = color.toString();
-        if (this.settings.colorCode) {
+        if (this.colorCode) {
           this.el.value = color;
         }
       }
 
       // todo: create reactivity and stop force update
-      this.$forceUpdate();
       
+      this.$forceUpdate();
       if (mute) return;
       this.el.dispatchEvent(new Event('change')); // eslint-disable-line
       this.el.dispatchEvent(new Event('input'));  // eslint-disable-line
-      call(this.settings.updated);
+      call(this.updated);
     }
   }
 }

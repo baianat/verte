@@ -11,7 +11,7 @@
     <br>
     <br>
     <br>
-    <slider :gradient="['#fff', '#f0f']" :value="5"></slider>
+    <slider ref="slider1" :gradient="grad" :value="100" :max="255" :track-slide="true" :editable="true"></slider>
   </div>
 </head>
 <body>
@@ -24,7 +24,15 @@
     Vue.use(verte);
 
     new Vue ({
-      el: '#app'
+      el: '#app',
+      data: {
+        grad: ['#fff', '#f0f', '#000']
+      },
+      mounted() {
+        setTimeout(() => {
+          this.grad = ['#000', '#fff']
+        }, 2000);
+      }
     });
   </script>
 </body>

@@ -782,20 +782,20 @@ var script$1 = {
       fill: {
         translate: 0,
         scale: 0
-      }
+      },
+      multiple: false,
+      handles: [],
+      values: []
     }
   },
-  computed: {
-    settings: function () {
-      return { ...this.$props };
+  watch: {
+    gradient: function (val) {
+      this.initGradient(val);
+      this.reloadHandlesColor();
     },
     values: function () {
-      return this.handlesValue;
-    },
-    handles: function () {
-      return this.handlesValue.map(value => {
-        return { value };
-      });
+      this.multiple = this.values.length > 1;
+      this.fill = this.multiple ? false : this.fill || {};
     }
   },
   mounted() {
@@ -805,17 +805,21 @@ var script$1 = {
   methods: {
     init () {
       this.multiple = this.values.length > 1;
+      this.values = this.handlesValue;
+      this.handles = this.handlesValue.map(value => {
+        return { value };
+      });
       if (this.values.length === 1) {
-        this.values[0] = Number(this.el.value) || Number(this.settings.value);
+        this.values[0] = Number(this.el.value) || Number(this.value);
       }
       this.values.sort();
-      if (this.settings.colorCode) {
+      if (this.colorCode) {
         this.el.type = 'text';
       }
 
       this.initElements();
-      if (this.settings.gradient) {
-        this.initGradient();
+      if (this.gradient) {
+        this.initGradient(this.gradient);
       }
       this.initEvents();
       this.values.forEach((handle, index) => {
@@ -829,41 +833,31 @@ var script$1 = {
       this.wrapper = this.$refs.wrapper;
       this.track = this.$refs.track;
 
-      this.wrapper.classList.toggle('is-editable', this.settings.editable);
-      this.wrapper.classList.toggle('is-reverse', this.settings.reverse);
-      if (this.settings.classes) {
-        this.wrapper.classList.add(...this.settings.classes);
+      this.wrapper.classList.toggle('is-editable', this.editable);
+      this.wrapper.classList.toggle('is-reverse', this.reverse);
+      if (this.classes) {
+        this.wrapper.classList.add(...this.classes);
       }
-      call(this.settings.created, this);
+      call(this.created, this);
     },
 
-    initGradient () {
-      if (this.settings.gradient.length > 1) {
-        this.track.style.backgroundImage = `linear-gradient(90deg, ${this.settings.gradient})`;
+    initGradient (gradient) {
+      if (gradient.length > 1) {
+        this.track.style.backgroundImage = `linear-gradient(90deg, ${gradient})`;
         return;
       }
       this.track.style.backgroundImage = '';
-      this.track.style.backgroundColor = this.settings.gradient[0];
+      this.track.style.backgroundColor = gradient[0];
       this.handles.forEach(handle => {
-        handle.style.color = this.settings.gradient[0];
+        handle.style.color = gradient[0];
       });
-      // this.gradient = null;
     },
 
     initEvents () {
       window.addEventListener('resize', () => {
         this.updateWidth();
-        this.update(undefined, true);
+        this.update(this.currentValue, true);
       });
-      if (this.settings.trackSlide) {
-        this.track.addEventListener('mousedown', this.select.bind(this), false);
-        this.track.addEventListener('touchstart', this.select.bind(this), false);
-      }
-      if (this.settings.editable && !this.settings.colorCode) {
-        this.el.addEventListener('change', (evt) => {
-          this.update(this.el.value);
-        }, false);
-      }
     },
 
     /**
@@ -960,31 +954,20 @@ var script$1 = {
       return Math.min(Math.max(Number(value), this.min), this.max);
     },
 
-    newGradient (newGradient) {
-      this.settings.gradient = newGradient;
-      this.initGradient();
-      this.update(undefined, true);
-    },
-
     addHandle (value) {
       const closest = getClosestValue(this.values, value);
       const closestIndex = this.values.indexOf(closest);
       const closestValue = this.values[closestIndex];
       const newIndex = closestValue <= value ? closestIndex + 1 : closestIndex;
+      this.handles.splice(newIndex, 0, { value });
       this.values.splice(newIndex, 0, value);
-      this.handles.splice(newIndex, 0, { });
 
-      this.handles[newIndex].addEventListener('mousedown', this.select.bind(this), false);
-      this.handles[newIndex].addEventListener('touchstart', this.select.bind(this), false);
-      this.track.appendChild(this.handles[newIndex]);
       this.activeHandle = newIndex;
       this.currentValue = null;
       this.update(value);
-      return this.handles[newIndex];
     },
 
     removeHandle (index) {
-      this.handles[index].remove();
       this.handles.splice(index, 1);
       this.values.splice(index, 1);
       this.activeHandle = index === 0 ? index + 1 : index - 1;
@@ -1014,6 +997,16 @@ var script$1 = {
      * update the slider fill, value and color
      * @param {Number} value
      */
+
+    reloadHandlesColor () {
+      this.handles.forEach((handle) => {
+        const positionPercentage = this.getPositionPercentage(handle.value);
+        const color = this.getHandleColor(positionPercentage);
+        handle.color = color.toString();
+        this.$forceUpdate();
+      });
+    },
+
     update (value, mute = false) {
       if (Number(value) === this.value) return;
 
@@ -1036,18 +1029,18 @@ var script$1 = {
       if (this.gradient) {
         const color = this.getHandleColor(positionPercentage);
         this.handles[this.activeHandle].color = color.toString();
-        if (this.settings.colorCode) {
+        if (this.colorCode) {
           this.el.value = color;
         }
       }
 
       // todo: create reactivity and stop force update
-      this.$forceUpdate();
       
+      this.$forceUpdate();
       if (mute) return;
       this.el.dispatchEvent(new Event('change')); // eslint-disable-line
       this.el.dispatchEvent(new Event('input'));  // eslint-disable-line
-      call(this.settings.updated);
+      call(this.updated);
     }
   }
 }
@@ -1060,18 +1053,25 @@ var __vue_render__$1 = function() {
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
   return _c("div", { ref: "wrapper", staticClass: "slider" }, [
-    _c("input", { ref: "el", staticClass: "slider-input" }),
+    _c(
+      "input",
+      _vm._g(
+        { ref: "el", staticClass: "slider-input" },
+        _vm.editable && !_vm.colorCode
+          ? {
+              change: function(ev) {
+                return _vm.update(ev.target.value, true)
+              }
+            }
+          : {}
+      )
+    ),
     _c(
       "div",
-      {
-        ref: "track",
-        staticClass: "slider-track",
-        nativeOn: {
-          mousedown: function($event) {
-            return _vm.select($event)
-          }
-        }
-      },
+      _vm._g(
+        { ref: "track", staticClass: "slider-track" },
+        _vm.trackSlide ? { mousedown: _vm.select, touchstrat: _vm.select } : {}
+      ),
       [
         _vm.fill
           ? _c("div", {
@@ -1105,7 +1105,7 @@ var __vue_render__$1 = function() {
               }
             },
             [
-              _vm.settings.label
+              _vm.label
                 ? _c("div", { staticClass: "slider-label" }, [
                     _vm._v(_vm._s(handle.value))
                   ])
@@ -1127,7 +1127,7 @@ const __vue_template__$1 = typeof __vue_render__$1 !== 'undefined'
 /* style */
 const __vue_inject_styles__$1 = function (inject) {
   if (!inject) return
-  inject("data-v-79bc1a58_0", { source: "\n.slider {\n  position: relative;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  margin-bottom: 10px;\n}\n.slider-input {\n    display: none;\n    margin-bottom: 0;\n    padding: 0.6em;\n    max-width: 70px;\n    width: 20%;\n    border: 1px solid #000;\n    border-radius: 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: text;\n}\n.slider-input:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.slider-track {\n    position: relative;\n    flex: 1;\n    margin: 0.2em;\n    width: auto;\n    height: 0.2em;\n    background: #cccccc;\n    will-change: transfom;\n}\n.slider-handle {\n    position: relative;\n    position: absolute;\n    top: 0;\n    left: 0;\n    will-change: transform;\n    color: #000;\n    margin: -0.1em 0 0 -0.2em;\n    width: 0.4em;\n    height: 0.4em;\n    background-color: currentColor;\n}\n.slider-label {\n    position: absolute;\n    top: -3em;\n    left: 0.4em;\n    z-index: 999;\n    visibility: hidden;\n    padding: 6px;\n    min-width: 3em;\n    border-radius: 0;\n    background-color: #000;\n    color: #fff;\n    text-align: center;\n    font-size: 12px;\n    line-height: 1em;\n    opacity: 0;\n    transform: translate(-50%, 0);\n    white-space: nowrap;\n}\n.slider-label:before {\n      position: absolute;\n      bottom: -0.6em;\n      left: 50%;\n      display: block;\n      width: 0;\n      height: 0;\n      border-width: 0.6em 0.6em 0 0.6em;\n      border-style: solid;\n      border-color: #000 transparent transparent transparent;\n      content: '';\n      transform: translate3d(-50%, 0, 0);\n}\n.slider-fill {\n    width: 100%;\n    height: 100%;\n    background-color: #cccccc;\n    transform-origin: left top;\n}\n.slider:hover .slider-label, .slider.is-dragging .slider-label {\n    visibility: visible;\n    opacity: 1;\n}\n.slider.is-editable .slider-input {\n    display: block;\n}\n.slider.is-reverse {\n    flex-direction: row-reverse;\n}\n\n/*# sourceMappingURL=Slider.vue.map */", map: undefined, media: undefined });
+  inject("data-v-0c3f6955_0", { source: "\n.slider {\n  position: relative;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  margin-bottom: 10px;\n}\n.slider-input {\n    display: none;\n    margin-bottom: 0;\n    padding: 0.6em;\n    max-width: 70px;\n    width: 20%;\n    border: 1px solid #000;\n    border-radius: 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: text;\n}\n.slider-input:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.slider-track {\n    position: relative;\n    flex: 1;\n    margin: 0.2em;\n    width: auto;\n    height: 0.2em;\n    background: #cccccc;\n    will-change: transfom;\n}\n.slider-handle {\n    position: relative;\n    position: absolute;\n    top: 0;\n    left: 0;\n    will-change: transform;\n    color: #000;\n    margin: -0.1em 0 0 -0.2em;\n    width: 0.4em;\n    height: 0.4em;\n    background-color: currentColor;\n}\n.slider-label {\n    position: absolute;\n    top: -3em;\n    left: 0.4em;\n    z-index: 999;\n    visibility: hidden;\n    padding: 6px;\n    min-width: 3em;\n    border-radius: 0;\n    background-color: #000;\n    color: #fff;\n    text-align: center;\n    font-size: 12px;\n    line-height: 1em;\n    opacity: 0;\n    transform: translate(-50%, 0);\n    white-space: nowrap;\n}\n.slider-label:before {\n      position: absolute;\n      bottom: -0.6em;\n      left: 50%;\n      display: block;\n      width: 0;\n      height: 0;\n      border-width: 0.6em 0.6em 0 0.6em;\n      border-style: solid;\n      border-color: #000 transparent transparent transparent;\n      content: '';\n      transform: translate3d(-50%, 0, 0);\n}\n.slider-fill {\n    width: 100%;\n    height: 100%;\n    background-color: #cccccc;\n    transform-origin: left top;\n}\n.slider:hover .slider-label, .slider.is-dragging .slider-label {\n    visibility: visible;\n    opacity: 1;\n}\n.slider.is-editable .slider-input {\n    display: block;\n}\n.slider.is-reverse {\n    flex-direction: row-reverse;\n}\n\n/*# sourceMappingURL=Slider.vue.map */", map: undefined, media: undefined });
 
 };
 /* scoped */
