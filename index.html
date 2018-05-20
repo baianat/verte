@@ -7,15 +7,10 @@
   <title>Document</title>
 
   <div id="app">
-    <br>
-    <br>
-    <br>
-    <br>
-    <slider ref="slider1" :gradient="grad" :value="100" :max="255" :track-slide="true" :editable="true"></slider>
+    <picker mode="square"></picker>
   </div>
 </head>
 <body>
-  Hello, world
 
   
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
@@ -24,10 +19,7 @@
     Vue.use(verte);
 
     new Vue ({
-      el: '#app',
-      data: {
-        grad: ['#fff', '#f0f', '#000']
-      },
+      el: '#app'
     });
   </script>
 </body>

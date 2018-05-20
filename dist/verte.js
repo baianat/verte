@@ -3,277 +3,6 @@
     * (c) 2018 Baianat
     * @license MIT
     */
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-var script = {
-  name: 'Verte',
-  data() {
-    return {
-      currentColor: '#000'
-    }
-  },
-  methods: {
-    _initWheel() {
-      this.wheel = this.$refs.wheel;
-      this.canvas = this.$refs.canvas;
-      this.cursor = this.$refs.cursor;
-
-
-      // setup canvas
-      this.canvas.width = 200;
-      this.canvas.height = 200;
-      this.ctx = this.canvas.getContext('2d');
-
-      // draw wheel circle path
-      this.circle = {
-        path: new Path2D(), // eslint-disable-line
-        xCords: this.canvas.width / 2,
-        yCords: this.canvas.height / 2,
-        radius: this.canvas.width / 2
-      };
-      this.circle.path.moveTo(this.circle.xCords, this.circle.yCords);
-      this.circle.path.arc(
-        this.circle.xCords,
-        this.circle.yCords,
-        this.circle.radius,
-        0,
-        360
-      );
-      this.circle.path.closePath();
-
-      const updateColor = (event) => {
-        // check if mouse outside the wheel
-        const mouse = this.getMouseCords(event);
-        if (this.ctx.isPointInPath(this.circle.path, mouse.x, mouse.y)) {
-          let color = this.getColorCanvas(mouse, this.ctx);
-          this.selectColor(color);
-          this.updateCursor(mouse);
-        }
-      };
-      // add event listener
-      this.wheel.addEventListener('mousedown', (event) => mouseDownHandler(event)(updateColor));
-
-      this.updateWheelColors();
-      this.updateCursor();
-    },
-
-    getMouseCords() {
-
-    },
-    updateWheelColors() {
-      const x = this.circle.xCords;
-      const y = this.circle.yCords;
-      const radius = this.circle.radius;
-      const saturation = 100;
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-      for (let angle = 0; angle < 360; angle += 1) {
-        const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
-        const startAngle = (angle - 2) * Math.PI / 180;
-        const endAngle = (angle + 2) * Math.PI / 180;
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(x, y);
-        this.ctx.arc(x, y, radius, startAngle, endAngle);
-        this.ctx.closePath();
-
-        gradient.addColorStop(0, `hsl(${angle}, ${saturation}%, 100%)`);
-        gradient.addColorStop(0.5, `hsl(${angle}, ${saturation}%, 50%)`);
-        gradient.addColorStop(1, `hsl(${angle}, ${saturation}%, 0%)`);
-        this.ctx.fillStyle = gradient;
-        this.ctx.fill();
-      }
-    },
-    updateCursor() {
-    }
-  },
-  mounted() {
-    this._initWheel();
-  }
-}
-
-const __vue_script__ = script;
-            
-/* template */
-var __vue_render__ = function() {
-  var _vm = this;
-  var _h = _vm.$createElement;
-  var _c = _vm._self._c || _h;
-  return _c("div", { staticClass: "picker" }, [
-    _c("button", { staticClass: "picker-guide" }, [
-      _vm._v("{this.settings.guideIcon}")
-    ]),
-    _c(
-      "div",
-      { ref: "menu", staticClass: "picker-menu", attrs: { tabindex: "-1" } },
-      [
-        _c("div", { ref: "wheel", staticClass: "picker-wheel" }, [
-          _c("canvas", { ref: "canvas", staticClass: "picker-canvas" }),
-          _c("div", { ref: "cursor", staticClass: "picker-cursor" })
-        ]),
-        _c("div", { staticClass: "picker-input" }),
-        _c("button", { staticClass: "picker-submit" }, [
-          _c("svg", { staticClass: "icon", attrs: { viewBox: "0 0 24 24" } }, [
-            _c("path", {
-              attrs: { d: "M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" }
-            })
-          ])
-        ])
-      ]
-    )
-  ])
-};
-var __vue_staticRenderFns__ = [];
-__vue_render__._withStripped = true;
-
-const __vue_template__ = typeof __vue_render__ !== 'undefined'
-  ? { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ }
-  : {};
-/* style */
-const __vue_inject_styles__ = function (inject) {
-  if (!inject) return
-  inject("data-v-4df72508_0", { source: "\n.picker {\n  position: relative;\n  display: flex;\n  justify-content: center;\n  box-sizing: border-box;\n}\n.picker-guide {\n    width: 24px;\n    height: 24px;\n    padding: 0;\n    border: 0;\n    background: transparent;\n}\n.picker-guide:focus {\n      outline: 0;\n}\n.picker-guide svg {\n      width: 100%;\n      height: 100%;\n      fill: inherit;\n}\n.picker-wheel {\n    position: relative;\n    margin: 10px auto 20px;\n    user-select: none;\n}\n.picker-square {\n    position: relative;\n    margin: 10px auto 20px;\n    user-select: none;\n    display: flex;\n    justify-content: center;\n}\n.picker-squareStrip {\n    margin: 0 5px;\n}\n.picker-menu {\n    position: absolute;\n    top: 50px;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: stretch;\n    padding: 40px;\n    width: 300px;\n    border-radius: 20px;\n    background-color: #fff;\n    will-change: transform;\n}\n.picker-menu.is-hidden {\n      display: none;\n}\n.picker-menu:focus {\n      outline: none;\n}\n.picker-recent {\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: flex-end;\n    align-items: center;\n    width: 100%;\n}\n.picker-color {\n    margin: 4px;\n    width: 28px;\n    height: 28px;\n    border-radius: 50%;\n    background-color: #000;\n}\n.picker-value {\n    padding: 0.6em;\n    width: 100%;\n    border: 2px solid #000;\n    border-radius: 20px 0 0 20px;\n    text-align: center;\n    font-size: 20px;\n    -webkit-appearance: none;\n    -moz-appearance: textfield;\n}\n.picker-value:focus {\n      outline: none;\n      border-color: #fff;\n}\n.picker-cursor {\n    position: absolute;\n    top: 0;\n    left: 0;\n    margin: -6px;\n    width: 10px;\n    height: 10px;\n    border: 2px solid #fff;\n    border-radius: 50%;\n    will-change: transform;\n    pointer-events: none;\n    background-color: transparent;\n}\n.picker-input {\n    display: flex;\n    margin-bottom: 20px;\n}\n.picker-submit {\n    position: relative;\n    display: inline-flex;\n    justify-content: center;\n    align-items: center;\n    padding: 0.4em 0.75em;\n    outline-width: 2px;\n    outline-offset: 1px;\n    border-width: 2px;\n    border-style: solid;\n    border-radius: 0 20px 20px 0;\n    background-clip: border-box;\n    vertical-align: top;\n    text-align: center;\n    text-decoration: none;\n    cursor: pointer;\n    background-color: #000;\n    border-color: #000;\n}\n.picker-submit > .icon {\n      width: 22.5px;\n      height: 18.5px;\n      fill: #fff;\n}\n.picker-submit:hover > .icon {\n      fill: #fff;\n}\n.picker .slider-fill {\n    display: none;\n}\n\n/*# sourceMappingURL=Verte.vue.map */", map: undefined, media: undefined });
-
-};
-/* scoped */
-const __vue_scope_id__ = undefined;
-/* module identifier */
-const __vue_module_identifier__ = undefined;
-/* functional template */
-const __vue_is_functional_template__ = false;
-/* component normalizer */
-function __vue_normalize__(
-  template, style, script$$1,
-  scope, functional, moduleIdentifier,
-  createInjector, createInjectorSSR
-) {
-  const component = script$$1 || {};
-
-  {
-    component.__file = "/mnt/c/Users/Abdelrahman/Projects/verte/src/Verte.vue";
-  }
-
-  if (!component.render) {
-    component.render = template.render;
-    component.staticRenderFns = template.staticRenderFns;
-    component._compiled = true;
-
-    if (functional) component.functional = true;
-  }
-
-  component._scopeId = scope;
-
-  {
-    let hook;
-    if (style) {
-      hook = function(context) {
-        style.call(this, createInjector(context));
-      };
-    }
-
-    if (hook !== undefined) {
-      if (component.functional) {
-        // register for functional component in vue file
-        const originalRender = component.render;
-        component.render = function renderWithStyleInjection(h, context) {
-          hook.call(context);
-          return originalRender(h, context)
-        };
-      } else {
-        // inject component registration as beforeCreate hook
-        const existing = component.beforeCreate;
-        component.beforeCreate = existing ? [].concat(existing, hook) : [hook];
-      }
-    }
-  }
-
-  return component
-}
-/* style inject */
-function __vue_create_injector__() {
-  const head = document.head || document.getElementsByTagName('head')[0];
-  const styles = __vue_create_injector__.styles || (__vue_create_injector__.styles = {});
-  const isOldIE =
-    typeof navigator !== 'undefined' &&
-    /msie [6-9]\\b/.test(navigator.userAgent.toLowerCase());
-
-  return function addStyle(id, css) {
-    if (document.querySelector('style[data-vue-ssr-id~="' + id + '"]')) return // SSR styles are present.
-
-    const group = isOldIE ? css.media || 'default' : id;
-    const style = styles[group] || (styles[group] = { ids: [], parts: [], element: undefined });
-
-    if (!style.ids.includes(id)) {
-      let code = css.source;
-      let index = style.ids.length;
-
-      style.ids.push(id);
-
-      if (isOldIE) {
-        style.element = style.element || document.querySelector('style[data-group=' + group + ']');
-      }
-
-      if (!style.element) {
-        const el = style.element = document.createElement('style');
-        el.type = 'text/css';
-
-        if (css.media) el.setAttribute('media', css.media);
-        if (isOldIE) {
-          el.setAttribute('data-group', group);
-          el.setAttribute('data-next-index', '0');
-        }
-
-        head.appendChild(el);
-      }
-
-      if (isOldIE) {
-        index = parseInt(style.element.getAttribute('data-next-index'));
-        style.element.setAttribute('data-next-index', index + 1);
-      }
-
-      if (style.element.styleSheet) {
-        style.parts.push(code);
-        style.element.styleSheet.cssText = style.parts
-          .filter(Boolean)
-          .join('\n');
-      } else {
-        const textNode = document.createTextNode(code);
-        const nodes = style.element.childNodes;
-        if (nodes[index]) style.element.removeChild(nodes[index]);
-        if (nodes.length) style.element.insertBefore(textNode, nodes[index]);
-        else style.element.appendChild(textNode);
-      }
-    }
-  }
-}
-/* style inject SSR */
-
-
-var Verte = __vue_normalize__(
-  __vue_template__,
-  __vue_inject_styles__,
-  typeof __vue_script__ === 'undefined' ? {} : __vue_script__,
-  __vue_scope_id__,
-  __vue_is_functional_template__,
-  __vue_module_identifier__,
-  typeof __vue_create_injector__ !== 'undefined' ? __vue_create_injector__ : function () {},
-  typeof __vue_create_injector_ssr__ !== 'undefined' ? __vue_create_injector_ssr__ : function () {}
-)
-
 /**
   * color-fns v0.0.3
   * (c) 2018 Baianat
@@ -577,6 +306,60 @@ function parseRgb(rgb) {
   });
 }
 
+function rgb2Hsl(rgb) {
+  if (!rgb) {
+    return new HslColor();
+  }
+
+  rgb = parseRgb(rgb);
+
+  // Convert the RGB values to the range 0-1
+  var _ref = [rgb.red / 255, rgb.green / 255, rgb.blue / 255, rgb.alpha],
+      red = _ref[0],
+      green = _ref[1],
+      blue = _ref[2],
+      alpha = _ref[3];
+  var hue = 0,
+      sat = 0,
+      lum = 0;
+
+  // Find the minimum and maximum values of R, G and B.
+
+  var min = Math.min(red, green, blue);
+  var max = Math.max(red, green, blue);
+
+  // Calculate the lightness value
+  lum = (min + max) / 2;
+
+  // Calculate the saturation.
+  if (min !== max) {
+    sat = lum > 0.5 ? (max - min) / (2 - max - min) : (max - min) / (max + min);
+  }
+
+  // calculate the hue
+  if (red >= max && min !== max) {
+    hue = 60 * ((green - blue) / (max - min));
+  }
+  if (green >= max && min !== max) {
+    hue = 60 * (2.0 + (blue - red) / (max - min));
+  }
+  if (blue >= max && min !== max) {
+    hue = 60 * (4.0 + (red - green) / (max - min));
+  }
+
+  // normalize values
+  hue = hue < 0 ? Math.floor(hue + 360) : Math.floor(hue);
+  sat = Math.floor(sat * 100);
+  lum = Math.floor(lum * 100);
+
+  return new HslColor({
+    hue: hue,
+    sat: sat,
+    lum: lum,
+    alpha: alpha
+  });
+}
+
 function expandHexShorthand(hex) {
   var regex = /^#([a-f\d])([a-f\d])([a-f\d])([a-f\d])*$/i;
   if ((hex.length === 5 || hex.length === 4) && regex.test(hex)) {
@@ -699,6 +482,13 @@ function hslToRgb(hsl) {
   });
 }
 
+function hexToHsl(hex) {
+  if (!hex) {
+    return new HslColor();
+  }
+  return rgb2Hsl(hexToRgb(hex));
+}
+
 /**
  * Parses the given color string into a RGB color object.
  *
@@ -724,6 +514,33 @@ function toRgb(color) {
   }
 
   return new RgbColor();
+}
+
+/**
+ * Parses the given color string into a HSL color object.
+ *
+ * @param {String} color The color to be parsed and converted.
+ */
+function toHsl(color) {
+  var model = getColorModel(color);
+
+  if (model === 'hex') {
+    return hexToHsl(color);
+  }
+
+  if (model === 'rgb') {
+    return rgb2Hsl(color);
+  }
+
+  if (model === 'hsl' && typeof color === 'string') {
+    return parseHsl(color);
+  }
+
+  if (model === 'hsl' && (typeof color === 'undefined' ? 'undefined' : _typeof(color)) === 'object') {
+    return color;
+  }
+
+  return new HslColor();
 }
 
 function mixColors(color1, color2, ratio) {
@@ -757,9 +574,16 @@ function getClosestValue (array, value) {
   });
 }
 
+function getCartesianCoords (r, theta) {
+  return {
+    x: r * Math.cos(theta * Math.PI * 2),
+    y: r * Math.sin(theta * Math.PI * 2)
+  };
+}
+
 //
 
-var script$1 = {
+var script = {
   name: 'Slider',
   props: {
     created: Object,
@@ -1040,17 +864,17 @@ var script$1 = {
       // todo: create reactivity and stop force update
       
       if (mute) return;
-      this.el.dispatchEvent(new Event('change')); // eslint-disable-line
-      this.el.dispatchEvent(new Event('input'));  // eslint-disable-line
+      this.$emit('change', this.currentValue);
+      this.$emit('input', this.currentValue);
       call(this.updated);
-    }
+    },
   }
 }
 
-const __vue_script__$1 = script$1;
+const __vue_script__ = script;
             
 /* template */
-var __vue_render__$1 = function() {
+var __vue_render__ = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
@@ -1120,6 +944,409 @@ var __vue_render__$1 = function() {
     )
   ])
 };
+var __vue_staticRenderFns__ = [];
+__vue_render__._withStripped = true;
+
+const __vue_template__ = typeof __vue_render__ !== 'undefined'
+  ? { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ }
+  : {};
+/* style */
+const __vue_inject_styles__ = function (inject) {
+  if (!inject) return
+  inject("data-v-7227e2b8_0", { source: "\n.slider {\n  position: relative;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  margin-bottom: 10px;\n}\n.slider-input {\n    display: none;\n    margin-bottom: 0;\n    padding: 0.6em;\n    max-width: 70px;\n    width: 20%;\n    border: 1px solid #000;\n    border-radius: 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: text;\n}\n.slider-input:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.slider-track {\n    position: relative;\n    flex: 1;\n    margin: 0.2em;\n    width: auto;\n    height: 0.2em;\n    background: #cccccc;\n    will-change: transfom;\n}\n.slider-handle {\n    position: relative;\n    position: absolute;\n    top: 0;\n    left: 0;\n    will-change: transform;\n    color: #000;\n    margin: -0.1em 0 0 -0.2em;\n    width: 0.4em;\n    height: 0.4em;\n    background-color: currentColor;\n}\n.slider-label {\n    position: absolute;\n    top: -3em;\n    left: 0.4em;\n    z-index: 999;\n    visibility: hidden;\n    padding: 6px;\n    min-width: 3em;\n    border-radius: 0;\n    background-color: #000;\n    color: #fff;\n    text-align: center;\n    font-size: 12px;\n    line-height: 1em;\n    opacity: 0;\n    transform: translate(-50%, 0);\n    white-space: nowrap;\n}\n.slider-label:before {\n      position: absolute;\n      bottom: -0.6em;\n      left: 50%;\n      display: block;\n      width: 0;\n      height: 0;\n      border-width: 0.6em 0.6em 0 0.6em;\n      border-style: solid;\n      border-color: #000 transparent transparent transparent;\n      content: '';\n      transform: translate3d(-50%, 0, 0);\n}\n.slider-fill {\n    width: 100%;\n    height: 100%;\n    background-color: #cccccc;\n    transform-origin: left top;\n}\n.slider:hover .slider-label, .slider.is-dragging .slider-label {\n    visibility: visible;\n    opacity: 1;\n}\n.slider.is-editable .slider-input {\n    display: block;\n}\n.slider.is-reverse {\n    flex-direction: row-reverse;\n}\n\n/*# sourceMappingURL=Slider.vue.map */", map: undefined, media: undefined });
+
+};
+/* scoped */
+const __vue_scope_id__ = undefined;
+/* module identifier */
+const __vue_module_identifier__ = undefined;
+/* functional template */
+const __vue_is_functional_template__ = false;
+/* component normalizer */
+function __vue_normalize__(
+  template, style, script$$1,
+  scope, functional, moduleIdentifier,
+  createInjector, createInjectorSSR
+) {
+  const component = script$$1 || {};
+
+  {
+    component.__file = "/mnt/c/Users/Abdelrahman/Projects/verte/src/components/Slider.vue";
+  }
+
+  if (!component.render) {
+    component.render = template.render;
+    component.staticRenderFns = template.staticRenderFns;
+    component._compiled = true;
+
+    if (functional) component.functional = true;
+  }
+
+  component._scopeId = scope;
+
+  {
+    let hook;
+    if (style) {
+      hook = function(context) {
+        style.call(this, createInjector(context));
+      };
+    }
+
+    if (hook !== undefined) {
+      if (component.functional) {
+        // register for functional component in vue file
+        const originalRender = component.render;
+        component.render = function renderWithStyleInjection(h, context) {
+          hook.call(context);
+          return originalRender(h, context)
+        };
+      } else {
+        // inject component registration as beforeCreate hook
+        const existing = component.beforeCreate;
+        component.beforeCreate = existing ? [].concat(existing, hook) : [hook];
+      }
+    }
+  }
+
+  return component
+}
+/* style inject */
+function __vue_create_injector__() {
+  const head = document.head || document.getElementsByTagName('head')[0];
+  const styles = __vue_create_injector__.styles || (__vue_create_injector__.styles = {});
+  const isOldIE =
+    typeof navigator !== 'undefined' &&
+    /msie [6-9]\\b/.test(navigator.userAgent.toLowerCase());
+
+  return function addStyle(id, css) {
+    if (document.querySelector('style[data-vue-ssr-id~="' + id + '"]')) return // SSR styles are present.
+
+    const group = isOldIE ? css.media || 'default' : id;
+    const style = styles[group] || (styles[group] = { ids: [], parts: [], element: undefined });
+
+    if (!style.ids.includes(id)) {
+      let code = css.source;
+      let index = style.ids.length;
+
+      style.ids.push(id);
+
+      if (isOldIE) {
+        style.element = style.element || document.querySelector('style[data-group=' + group + ']');
+      }
+
+      if (!style.element) {
+        const el = style.element = document.createElement('style');
+        el.type = 'text/css';
+
+        if (css.media) el.setAttribute('media', css.media);
+        if (isOldIE) {
+          el.setAttribute('data-group', group);
+          el.setAttribute('data-next-index', '0');
+        }
+
+        head.appendChild(el);
+      }
+
+      if (isOldIE) {
+        index = parseInt(style.element.getAttribute('data-next-index'));
+        style.element.setAttribute('data-next-index', index + 1);
+      }
+
+      if (style.element.styleSheet) {
+        style.parts.push(code);
+        style.element.styleSheet.cssText = style.parts
+          .filter(Boolean)
+          .join('\n');
+      } else {
+        const textNode = document.createTextNode(code);
+        const nodes = style.element.childNodes;
+        if (nodes[index]) style.element.removeChild(nodes[index]);
+        if (nodes.length) style.element.insertBefore(textNode, nodes[index]);
+        else style.element.appendChild(textNode);
+      }
+    }
+  }
+}
+/* style inject SSR */
+
+
+var Slider = __vue_normalize__(
+  __vue_template__,
+  __vue_inject_styles__,
+  typeof __vue_script__ === 'undefined' ? {} : __vue_script__,
+  __vue_scope_id__,
+  __vue_is_functional_template__,
+  __vue_module_identifier__,
+  typeof __vue_create_injector__ !== 'undefined' ? __vue_create_injector__ : function () {},
+  typeof __vue_create_injector_ssr__ !== 'undefined' ? __vue_create_injector_ssr__ : function () {}
+)
+
+//
+
+var script$1 = {
+  name: 'Picker',
+  props: {
+    mode: { type: String, default: 'wheel' },
+    edge: { type: Number, default: 190 },
+    radius: { type: Number, default: 200 },
+    satSlider: { type: Boolean, default: true },
+  },
+  data() {
+    return {
+      currentColor: '#000'
+    }
+  },
+  components: {
+    Slider
+  },
+  methods: {
+    _initSquare () {
+      this.picker = this.$refs.picker;
+      this.canvas = this.$refs.canvas;
+      this.strip = this.$refs.strip;
+      this.cursor = this.$refs.cursor;
+
+      this.currentHue = 'hsl(0, 100%, 50%)';
+
+      // setup canvas
+      const edge = this.edge;
+      this.canvas.width = edge;
+      this.canvas.height = edge;
+      this.strip.width = this.edge / 10;
+      this.strip.height = edge;
+      this.ctx = this.canvas.getContext('2d');
+      this.stripCtx = this.strip.getContext('2d');
+
+      this.stripCtx.rect(0, 0, this.strip.width, this.strip.height);
+      const hue = this.stripCtx.createLinearGradient(0, 0, 0, this.strip.height);
+      for (let angle = 0; angle < 360; angle += 1) {
+        hue.addColorStop(angle / 359, `hsl(${angle}, 100%, 50%)`);
+      }
+      this.stripCtx.fillStyle = hue;
+      this.stripCtx.fill();
+
+      this.updateSquareColors();
+    },
+
+    updateHue(event) {
+      if (event.target !== this.strip) {
+        return;
+      }
+      this.currentHue = this.getColorCanvas(this.getMouseCords(event), this.stripCtx);
+      this.updateSquareColors();
+      const color = this.getColorCanvas(this.mouse, this.ctx);
+      this.$emit('updateColor', color);
+    },
+
+    updateColor(event) {
+      if (event.target !== this.canvas) {
+        return;
+      }
+      const { x, y } = this.getMouseCords(event);
+      if (this.mode === 'square') {
+        const squareThreshold = this.edge - 1;
+        this.mouse = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
+      }
+
+      if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
+        this.mouse = { x, y };
+      }
+
+      this.currentColor = this.getColorCanvas(this.mouse, this.ctx);
+      this.$emit('update', this.currentColor );
+      this.updateCursor(this.mouse);
+    },
+
+    _initWheel () {
+      this.picker = this.$refs.picker;
+      this.saturation = this.$refs.saturation;
+      this.canvas = this.$refs.canvas;
+      this.cursor = this.$refs.cursor;
+
+      // setup canvas
+      this.canvas.width = this.radius;
+      this.canvas.height = this.radius;
+      this.ctx = this.canvas.getContext('2d');
+
+      // draw wheel circle path
+      this.circle = {
+        path: new Path2D(), // eslint-disable-line
+        xCords: this.canvas.width / 2,
+        yCords: this.canvas.height / 2,
+        radius: this.canvas.width / 2
+      };
+      this.circle.path.moveTo(this.circle.xCords, this.circle.yCords);
+      this.circle.path.arc(
+        this.circle.xCords,
+        this.circle.yCords,
+        this.circle.radius,
+        0,
+        360
+      );
+      this.circle.path.closePath();
+
+
+      this.updateWheelColors();
+      this.updateCursor();
+    },
+
+    updateWheelColors () {
+      if (!this.circle) return;
+      const x = this.circle.xCords;
+      const y = this.circle.yCords;
+      const radius = this.circle.radius;
+      const saturation = this.satSlider ? this.saturation.currentValue : 100;
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      for (let angle = 0; angle < 360; angle += 1) {
+        const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
+        const startAngle = (angle - 2) * Math.PI / 180;
+        const endAngle = (angle + 2) * Math.PI / 180;
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(x, y);
+        this.ctx.arc(x, y, radius, startAngle, endAngle);
+        this.ctx.closePath();
+
+        gradient.addColorStop(0, `hsl(${angle}, ${saturation}%, 100%)`);
+        gradient.addColorStop(0.5, `hsl(${angle}, ${saturation}%, 50%)`);
+        gradient.addColorStop(1, `hsl(${angle}, ${saturation}%, 0%)`);
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+      }
+    },
+
+    updateSquareColors () {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      this.ctx.fillStyle = this.currentHue;
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+      let grdBlack = this.ctx.createLinearGradient(0, 0, this.canvas.width, 0);
+      grdBlack.addColorStop(0, `hsl(0, 0%, 50%)`);
+      grdBlack.addColorStop(1, `hsla(0, 0%, 50%, 0)`);
+      this.ctx.fillStyle = grdBlack;
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+      let grdWhite = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+      grdWhite.addColorStop(0, `hsl(0, 0%, 100%)`);
+      grdWhite.addColorStop(0.5, `hsla(0, 0%, 100%, 0)`);
+      grdWhite.addColorStop(0.5, `hsla(0, 0%, 0%, 0)`);
+      grdWhite.addColorStop(1, `hsl(0, 0%, 0%) `);
+      this.ctx.fillStyle = grdWhite;
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+
+    updateCursor (mouse) {
+      if (mouse) {
+        this.cursor.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0)`;
+        return;
+      }
+
+      const hslColor = toHsl(this.currentColor, true);
+      if (this.mode === 'wheel') {
+        const r = (100 - hslColor[3]) * (this.radius / 200);
+        const ratio = this.radius / 2;
+        this.mouse = getCartesianCoords(r, hslColor[1] / 360);
+        this.cursor.style.transform = `translate3d(${this.mouse.x + ratio}px, ${this.mouse.y + ratio}px, 0)`;
+      }
+      if (this.mode === 'square') {
+        const x = (hslColor[2] / 100) * (this.edge);
+        const y = ((100 - hslColor[3]) / 100) * (this.edge);
+        this.mouse = { x: x, y: y };
+        this.cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      }
+    },
+
+    getMouseCords ({ offsetX, offsetY }) {
+      return {
+        x: offsetX,
+        y: offsetY
+      };
+    },
+
+    getColorCanvas ({ x, y }, ctx) {
+      const imageData = ctx.getImageData(x, y, 1, 1).data;
+      return `rgb(${imageData[0]}, ${imageData[1]}, ${imageData[2]})`;
+    },
+
+    mouseDownHandler (event, func) {
+      event.preventDefault();
+      const el = event.target;
+      func(event);
+      const mouseupHandler = () => {
+        document.removeEventListener('mousemove', func);
+        document.removeEventListener('mouseup', mouseupHandler);
+      };
+      document.addEventListener('mousemove', func);
+      document.addEventListener('mouseup', mouseupHandler);
+    }
+
+  },
+  mounted() {
+    if (this.mode === 'wheel') {
+      this._initWheel();
+    }
+    if (this.mode === 'square') {
+      this._initSquare();
+    }
+  }
+}
+
+const __vue_script__$1 = script$1;
+            
+/* template */
+var __vue_render__$1 = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
+  return _c(
+    "div",
+    {
+      ref: "picker",
+      staticClass: "verte-picker",
+      class: "verte-picker--" + _vm.mode
+    },
+    [
+      _c("canvas", {
+        ref: "canvas",
+        staticClass: "verte-picker__canvas",
+        on: {
+          mousedown: function($event) {
+            _vm.mouseDownHandler($event, _vm.updateColor);
+          }
+        }
+      }),
+      _vm.mode === "square"
+        ? _c("canvas", {
+            ref: "strip",
+            staticClass: "verte-picker__strip",
+            on: {
+              mousedown: function($event) {
+                _vm.mouseDownHandler($event, _vm.updateHue);
+              }
+            }
+          })
+        : _vm._e(),
+      _c("div", { ref: "cursor", staticClass: "verte-picker__cursor" }),
+      _vm.mode === "wheel"
+        ? _c("Slider", {
+            ref: "saturation",
+            staticClass: "verte-picker__saturation",
+            attrs: {
+              gradient: ["#FFFFFF", "#000000"],
+              label: false,
+              min: 0,
+              max: 100,
+              value: 100
+            },
+            on: { change: _vm.updateWheelColors }
+          })
+        : _vm._e()
+    ],
+    1
+  )
+};
 var __vue_staticRenderFns__$1 = [];
 __vue_render__$1._withStripped = true;
 
@@ -1129,7 +1356,7 @@ const __vue_template__$1 = typeof __vue_render__$1 !== 'undefined'
 /* style */
 const __vue_inject_styles__$1 = function (inject) {
   if (!inject) return
-  inject("data-v-47de55c3_0", { source: "\n.slider {\n  position: relative;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  margin-bottom: 10px;\n}\n.slider-input {\n    display: none;\n    margin-bottom: 0;\n    padding: 0.6em;\n    max-width: 70px;\n    width: 20%;\n    border: 1px solid #000;\n    border-radius: 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: text;\n}\n.slider-input:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.slider-track {\n    position: relative;\n    flex: 1;\n    margin: 0.2em;\n    width: auto;\n    height: 0.2em;\n    background: #cccccc;\n    will-change: transfom;\n}\n.slider-handle {\n    position: relative;\n    position: absolute;\n    top: 0;\n    left: 0;\n    will-change: transform;\n    color: #000;\n    margin: -0.1em 0 0 -0.2em;\n    width: 0.4em;\n    height: 0.4em;\n    background-color: currentColor;\n}\n.slider-label {\n    position: absolute;\n    top: -3em;\n    left: 0.4em;\n    z-index: 999;\n    visibility: hidden;\n    padding: 6px;\n    min-width: 3em;\n    border-radius: 0;\n    background-color: #000;\n    color: #fff;\n    text-align: center;\n    font-size: 12px;\n    line-height: 1em;\n    opacity: 0;\n    transform: translate(-50%, 0);\n    white-space: nowrap;\n}\n.slider-label:before {\n      position: absolute;\n      bottom: -0.6em;\n      left: 50%;\n      display: block;\n      width: 0;\n      height: 0;\n      border-width: 0.6em 0.6em 0 0.6em;\n      border-style: solid;\n      border-color: #000 transparent transparent transparent;\n      content: '';\n      transform: translate3d(-50%, 0, 0);\n}\n.slider-fill {\n    width: 100%;\n    height: 100%;\n    background-color: #cccccc;\n    transform-origin: left top;\n}\n.slider:hover .slider-label, .slider.is-dragging .slider-label {\n    visibility: visible;\n    opacity: 1;\n}\n.slider.is-editable .slider-input {\n    display: block;\n}\n.slider.is-reverse {\n    flex-direction: row-reverse;\n}\n\n/*# sourceMappingURL=Slider.vue.map */", map: undefined, media: undefined });
+  inject("data-v-246679a0_0", { source: "\n.verte-picker {\n  position: relative;\n  margin: 10px auto 20px;\n  user-select: none;\n}\n.verte-picker__strip {\n    margin: 0 5px;\n}\n.verte-picker__cursor {\n    position: absolute;\n    top: 0;\n    left: 0;\n    margin: -6px;\n    width: 10px;\n    height: 10px;\n    border: 2px solid #fff;\n    border-radius: 50%;\n    will-change: transform;\n    pointer-events: none;\n    background-color: transparent;\n}\n.verte-picker__input {\n    display: flex;\n    margin-bottom: 10px;\n}\n\n/*# sourceMappingURL=Picker.vue.map */", map: undefined, media: undefined });
 
 };
 /* scoped */
@@ -1147,7 +1374,7 @@ function __vue_normalize__$1(
   const component = script || {};
 
   {
-    component.__file = "/mnt/c/Users/Abdelrahman/Projects/verte/src/Slider.vue";
+    component.__file = "/mnt/c/Users/Abdelrahman/Projects/verte/src/components/Picker.vue";
   }
 
   if (!component.render) {
@@ -1246,7 +1473,7 @@ function __vue_create_injector__$1() {
 /* style inject SSR */
 
 
-var Slider = __vue_normalize__$1(
+var Picker = __vue_normalize__$1(
   __vue_template__$1,
   __vue_inject_styles__$1,
   typeof __vue_script__$1 === 'undefined' ? {} : __vue_script__$1,
@@ -1259,8 +1486,7 @@ var Slider = __vue_normalize__$1(
 
 const install = {
   install (Vue, options) {
-    Vue.component(Verte.name, Verte);
-    Vue.component(Slider.name, Slider);
+    Vue.component(Picker.name, Picker);
   }
 };
 

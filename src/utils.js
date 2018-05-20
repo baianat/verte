@@ -52,7 +52,7 @@ export function getAverage (array, length) {
 }
 
 export function getArray (length, value) {
-  let array = []
+  let array = [];
   for (let i = 0; i < length; i++) {
     let temp = typeof value === 'function' ? value() : value;
     array.push(temp);
@@ -141,18 +141,9 @@ export function getClosestValue (array, value) {
   });
 }
 
-export function mouseDownHandler (event) {
-  event.preventDefault();
-  return function (func) {
-    func(event);
-    let tempFunc = (event) => {
-      window.requestAnimationFrame(() => func(event));
-    }
-    const mouseupHandler = () => {
-      document.removeEventListener('mousemove', tempFunc);
-      document.removeEventListener('mouseup', mouseupHandler);
-    }
-    document.addEventListener('mousemove', tempFunc);
-    document.addEventListener('mouseup', mouseupHandler);
-  }
+export function getCartesianCoords (r, theta) {
+  return {
+    x: r * Math.cos(theta * Math.PI * 2),
+    y: r * Math.sin(theta * Math.PI * 2)
+  };
 }

@@ -21,7 +21,7 @@
 
 <script>
 import { mixColors } from 'color-fns';
-import { call, getClosestValue } from './utils';
+import { call, getClosestValue } from '../utils';
 
 export default {
   name: 'Slider',
@@ -304,30 +304,16 @@ export default {
       // todo: create reactivity and stop force update
       
       if (mute) return;
-      this.el.dispatchEvent(new Event('change')); // eslint-disable-line
-      this.el.dispatchEvent(new Event('input'));  // eslint-disable-line
+      this.$emit('change', this.currentValue);
+      this.$emit('input', this.currentValue);
       call(this.updated);
-    }
+    },
   }
 }
 </script>
 
 <style lang="sass">
-$black: #000
-$whiteyar: #fff
-$magenta: #eb008b
-$blue: #1a3aff
-$cyan: #1de9cf
-$green: #5fca16
-$yellow: #ff9600
-$red: #f42828
-$gray: #cccccc
-$purple: #a324ea
-$margin: 10px
-$padding: 0.5em
-$borderRadius: 0
-$border: 1px
-$fontTiny: 12px
+@import 'variables';
 
 .slider
   position: relative
@@ -384,7 +370,7 @@ $fontTiny: 12px
     min-width: 3em
     border-radius: $borderRadius
     background-color: $black
-    color: $whiteyar
+    color: $white
     text-align: center
     font-size: $fontTiny
     line-height: 1em
