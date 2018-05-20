@@ -75,7 +75,6 @@ export default {
       this.rgb = toRgb(color);
       this.hex = toHex(color);
       this.hsl = toHsl(color);
-      console.log(this.rgb)
       this.el.value =
         this.model === 'hex' ? this.hex
           : this.model === 'hsl' ? this.hsl
@@ -100,7 +99,6 @@ export default {
 
     updateSlider () {
       const color = this.getColorFromSliders();
-      console.log(color)
       window.requestAnimationFrame(() => {
         this.selectColor(color);
       })
