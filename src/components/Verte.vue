@@ -1,124 +1,136 @@
 <template lang="pug">
-  .picker
-    button.picker-guide {this.settings.guideIcon}
-    .picker-menu(tabindex="-1" ref="menu")
-      .picker-wheel(ref="wheel")
-        canvas.picker-canvas(ref="canvas")
-        .picker-cursor(ref="cursor")
-      div.picker-input
-      button.picker-submit
-        svg.icon(viewBox="0 0 24 24")
+.verte
+  button.verte__guide
+    slot
+      svg.verte__icon(viewBox="0 0 24 24")
+        circle(cx="12" cy="12" r="12")
+  .verte__menu(tabindex="-1")
+    Picker(mode="wheel" color="rgb(255, 100, 0)")
+    Slider(
+      ref="red"
+      :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
+      :value="rgb.red"
+      @change="updateSlider"
+      )
+    Slider(ref="green"
+      :gradient="[`rgb(${rgb.red},0,${rgb.blue})`, `rgb(${rgb.red},255,${rgb.blue})`]"
+      :value="rgb.red"
+      @change="updateSlider"
+      )
+    Slider(ref="blue"
+      :gradient="[`rgb(${rgb.red},${rgb.green},0)`, `rgb(${rgb.red},${rgb.green},255)`]"
+      :value="rgb.red"
+      @change="updateSlider"
+      )
+    .verte__input
+      input.verte__value(ref="el")
+      button.verte__submit
+        svg.verte__icon(viewBox="0 0 24 24")
           path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
+    .verte__recent(ref="recent")
+      a.verte__color(
+        v-for="clr in recentColors.colors"
+        :style="`background: ${clr}`"
+        @click.prevent="selectColor(clr)"
+        )
 
 </template>
 
 
 <script>
+import Picker from './Picker.vue';
+import Slider from './Slider.vue';
+import { getArray, call } from '../utils'
+import { toRgb,
+  toHex,
+  toHsl,
+  getRandomColor,
+  isAColor
+} from 'color-fns';
+
 export default {
   name: 'Verte',
+  props: {
+    color: { type: String, default: '#000' },
+    modle: { type: String, default: 'rgb' },
+  },
   data() {
     return {
-      currentColor: '#000'
+      currentColor: '',
+      lastMove: { x: 0, y: 0 },
+      isMenuActive: false,
+      rgb: {},
+      hex: {},
+      hsl: {},
+      recentColors: {
+        max: 6,
+        colors: getArray(6, getRandomColor)
+      },
     }
   },
   methods: {
-    _initWheel() {
-      this.wheel = this.$refs.wheel;
-      this.canvas = this.$refs.canvas;
-      this.cursor = this.$refs.cursor;
+    selectColor (color, mute = false) {
+      if (!isAColor(color)) return;
+      // if (!mute) call(this.settings.events.beforeSelect);
+      this.rgb = toRgb(color);
+      this.hex = toHex(color);
+      this.hsl = toHsl(color);
+      console.log(this.rgb)
+      this.el.value =
+        this.model === 'hex' ? this.hex
+          : this.model === 'hsl' ? this.hsl
+            : this.model === 'rgb' ? this.rgb
+              : '';
 
+      this.currentColor = this.rgb.toString();
+      // this.guide.style.color = color;
+      // this.guide.style.fill = color;
 
-      // setup canvas
-      this.canvas.width = 200;
-      this.canvas.height = 200;
-      this.ctx = this.canvas.getContext('2d');
-
-      // draw wheel circle path
-      this.circle = {
-        path: new Path2D(), // eslint-disable-line
-        xCords: this.canvas.width / 2,
-        yCords: this.canvas.height / 2,
-        radius: this.canvas.width / 2
-      }
-      this.circle.path.moveTo(this.circle.xCords, this.circle.yCords);
-      this.circle.path.arc(
-        this.circle.xCords,
-        this.circle.yCords,
-        this.circle.radius,
-        0,
-        360
-      );
-      this.circle.path.closePath();
-
-      const updateColor = (event) => {
-        // check if mouse outside the wheel
-        const mouse = this.getMouseCords(event);
-        if (this.ctx.isPointInPath(this.circle.path, mouse.x, mouse.y)) {
-          let color = this.getColorCanvas(mouse, this.ctx);
-          this.selectColor(color);
-          this.updateCursor(mouse);
-        }
-      }
-      // add event listener
-      this.wheel.addEventListener('mousedown', (event) => mouseDownHandler(event)(updateColor));
-
-      this.updateWheelColors();
-      this.updateCursor();
+      if (mute) return;
+      // call(this.settings.events.afterSelect);
+      // this.events.forEach((event) => this.el.dispatchEvent(event));
     },
 
-    getMouseCords() {
-
+    getColorFromSliders () {
+      const red = this.$refs.red.currentValue;
+      const green = this.$refs.green.currentValue;
+      const blue = this.$refs.blue.currentValue;
+      return `rgb(${red}, ${green}, ${blue})`;
     },
-    updateWheelColors() {
-      const x = this.circle.xCords;
-      const y = this.circle.yCords;
-      const radius = this.circle.radius;
-      const saturation = 100
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-      for (let angle = 0; angle < 360; angle += 1) {
-        const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
-        const startAngle = (angle - 2) * Math.PI / 180;
-        const endAngle = (angle + 2) * Math.PI / 180;
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(x, y);
-        this.ctx.arc(x, y, radius, startAngle, endAngle);
-        this.ctx.closePath();
-
-        gradient.addColorStop(0, `hsl(${angle}, ${saturation}%, 100%)`);
-        gradient.addColorStop(0.5, `hsl(${angle}, ${saturation}%, 50%)`);
-        gradient.addColorStop(1, `hsl(${angle}, ${saturation}%, 0%)`);
-        this.ctx.fillStyle = gradient;
-        this.ctx.fill();
-      }
-    },
-    updateCursor() {
-yar
+    updateSlider () {
+      const color = this.getColorFromSliders();
+      console.log(color)
+      window.requestAnimationFrame(() => {
+        this.selectColor(color);
+      })
     }
   },
+  components: {
+    Picker,
+    Slider
+  },
+  created() {
+    this.currentColor = this.color;
+    this.rgb = toRgb(this.color);
+  },
   mounted() {
-    this._initWheel();
+    this.el = this.$refs.el;
   }
 }
 </script>
 
 
 <style lang="sass">
-$borderRadius: 20px
-$margin: 20px
-$clBlack: #000
-$clWhite: #fff
-$clSecondary: #fff
-$fontTiny: 20px
+@import 'variables';
 
-.picker
+.verte
   position: relative
   display: flex
   justify-content: center
-  box-sizing: border-box
-
-  &-guide
+  *
+    box-sizing: border-box
+  &__guide
     width: 24px
     height: 24px
     padding: 0
@@ -132,21 +144,8 @@ $fontTiny: 20px
       width: 100%
       height: 100%
       fill: inherit
-  &-wheel
-    position: relative
-    margin: 10px auto 20px
-    user-select: none
 
-  &-square
-    position: relative
-    margin: 10px auto 20px
-    user-select: none
-    display: flex
-    justify-content: center
-  &-squareStrip
-    margin: 0 5px
-
-  &-menu
+  &__menu
     position: absolute
     top: 50px
     display: flex
@@ -156,7 +155,7 @@ $fontTiny: 20px
     padding: 40px
     width: 300px
     border-radius: $borderRadius
-    background-color: $clWhite
+    background-color: $white
     will-change: transform
 
     &.is-hidden
@@ -166,24 +165,24 @@ $fontTiny: 20px
       outline: none
     
 
-  &-recent
+  &__recent
     display: flex
     flex-wrap: wrap
     justify-content: flex-end
     align-items: center
     width: 100%
 
-  &-color
+  &__color
     margin: 4px
     width: 28px
     height: 28px
     border-radius: 50%
-    background-color: $clBlack
+    background-color: $black
 
-  &-value
+  &__value
     padding: 0.6em
     width: 100%
-    border: 2px solid $clBlack
+    border: 2px solid $black
     border-radius: $borderRadius 0 0 $borderRadius
     text-align: center
     font-size: $fontTiny
@@ -191,24 +190,16 @@ $fontTiny: 20px
     -moz-appearance: textfield
     &:focus
       outline: none
-      border-color: $clSecondary
+      border-color: $blue
+  &__icon
+    width: 22.5px
+    height: 18.5px
+    fill: $white
 
-  &-cursor
-    position: absolute
-    top: 0
-    left: 0
-    margin: -6px
-    width: 10px
-    height: 10px
-    border: 2px solid $clWhite
-    border-radius: 50%
-    will-change: transform
-    pointer-events: none
-    background-color: transparent
-  &-input
+  &__input
     display: flex
     margin-bottom: $margin
-  &-submit
+  &__submit
     position: relative
     display: inline-flex
     justify-content: center
@@ -224,17 +215,10 @@ $fontTiny: 20px
     text-align: center
     text-decoration: none
     cursor: pointer
-    background-color: $clBlack
-    border-color: $clBlack
-    >.icon
-      width: 22.5px
-      height: 18.5px
-      fill: $clWhite
+    background-color: $black
+    border-color: $black
     &:hover
-      >.icon
-        fill: $clSecondary
-  .slider-fill
-    display: none
+      fill: $blue
 
 </style>
 

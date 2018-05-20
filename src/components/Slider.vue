@@ -1,10 +1,5 @@
 <template lang="pug">
   .slider(ref="wrapper")
-    input.slider-input(
-      ref="el"
-      v-on="editable && !colorCode ? {  change: (ev) => update(ev.target.value, true) } : { }"
-      )
-
     .slider-track(
       ref="track"
       v-on="trackSlide ?  { mousedown: select, touchstrat: select } : { }"
@@ -17,6 +12,10 @@
         :style="`transform: translate(${handle.positoin}px, 0); background-color: ${handle.color};`"
         )
         .slider-label(v-if="label") {{ handle.value }}
+    input.slider-input(
+      ref="el"
+      v-on="editable && !colorCode ? {  change: (ev) => update(ev.target.value, true) } : { }"
+      )
 </template>
 
 <script>
@@ -31,12 +30,12 @@ export default {
     gradient: Array,
     classes: Array,
     colorCode: { type: Boolean, default: false },
-    editable: { type: Boolean, default: false },
+    editable: { type: Boolean, default: true },
     reverse: { type: Boolean, default: false },
-    label: { type: Boolean, default: true },
+    label: { type: Boolean, default: false },
     trackSlide: { type: Boolean, default: true },
     min: { type: Number, default: 0 },
-    max: { type: Number, default: 10 },
+    max: { type: Number, default: 255 },
     step: { type: Number, default: 1 },
     value: { type: Number, default: 0 },
     handlesValue: { type: Array, default: () => [0] }
@@ -301,8 +300,6 @@ export default {
         }
       }
 
-      // todo: create reactivity and stop force update
-      
       if (mute) return;
       this.$emit('change', this.currentValue);
       this.$emit('input', this.currentValue);

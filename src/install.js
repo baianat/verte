@@ -1,8 +1,8 @@
-import Picker from './components/Picker.vue';
+import Verte from './components/Verte.vue';
 
 const install = {
   install (Vue, options) {
-    Vue.component(Picker.name, Picker);
+    Vue.component(Verte.name, Verte);
   }
 };
 

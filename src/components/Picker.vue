@@ -9,14 +9,16 @@
     v-if="mode === 'square'"
     @mousedown="mouseDownHandler($event, updateHue)"
     )
-  .verte-picker__cursor(ref="cursor")
+  .verte-picker__cursor(
+    ref="cursor"
+    :style="`transform: translate3d(${cursor.x}px, ${cursor.y}px, 0)`"
+    )
   Slider.verte-picker__saturation(
     ref="saturation"
     v-if="mode === 'wheel'"
     @change="updateWheelColors"
     :gradient="['#FFFFFF', '#000000']"
-    :label="false"
-    :min="0"
+    :editable="false"
     :max="100"
     :value="100"
     )
@@ -38,10 +40,13 @@ export default {
     edge: { type: Number, default: 190 },
     radius: { type: Number, default: 200 },
     satSlider: { type: Boolean, default: true },
+    color: { type: String, default: '#fff' }
   },
   data() {
     return {
-      currentColor: '#000'
+      currentColor: '',
+      mouse: { x: 0, y: 0 },
+      cursor: { x: 0, y: 0 }
     }
   },
   components: {
@@ -54,7 +59,7 @@ export default {
       this.strip = this.$refs.strip;
       this.cursor = this.$refs.cursor;
 
-      this.currentHue = 'hsl(0, 100%, 50%)';
+      this.currentHue = toHsl(this.color).hue;
 
       // setup canvas
       const edge = this.edge;
@@ -80,10 +85,11 @@ export default {
       if (event.target !== this.strip) {
         return;
       }
-      this.currentHue = this.getColorCanvas(this.getMouseCords(event), this.stripCtx);
+      let tempColor = this.getColorCanvas(this.getMouseCords(event), this.stripCtx);
+      this.currentHue = toHsl(tempColor).hue;
       this.updateSquareColors();
-      const color = this.getColorCanvas(this.mouse, this.ctx);
-      this.$emit('updateColor', color);
+      tempColor = this.getColorCanvas(this.mouse, this.ctx);
+      this.$emit('updateColor', tempColor);
     },
 
     updateColor(event) {
@@ -132,10 +138,7 @@ export default {
         360
       );
       this.circle.path.closePath();
-
-
       this.updateWheelColors();
-      this.updateCursor();
     },
 
     updateWheelColors () {
@@ -167,7 +170,7 @@ export default {
     updateSquareColors () {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-      this.ctx.fillStyle = this.currentHue;
+      this.ctx.fillStyle = `hsl(${this.currentHue}, 100%, 50%)`;
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
       let grdBlack = this.ctx.createLinearGradient(0, 0, this.canvas.width, 0);
@@ -187,22 +190,21 @@ export default {
 
     updateCursor (mouse) {
       if (mouse) {
-        this.cursor.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0)`;
+        this.cursor = mouse;
         return;
       }
 
-      const hslColor = toHsl(this.currentColor, true);
+      const hslColor = toHsl(this.currentColor);
       if (this.mode === 'wheel') {
-        const r = (100 - hslColor[3]) * (this.radius / 200);
+        const r = (100 - hslColor.lum) * (this.radius / 200);
         const ratio = this.radius / 2;
-        this.mouse = getCartesianCoords(r, hslColor[1] / 360);
-        this.cursor.style.transform = `translate3d(${this.mouse.x + ratio}px, ${this.mouse.y + ratio}px, 0)`;
+        this.mouse = getCartesianCoords(r, hslColor.hue / 360);
+        this.cursor = { x: this.mouse.x + ratio, y: this.mouse.y + ratio };
       }
       if (this.mode === 'square') {
-        const x = (hslColor[2] / 100) * (this.edge);
-        const y = ((100 - hslColor[3]) / 100) * (this.edge);
-        this.mouse = { x: x, y: y };
-        this.cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        const x = (hslColor.sat / 100) * (this.edge);
+        const y = ((100 - hslColor.lum) / 100) * (this.edge);
+        this.cursor = this.mouse = { x, y };
       }
     },
 
@@ -232,12 +234,14 @@ export default {
 
   },
   mounted() {
+    this.currentColor = this.color;
     if (this.mode === 'wheel') {
       this._initWheel();
     }
     if (this.mode === 'square') {
       this._initSquare();
     }
+    this.updateCursor();
   }
 }
 </script>
