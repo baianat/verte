@@ -1,20 +1,21 @@
 <template lang="pug">
   .slider(ref="wrapper")
-    .slider-track(
+    .slider__track(
       ref="track"
       v-on="trackSlide ?  { mousedown: select, touchstrat: select } : { }"
       )
-      .slider-fill(v-if="fill" :style="`transform: translate(${fill.translate}px, 0) scale(${fill.scale}, 1)`")
-      .slider-handle(
+      .slider__fill(v-if="fill" :style="`transform: translate(${fill.translate}px, 0) scale(${fill.scale}, 1)`")
+      .slider__handle(
         v-for="handle in handles"
         @mousedown.native="select"
         @touchstart.native="select"
         :style="`transform: translate(${handle.positoin}px, 0); background-color: ${handle.color};`"
         )
-        .slider-label(v-if="label") {{ handle.value }}
-    input.slider-input(
+        .slider__label(v-if="label") {{ handle.value }}
+    input.slider__input(
       ref="el"
       :type="colorCode ? 'text' : 'number'"
+      v-show="editable"
       v-model="value"
       )
 </template>
@@ -100,8 +101,8 @@ export default {
       this.wrapper = this.$refs.wrapper;
       this.track = this.$refs.track;
 
-      this.wrapper.classList.toggle('is-editable', this.editable);
-      this.wrapper.classList.toggle('is-reverse', this.reverse);
+      this.wrapper.classList.toggle('slider--editable', this.editable);
+      this.wrapper.classList.toggle('slider--reverse', this.reverse);
       if (this.classes) {
         this.wrapper.classList.add(...this.classes);
       }
@@ -135,7 +136,7 @@ export default {
       event.stopPropagation();
       // check if  left mouse is clicked
       if (event.buttons !== 1) return;
-      this.track.classList.add('is-dragging');
+      this.track.classList.add('slider--dragging');
       this.ticking = false;
 
       const stepValue = this.getStepValue(event);
@@ -174,7 +175,7 @@ export default {
      * release handler
      */
     release () {
-      this.track.classList.remove('is-dragging');
+      this.track.classList.remove('slider--dragging');
       document.removeEventListener('mousemove', this.tempDrag);
       document.removeEventListener('touchmove', this.tempDrag);
       document.removeEventListener('mouseup', this.tempRelease);
@@ -322,9 +323,9 @@ export default {
   align-items: center
   box-sizing: border-box
   margin-bottom: $margin
+  font-size: 20px
 
-  &-input
-    display: none
+  &__input
     margin-bottom: 0
     padding: 0.6em
     max-width: 70px
@@ -340,7 +341,7 @@ export default {
       outline: none
       border-color: $blue
 
-  &-track
+  &__track
     position: relative
     flex: 1
     margin: 0.2em
@@ -349,7 +350,7 @@ export default {
     background: $gray
     will-change: transfom
 
-  &-handle
+  &__handle
     position: relative
     position: absolute
     top: 0
@@ -361,7 +362,7 @@ export default {
     height: 0.4em
     background-color: currentColor
 
-  &-label
+  &__label
     position: absolute
     top: -3em
     left: 0.4em
@@ -392,7 +393,7 @@ export default {
       content: ''
       transform: translate3d(-50%, 0, 0)
 
-  &-fill
+  &__fill
     width: 100%
     height: 100%
     background-color: $gray
@@ -400,21 +401,10 @@ export default {
     display: none
 
   &:hover,
-  &.is-dragging
+  &--dragging
     .slider-label
       visibility: visible
       opacity: 1
 
-  &.is-editable
-    .slider-input
-      display: block
 
-  &.is-reverse
-    flex-direction: row-reverse
-
-  &.is-rounded
-    .slider-handle,
-    .slider-track,
-    .slider-fill
-      border-radius 10em
 </style>

@@ -748,8 +748,8 @@ var script = {
       this.wrapper = this.$refs.wrapper;
       this.track = this.$refs.track;
 
-      this.wrapper.classList.toggle('is-editable', this.editable);
-      this.wrapper.classList.toggle('is-reverse', this.reverse);
+      this.wrapper.classList.toggle('slider--editable', this.editable);
+      this.wrapper.classList.toggle('slider--reverse', this.reverse);
       if (this.classes) {
         this.wrapper.classList.add(...this.classes);
       }
@@ -783,7 +783,7 @@ var script = {
       event.stopPropagation();
       // check if  left mouse is clicked
       if (event.buttons !== 1) return;
-      this.track.classList.add('is-dragging');
+      this.track.classList.add('slider--dragging');
       this.ticking = false;
 
       const stepValue = this.getStepValue(event);
@@ -822,7 +822,7 @@ var script = {
      * release handler
      */
     release () {
-      this.track.classList.remove('is-dragging');
+      this.track.classList.remove('slider--dragging');
       document.removeEventListener('mousemove', this.tempDrag);
       document.removeEventListener('touchmove', this.tempDrag);
       document.removeEventListener('mouseup', this.tempRelease);
@@ -971,13 +971,13 @@ var __vue_render__ = function() {
     _c(
       "div",
       _vm._g(
-        { ref: "track", staticClass: "slider-track" },
+        { ref: "track", staticClass: "slider__track" },
         _vm.trackSlide ? { mousedown: _vm.select, touchstrat: _vm.select } : {}
       ),
       [
         _vm.fill
           ? _c("div", {
-              staticClass: "slider-fill",
+              staticClass: "slider__fill",
               style:
                 "transform: translate(" +
                 _vm.fill.translate +
@@ -990,7 +990,7 @@ var __vue_render__ = function() {
           return _c(
             "div",
             {
-              staticClass: "slider-handle",
+              staticClass: "slider__handle",
               style:
                 "transform: translate(" +
                 handle.positoin +
@@ -1008,7 +1008,7 @@ var __vue_render__ = function() {
             },
             [
               _vm.label
-                ? _c("div", { staticClass: "slider-label" }, [
+                ? _c("div", { staticClass: "slider__label" }, [
                     _vm._v(_vm._s(handle.value))
                   ])
                 : _vm._e()
@@ -1022,6 +1022,12 @@ var __vue_render__ = function() {
       ? _c("input", {
           directives: [
             {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.editable,
+              expression: "editable"
+            },
+            {
               name: "model",
               rawName: "v-model",
               value: _vm.value,
@@ -1029,7 +1035,7 @@ var __vue_render__ = function() {
             }
           ],
           ref: "el",
-          staticClass: "slider-input",
+          staticClass: "slider__input",
           attrs: { type: "checkbox" },
           domProps: {
             checked: Array.isArray(_vm.value)
@@ -1060,6 +1066,12 @@ var __vue_render__ = function() {
         ? _c("input", {
             directives: [
               {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.editable,
+                expression: "editable"
+              },
+              {
                 name: "model",
                 rawName: "v-model",
                 value: _vm.value,
@@ -1067,7 +1079,7 @@ var __vue_render__ = function() {
               }
             ],
             ref: "el",
-            staticClass: "slider-input",
+            staticClass: "slider__input",
             attrs: { type: "radio" },
             domProps: { checked: _vm._q(_vm.value, null) },
             on: {
@@ -1079,6 +1091,12 @@ var __vue_render__ = function() {
         : _c("input", {
             directives: [
               {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.editable,
+                expression: "editable"
+              },
+              {
                 name: "model",
                 rawName: "v-model",
                 value: _vm.value,
@@ -1086,7 +1104,7 @@ var __vue_render__ = function() {
               }
             ],
             ref: "el",
-            staticClass: "slider-input",
+            staticClass: "slider__input",
             attrs: { type: _vm.colorCode ? "text" : "number" },
             domProps: { value: _vm.value },
             on: {
@@ -1109,7 +1127,7 @@ const __vue_template__ = typeof __vue_render__ !== 'undefined'
 /* style */
 const __vue_inject_styles__ = function (inject) {
   if (!inject) return
-  inject("data-v-4b42e642_0", { source: "\n.slider {\n  position: relative;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  margin-bottom: 10px;\n}\n.slider-input {\n    display: none;\n    margin-bottom: 0;\n    padding: 0.6em;\n    max-width: 70px;\n    width: 20%;\n    border: 2px solid #000;\n    border-radius: 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: textfield;\n}\n.slider-input:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.slider-track {\n    position: relative;\n    flex: 1;\n    margin: 0.2em;\n    width: auto;\n    height: 0.2em;\n    background: #cccccc;\n    will-change: transfom;\n}\n.slider-handle {\n    position: relative;\n    position: absolute;\n    top: 0;\n    left: 0;\n    will-change: transform;\n    color: #000;\n    margin: -0.1em 0 0 -0.2em;\n    width: 0.4em;\n    height: 0.4em;\n    background-color: currentColor;\n}\n.slider-label {\n    position: absolute;\n    top: -3em;\n    left: 0.4em;\n    z-index: 999;\n    visibility: hidden;\n    padding: 6px;\n    min-width: 3em;\n    border-radius: 0;\n    background-color: #000;\n    color: #fff;\n    text-align: center;\n    font-size: 12px;\n    line-height: 1em;\n    opacity: 0;\n    transform: translate(-50%, 0);\n    white-space: nowrap;\n}\n.slider-label:before {\n      position: absolute;\n      bottom: -0.6em;\n      left: 50%;\n      display: block;\n      width: 0;\n      height: 0;\n      border-width: 0.6em 0.6em 0 0.6em;\n      border-style: solid;\n      border-color: #000 transparent transparent transparent;\n      content: '';\n      transform: translate3d(-50%, 0, 0);\n}\n.slider-fill {\n    width: 100%;\n    height: 100%;\n    background-color: #cccccc;\n    transform-origin: left top;\n    display: none;\n}\n.slider:hover .slider-label, .slider.is-dragging .slider-label {\n    visibility: visible;\n    opacity: 1;\n}\n.slider.is-editable .slider-input {\n    display: block;\n}\n.slider.is-reverse {\n    flex-direction: row-reverse;\n}\n\n/*# sourceMappingURL=Slider.vue.map */", map: undefined, media: undefined });
+  inject("data-v-2fed1e5b_0", { source: "\n.slider {\n  position: relative;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  margin-bottom: 10px;\n  font-size: 20px;\n}\n.slider__input {\n    margin-bottom: 0;\n    padding: 0.6em;\n    max-width: 70px;\n    width: 20%;\n    border: 2px solid #000;\n    border-radius: 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: textfield;\n}\n.slider__input:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.slider__track {\n    position: relative;\n    flex: 1;\n    margin: 0.2em;\n    width: auto;\n    height: 0.2em;\n    background: #cccccc;\n    will-change: transfom;\n}\n.slider__handle {\n    position: relative;\n    position: absolute;\n    top: 0;\n    left: 0;\n    will-change: transform;\n    color: #000;\n    margin: -0.1em 0 0 -0.2em;\n    width: 0.4em;\n    height: 0.4em;\n    background-color: currentColor;\n}\n.slider__label {\n    position: absolute;\n    top: -3em;\n    left: 0.4em;\n    z-index: 999;\n    visibility: hidden;\n    padding: 6px;\n    min-width: 3em;\n    border-radius: 0;\n    background-color: #000;\n    color: #fff;\n    text-align: center;\n    font-size: 12px;\n    line-height: 1em;\n    opacity: 0;\n    transform: translate(-50%, 0);\n    white-space: nowrap;\n}\n.slider__label:before {\n      position: absolute;\n      bottom: -0.6em;\n      left: 50%;\n      display: block;\n      width: 0;\n      height: 0;\n      border-width: 0.6em 0.6em 0 0.6em;\n      border-style: solid;\n      border-color: #000 transparent transparent transparent;\n      content: '';\n      transform: translate3d(-50%, 0, 0);\n}\n.slider__fill {\n    width: 100%;\n    height: 100%;\n    background-color: #cccccc;\n    transform-origin: left top;\n    display: none;\n}\n.slider:hover .slider-label, .slider--dragging .slider-label {\n    visibility: visible;\n    opacity: 1;\n}\n\n/*# sourceMappingURL=Slider.vue.map */", map: undefined, media: undefined });
 
 };
 /* scoped */
