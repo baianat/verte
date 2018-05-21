@@ -1252,10 +1252,10 @@ var script$1 = {
     return {
       currentHue: 0,
       currentSat: 0,
-      currentColor: '',
+      currentColor: {},
       hsl: {},
-      mouse: { x: 0, y: 0 },
-      cursor: { x: 0, y: 0 }
+      mouse: {},
+      cursor: {}
     }
   },
   watch: {
@@ -1264,9 +1264,11 @@ var script$1 = {
     },
     currentHue: function () {
       this.updateSquareColors();
+      this.selectColor();
     },
     currentSat: function () {
       this.updateWheelColors();
+      this.selectColor();
     }
   },
   components: {
@@ -1277,7 +1279,7 @@ var script$1 = {
       this.picker = this.$refs.picker;
       this.canvas = this.$refs.canvas;
       this.strip = this.$refs.strip;
-      this.cursor = this.$refs.cursor;
+
       // setup canvas
       const edge = this.edge;
       this.canvas.width = edge;
@@ -1302,7 +1304,6 @@ var script$1 = {
       this.picker = this.$refs.picker;
       this.saturation = this.$refs.saturation;
       this.canvas = this.$refs.canvas;
-      this.cursor = this.$refs.cursor;
 
       // setup canvas
       this.canvas.width = this.radius;
@@ -1337,16 +1338,19 @@ var script$1 = {
         this.currentSat = this.hsl.sat;
         const r = (100 - this.hsl.lum) * (this.radius / 200);
         const ratio = this.radius / 2;
-        this.mouse = getCartesianCoords(r, this.hsl.hue / 360);
-        this.cursor = { x: this.mouse.x + ratio, y: this.mouse.y + ratio };
+        const coords = getCartesianCoords(r, this.hsl.hue / 360);
+        this.mouse = { x: coords.x + ratio, y: coords.y + ratio };
       }
   
       if (this.mode === 'square') {
         this.currentHue = this.hsl.hue;
         const x = (this.hsl.sat / 100) * (this.edge);
         const y = ((100 - this.hsl.lum) / 100) * (this.edge);
-        this.cursor = this.mouse = { x, y };
+        const squareEdge = this.edge - 1;
+        this.mouse = { x: Math.min(x, squareEdge) , y: Math.min(y - 2) };
       }
+
+      this.updateCursor(this.mouse);
     },
 
     selectHue (event) {
@@ -1475,15 +1479,12 @@ var __vue_render__$1 = function() {
   var _c = _vm._self._c || _h;
   return _c(
     "div",
-    {
-      ref: "picker",
-      staticClass: "verte-picker",
-      class: "verte-picker--" + _vm.mode
-    },
+    { ref: "picker", staticClass: "verte-picker" },
     [
       _c("canvas", {
         ref: "canvas",
         staticClass: "verte-picker__canvas",
+        class: "verte-picker__canvas--" + _vm.mode,
         on: {
           mousedown: function($event) {
             _vm.mouseDownHandler($event, _vm.selectColor);
@@ -1546,7 +1547,7 @@ const __vue_template__$1 = typeof __vue_render__$1 !== 'undefined'
 /* style */
 const __vue_inject_styles__$1 = function (inject) {
   if (!inject) return
-  inject("data-v-27c67e0f_0", { source: "\n.verte-picker {\n  position: relative;\n  margin: 10px auto 20px;\n  user-select: none;\n}\n.verte-picker__strip {\n    margin: 0 5px;\n}\n.verte-picker__cursor {\n    position: absolute;\n    top: 0;\n    left: 0;\n    margin: -6px;\n    width: 10px;\n    height: 10px;\n    border: 2px solid #fff;\n    border-radius: 50%;\n    will-change: transform;\n    pointer-events: none;\n    background-color: transparent;\n}\n.verte-picker__input {\n    display: flex;\n    margin-bottom: 10px;\n}\n\n/*# sourceMappingURL=Picker.vue.map */", map: undefined, media: undefined });
+  inject("data-v-6f7b855a_0", { source: "\n.verte-picker {\n  position: relative;\n  margin: 0 auto 10px;\n  user-select: none;\n  width: 100%;\n}\n.verte-picker__canvas--wheel {\n    display: block;\n    margin-bottom: 10px;\n    margin-left: auto;\n    margin-right: auto;\n}\n.verte-picker__strip {\n    margin: 0 5px;\n}\n.verte-picker__cursor {\n    position: absolute;\n    top: 0;\n    left: 0;\n    margin: -6px;\n    width: 10px;\n    height: 10px;\n    border: 2px solid #fff;\n    border-radius: 50%;\n    will-change: transform;\n    pointer-events: none;\n    background-color: transparent;\n}\n.verte-picker__input {\n    display: flex;\n    margin-bottom: 10px;\n}\n\n/*# sourceMappingURL=Picker.vue.map */", map: undefined, media: undefined });
 
 };
 /* scoped */
@@ -1679,7 +1680,7 @@ var Picker = __vue_normalize__$1(
 var script$2 = {
   name: 'Verte',
   props: {
-    picker: { type: String, default: 'square' },
+    picker: { type: String, default: 'wheel' },
     color: { type: String, default: '#000' },
     model: { type: String, default: 'rgb' },
   },
@@ -1881,7 +1882,7 @@ const __vue_template__$2 = typeof __vue_render__$2 !== 'undefined'
 /* style */
 const __vue_inject_styles__$2 = function (inject) {
   if (!inject) return
-  inject("data-v-5820eb55_0", { source: "\n.verte {\n  position: relative;\n  display: flex;\n  justify-content: center;\n}\n.verte * {\n    box-sizing: border-box;\n}\n.verte__guide {\n    width: 24px;\n    height: 24px;\n    padding: 0;\n    border: 0;\n    background: transparent;\n}\n.verte__guide:focus {\n      outline: 0;\n}\n.verte__guide svg {\n      width: 100%;\n      height: 100%;\n      fill: inherit;\n}\n.verte__menu {\n    position: absolute;\n    top: 50px;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: stretch;\n    padding: 40px;\n    width: 300px;\n    border-radius: 0;\n    background-color: #fff;\n    will-change: transform;\n}\n.verte__menu.is-hidden {\n      display: none;\n}\n.verte__menu:focus {\n      outline: none;\n}\n.verte__recent {\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: flex-end;\n    align-items: center;\n    width: 100%;\n}\n.verte__color {\n    margin: 4px;\n    width: 28px;\n    height: 28px;\n    border-radius: 50%;\n    background-color: #000;\n}\n.verte__value {\n    padding: 0.6em;\n    width: 100%;\n    border: 2px solid #000;\n    border-radius: 0 0 0 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: textfield;\n}\n.verte__value:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.verte__icon {\n    width: 22.5px;\n    height: 18.5px;\n    fill: #fff;\n}\n.verte__input {\n    display: flex;\n    margin-bottom: 10px;\n}\n.verte__submit {\n    position: relative;\n    display: inline-flex;\n    justify-content: center;\n    align-items: center;\n    padding: 0.4em 0.75em;\n    outline-width: 2px;\n    outline-offset: 1px;\n    border-width: 2px;\n    border-style: solid;\n    border-radius: 0 0 0 0;\n    background-clip: border-box;\n    vertical-align: top;\n    text-align: center;\n    text-decoration: none;\n    cursor: pointer;\n    background-color: #000;\n    border-color: #000;\n}\n.verte__submit:hover {\n      fill: #1a3aff;\n}\n\n/*# sourceMappingURL=Verte.vue.map */", map: undefined, media: undefined });
+  inject("data-v-9a74289a_0", { source: "\n.verte {\n  position: relative;\n  display: flex;\n  justify-content: center;\n}\n.verte * {\n    box-sizing: border-box;\n}\n.verte__guide {\n    width: 24px;\n    height: 24px;\n    padding: 0;\n    border: 0;\n    background: transparent;\n}\n.verte__guide:focus {\n      outline: 0;\n}\n.verte__guide svg {\n      width: 100%;\n      height: 100%;\n      fill: inherit;\n}\n.verte__menu {\n    position: absolute;\n    top: 50px;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: stretch;\n    padding: 40px;\n    width: 300px;\n    border-radius: 0;\n    background-color: #fff;\n    will-change: transform;\n    box-shadow: 0 10px 15px -5px rgba(0, 0, 0, 0.1);\n}\n.verte__menu.is-hidden {\n      display: none;\n}\n.verte__menu:focus {\n      outline: none;\n}\n.verte__recent {\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: flex-end;\n    align-items: center;\n    width: 100%;\n}\n.verte__color {\n    margin: 4px;\n    width: 28px;\n    height: 28px;\n    border-radius: 50%;\n    background-color: #000;\n}\n.verte__value {\n    padding: 0.6em;\n    width: 100%;\n    border: 2px solid #000;\n    border-radius: 0 0 0 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: textfield;\n}\n.verte__value:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.verte__icon {\n    width: 22.5px;\n    height: 18.5px;\n    fill: #fff;\n}\n.verte__input {\n    display: flex;\n    margin-bottom: 10px;\n}\n.verte__submit {\n    position: relative;\n    display: inline-flex;\n    justify-content: center;\n    align-items: center;\n    padding: 0.4em 0.75em;\n    outline-width: 2px;\n    outline-offset: 1px;\n    border-width: 2px;\n    border-style: solid;\n    border-radius: 0 0 0 0;\n    background-clip: border-box;\n    vertical-align: top;\n    text-align: center;\n    text-decoration: none;\n    cursor: pointer;\n    background-color: #000;\n    border-color: #000;\n}\n.verte__submit:hover {\n      fill: #1a3aff;\n}\n\n/*# sourceMappingURL=Verte.vue.map */", map: undefined, media: undefined });
 
 };
 /* scoped */

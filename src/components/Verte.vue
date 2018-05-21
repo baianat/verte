@@ -51,7 +51,7 @@ import { toRgb,
 export default {
   name: 'Verte',
   props: {
-    picker: { type: String, default: 'square' },
+    picker: { type: String, default: 'wheel' },
     color: { type: String, default: '#000' },
     model: { type: String, default: 'rgb' },
   },
@@ -158,7 +158,7 @@ export default {
     border-radius: $borderRadius
     background-color: $white
     will-change: transform
-
+    box-shadow: 0 10px 15px -5px rgba($black, 0.1)
     &.is-hidden
       display: none
 

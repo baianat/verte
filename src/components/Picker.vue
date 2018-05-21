@@ -1,7 +1,8 @@
 <template lang="pug">
-.verte-picker(ref="picker" :class="`verte-picker--${mode}`")
+.verte-picker(ref="picker")
   canvas.verte-picker__canvas(
     ref="canvas"
+    :class="`verte-picker__canvas--${mode}`"
     @mousedown="mouseDownHandler($event, selectColor)"
     )
   canvas.verte-picker__strip(
@@ -46,10 +47,10 @@ export default {
     return {
       currentHue: 0,
       currentSat: 0,
-      currentColor: '',
+      currentColor: {},
       hsl: {},
-      mouse: { x: 0, y: 0 },
-      cursor: { x: 0, y: 0 }
+      mouse: {},
+      cursor: {}
     }
   },
   watch: {
@@ -58,9 +59,11 @@ export default {
     },
     currentHue: function () {
       this.updateSquareColors();
+      this.selectColor();
     },
     currentSat: function () {
       this.updateWheelColors();
+      this.selectColor();
     }
   },
   components: {
@@ -71,7 +74,7 @@ export default {
       this.picker = this.$refs.picker;
       this.canvas = this.$refs.canvas;
       this.strip = this.$refs.strip;
-      this.cursor = this.$refs.cursor;
+
       // setup canvas
       const edge = this.edge;
       this.canvas.width = edge;
@@ -96,7 +99,6 @@ export default {
       this.picker = this.$refs.picker;
       this.saturation = this.$refs.saturation;
       this.canvas = this.$refs.canvas;
-      this.cursor = this.$refs.cursor;
 
       // setup canvas
       this.canvas.width = this.radius;
@@ -131,16 +133,19 @@ export default {
         this.currentSat = this.hsl.sat;
         const r = (100 - this.hsl.lum) * (this.radius / 200);
         const ratio = this.radius / 2;
-        this.mouse = getCartesianCoords(r, this.hsl.hue / 360);
-        this.cursor = { x: this.mouse.x + ratio, y: this.mouse.y + ratio };
+        const coords = getCartesianCoords(r, this.hsl.hue / 360);
+        this.mouse = { x: coords.x + ratio, y: coords.y + ratio }
       }
   
       if (this.mode === 'square') {
         this.currentHue = this.hsl.hue;
         const x = (this.hsl.sat / 100) * (this.edge);
         const y = ((100 - this.hsl.lum) / 100) * (this.edge);
-        this.cursor = this.mouse = { x, y };
+        const squareEdge = this.edge - 1;
+        this.mouse = { x: Math.min(x, squareEdge) , y: Math.min(y - 2) };
       }
+
+      this.updateCursor(this.mouse);
     },
 
     selectHue (event) {
@@ -267,8 +272,16 @@ export default {
 
 .verte-picker
   position: relative
-  margin: 10px auto 20px
+  margin: 0 auto 10px
   user-select: none
+  width: 100%
+
+  &__canvas
+    &--wheel
+      display: block
+      margin-bottom: 10px
+      margin-left: auto
+      margin-right: auto
 
   &__strip
     margin: 0 5px
