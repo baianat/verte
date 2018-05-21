@@ -1,11 +1,25 @@
 <template lang="pug">
 .verte
-  button.verte__guide(:style="`color: ${currentColor}; fill: ${currentColor};`")
+  button.verte__guide(
+    ref="guide"
+    :style="`color: ${currentColor}; fill: ${currentColor};`"
+    @click="toggleMenu"
+    )
     slot
       svg.verte__icon(viewBox="0 0 24 24")
         circle(cx="12" cy="12" r="12")
-  .verte__menu(tabindex="-1")
-    Picker(:mode="picker" :color="currentColor" @updateColor="selectColor")
+  .verte__menu(
+    ref="menu"
+    tabindex="-1"
+    @mousedown="dargMenu"
+    :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
+    :class="{'verte__menu--active': isMenuActive}"
+    )
+    Picker(
+      :mode="picker"
+      :color="currentColor"
+      @updateColor="selectColor"
+      )
     Slider(
       ref="red"
       :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
@@ -40,8 +54,13 @@
 <script>
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
-import { getArray, call } from '../utils'
-import { toRgb,
+import {
+  getArray,
+  call,
+  isElementClosest
+} from '../utils'
+import {
+  toRgb,
   toHex,
   toHsl,
   getRandomColor,
@@ -58,11 +77,11 @@ export default {
   data() {
     return {
       currentColor: '',
-      lastMove: { x: 0, y: 0 },
-      isMenuActive: false,
+      isMenuActive: true,
       rgb: {},
       hex: {},
       hsl: {},
+      delta: { x: 0, y: 0 },
       recentColors: {
         max: 6,
         colors: getArray(6, getRandomColor)
@@ -86,8 +105,6 @@ export default {
         this.currentColor = this[this.model].toString();
       }
 
-      // this.currentColor = this.rgb.toString();
-
       if (mute) return;
       // call(this.settings.events.afterSelect);
       // this.events.forEach((event) => this.el.dispatchEvent(event));
@@ -105,6 +122,61 @@ export default {
       window.requestAnimationFrame(() => {
         this.selectColor(color);
       });
+    },
+
+    dargMenu (event) {
+      if (event.target !== this.menu || event.button !== 0) return;
+      let startPosition = {}
+      let endPosition = {}
+      let lastMove = { ...this.delta };
+
+      event.preventDefault();
+      startPosition.x = event.clientX;
+      startPosition.y = event.clientY;
+
+      const mousemoveHandler = (evnt) => {
+        window.requestAnimationFrame(() => {
+          endPosition.x = evnt.clientX;
+          endPosition.y = evnt.clientY;
+          this.delta.x = lastMove.x + endPosition.x - startPosition.x;
+          this.delta.y = lastMove.y + endPosition.y - startPosition.y;
+        });
+      }
+      const mouseupHandler = () => {
+        document.removeEventListener('mousemove', mousemoveHandler);
+        document.removeEventListener('mouseup', mouseupHandler);
+      }
+      document.addEventListener('mousemove', mousemoveHandler);
+      document.addEventListener('mouseup', mouseupHandler);
+    },
+
+    toggleMenu () {
+      if (this.isMenuActive) {
+        this.closeMenu();
+        return;
+      }
+      this.openMenu();
+    },
+
+    closeMenu () {
+      this.isMenuActive = false;
+      document.removeEventListener('click', this.closeCallback);
+    },
+
+    openMenu () {
+      this.isMenuActive = true;
+      this.closeCallback = (evnt) => {
+        if (
+          !isElementClosest(evnt.target, this.menu) &&
+          !isElementClosest(evnt.target, this.guide)
+          ) {
+          this.closeMenu();
+          return;
+        }
+        // call(this.settings.events.clicked);
+      };
+      document.addEventListener('click', this.closeCallback);
+      // call(this.settings.events.afterOpen);
     }
   },
   components: {
@@ -117,6 +189,8 @@ export default {
   },
   mounted() {
     this.el = this.$refs.el;
+    this.menu = this.$refs.menu;
+    this.guide = this.$refs.guide;
   }
 }
 </script>
@@ -149,7 +223,7 @@ export default {
   &__menu
     position: absolute
     top: 50px
-    display: flex
+    display: none
     flex-direction: column
     justify-content: center
     align-items: stretch
@@ -159,8 +233,8 @@ export default {
     background-color: $white
     will-change: transform
     box-shadow: 0 10px 15px -5px rgba($black, 0.1)
-    &.is-hidden
-      display: none
+    &--active
+      display: flex
 
     &:focus
       outline: none
