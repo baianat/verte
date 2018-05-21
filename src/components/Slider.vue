@@ -14,6 +14,8 @@
         .slider-label(v-if="label") {{ handle.value }}
     input.slider-input(
       ref="el"
+      :type="colorCode ? 'text' : 'number'"
+      v-model="value"
       v-on="editable && !colorCode ? {  change: (ev) => update(ev.target.value, true) } : { }"
       )
 </template>
@@ -47,6 +49,7 @@ export default {
         scale: 0
       },
       multiple: false,
+      currentValue: 0,
       handles: [],
       values: []
     }
@@ -59,10 +62,12 @@ export default {
     values: function () {
       this.multiple = this.values.length > 1;
       this.fill = this.multiple ? false : this.fill || {}
-    }
+    },
+    // value: function () {
+    //   this.update();
+    // }
   },
   mounted() {
-    this.el = this.$refs.el;
     this.init();
   },
   methods: {
@@ -73,12 +78,9 @@ export default {
         return { value, position: 0, color: '#fff' };
       });
       if (this.values.length === 1) {
-        this.values[0] = Number(this.el.value) || Number(this.value);
+        this.values[0] = Number(this.value);
       }
       this.values.sort();
-      if (this.colorCode) {
-        this.el.type = 'text';
-      }
 
       this.initElements();
       if (this.gradient) {
@@ -290,13 +292,13 @@ export default {
       this.values[this.activeHandle] = normalized;
       this.handles[this.activeHandle].value = normalized;
       this.handles[this.activeHandle].positoin = positionPercentage * this.width;
-      this.currentValue = this.el.value = normalized;
+      this.currentValue = normalized;
 
       if (this.gradient) {
         const color = this.getHandleColor(positionPercentage);
         this.handles[this.activeHandle].color = color.toString();
         if (this.colorCode) {
-          this.el.value = color;
+          this.currentValue = color;
         }
       }
 
@@ -330,7 +332,7 @@ export default {
     text-align: center
     font-size: $fontTiny
     -webkit-appearance: none
-    -moz-appearance: text
+    -moz-appearance: textfield
 
     &:focus
       outline: none
@@ -393,6 +395,7 @@ export default {
     height: 100%
     background-color: $gray
     transform-origin: left top
+    display: none
 
   &:hover,
   &.is-dragging

@@ -1,11 +1,11 @@
 <template lang="pug">
 .verte
-  button.verte__guide
+  button.verte__guide(style="`color: ${color}; fill: ${color};`")
     slot
       svg.verte__icon(viewBox="0 0 24 24")
         circle(cx="12" cy="12" r="12")
   .verte__menu(tabindex="-1")
-    Picker(mode="wheel" color="rgb(255, 100, 0)")
+    Picker(mode="square" :color="currentColor" @updateColor="selectColor")
     Slider(
       ref="red"
       :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
@@ -14,12 +14,12 @@
       )
     Slider(ref="green"
       :gradient="[`rgb(${rgb.red},0,${rgb.blue})`, `rgb(${rgb.red},255,${rgb.blue})`]"
-      :value="rgb.red"
+      :value="rgb.green"
       @change="updateSlider"
       )
     Slider(ref="blue"
       :gradient="[`rgb(${rgb.red},${rgb.green},0)`, `rgb(${rgb.red},${rgb.green},255)`]"
-      :value="rgb.red"
+      :value="rgb.blue"
       @change="updateSlider"
       )
     .verte__input
@@ -75,15 +75,13 @@ export default {
       this.rgb = toRgb(color);
       this.hex = toHex(color);
       this.hsl = toHsl(color);
-      this.el.value =
+      this.$refs.el.value =
         this.model === 'hex' ? this.hex
           : this.model === 'hsl' ? this.hsl
             : this.model === 'rgb' ? this.rgb
               : '';
 
       this.currentColor = this.rgb.toString();
-      // this.guide.style.color = color;
-      // this.guide.style.fill = color;
 
       if (mute) return;
       // call(this.settings.events.afterSelect);
@@ -101,7 +99,7 @@ export default {
       const color = this.getColorFromSliders();
       window.requestAnimationFrame(() => {
         this.selectColor(color);
-      })
+      });
     }
   },
   components: {

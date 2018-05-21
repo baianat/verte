@@ -2,12 +2,12 @@
 .verte-picker(ref="picker" :class="`verte-picker--${mode}`")
   canvas.verte-picker__canvas(
     ref="canvas"
-    @mousedown="mouseDownHandler($event, updateColor)"
+    @mousedown="mouseDownHandler($event, selectColor)"
     )
   canvas.verte-picker__strip(
     ref="strip"
     v-if="mode === 'square'"
-    @mousedown="mouseDownHandler($event, updateHue)"
+    @mousedown="mouseDownHandler($event, selectHue)"
     )
   .verte-picker__cursor(
     ref="cursor"
@@ -44,9 +44,18 @@ export default {
   },
   data() {
     return {
+      currentHue: 0,
       currentColor: '',
       mouse: { x: 0, y: 0 },
       cursor: { x: 0, y: 0 }
+    }
+  },
+  watch: {
+    color: function () {
+      // this.handleColor(this.color);
+    },
+    currentHue: function () {
+      this.updateSquareColors();
     }
   },
   components: {
@@ -81,36 +90,6 @@ export default {
       this.updateSquareColors();
     },
 
-    updateHue(event) {
-      if (event.target !== this.strip) {
-        return;
-      }
-      let tempColor = this.getColorCanvas(this.getMouseCords(event), this.stripCtx);
-      this.currentHue = toHsl(tempColor).hue;
-      this.updateSquareColors();
-      tempColor = this.getColorCanvas(this.mouse, this.ctx);
-      this.$emit('updateColor', tempColor);
-    },
-
-    updateColor(event) {
-      if (event.target !== this.canvas) {
-        return;
-      }
-      const { x, y } = this.getMouseCords(event);
-      if (this.mode === 'square') {
-        const squareThreshold = this.edge - 1;
-        this.mouse = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
-      }
-
-      if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
-        this.mouse = { x, y };
-      }
-
-      this.currentColor = this.getColorCanvas(this.mouse, this.ctx);
-      this.$emit('update', this.currentColor );
-      this.updateCursor(this.mouse);
-    },
-
     _initWheel () {
       this.picker = this.$refs.picker;
       this.saturation = this.$refs.saturation;
@@ -140,6 +119,57 @@ export default {
       this.circle.path.closePath();
       this.updateWheelColors();
     },
+
+
+    handleColor (color) {
+      this.currentColor = color;
+      const hslColor = toHsl(this.currentColor);
+
+      if (this.mode === 'wheel') {
+        const r = (100 - hslColor.lum) * (this.radius / 200);
+        const ratio = this.radius / 2;
+        this.mouse = getCartesianCoords(r, hslColor.hue / 360);
+        this.cursor = { x: this.mouse.x + ratio, y: this.mouse.y + ratio };
+      }
+  
+      if (this.mode === 'square') {
+        this.currentHue = hslColor.hue;
+        const x = (hslColor.sat / 100) * (this.edge);
+        const y = ((100 - hslColor.lum) / 100) * (this.edge);
+        this.cursor = this.mouse = { x, y };
+      }
+    },
+
+    selectHue (event) {
+      if (event.target !== this.strip) {
+        return;
+      }
+      let tempColor = this.getColorCanvas(this.getMouseCords(event), this.stripCtx);
+      this.currentHue = toHsl(tempColor).hue;
+      this.updateSquareColors();
+      tempColor = this.getColorCanvas(this.mouse, this.ctx);
+      this.$emit('updateColor', tempColor);
+    },
+
+    selectColor (event) {
+      if (event.target !== this.canvas) {
+        return;
+      }
+      const { x, y } = this.getMouseCords(event);
+      if (this.mode === 'square') {
+        const squareThreshold = this.edge - 1;
+        this.mouse = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
+      }
+
+      if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
+        this.mouse = { x, y };
+      }
+
+      this.currentColor = this.getColorCanvas(this.mouse, this.ctx);
+      this.updateCursor(this.mouse);
+      this.$emit('updateColor', this.currentColor );
+    },
+
 
     updateWheelColors () {
       if (!this.circle) return;
@@ -189,23 +219,8 @@ export default {
     },
 
     updateCursor (mouse) {
-      if (mouse) {
-        this.cursor = mouse;
-        return;
-      }
-
-      const hslColor = toHsl(this.currentColor);
-      if (this.mode === 'wheel') {
-        const r = (100 - hslColor.lum) * (this.radius / 200);
-        const ratio = this.radius / 2;
-        this.mouse = getCartesianCoords(r, hslColor.hue / 360);
-        this.cursor = { x: this.mouse.x + ratio, y: this.mouse.y + ratio };
-      }
-      if (this.mode === 'square') {
-        const x = (hslColor.sat / 100) * (this.edge);
-        const y = ((100 - hslColor.lum) / 100) * (this.edge);
-        this.cursor = this.mouse = { x, y };
-      }
+      if (!mouse) return;
+      this.cursor = mouse;
     },
 
     getMouseCords ({ offsetX, offsetY }) {
@@ -234,14 +249,13 @@ export default {
 
   },
   mounted() {
-    this.currentColor = this.color;
     if (this.mode === 'wheel') {
       this._initWheel();
     }
     if (this.mode === 'square') {
       this._initSquare();
     }
-    this.updateCursor();
+    this.handleColor(this.color);
   }
 }
 </script>
