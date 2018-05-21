@@ -710,12 +710,16 @@ var script = {
       this.multiple = this.values.length > 1;
       this.fill = this.multiple ? false : this.fill || {};
     },
-    // value: function () {
-    //   this.update();
-    // }
+    value: function () {
+      this.update(this.value, true);
+    }
   },
   mounted() {
     this.init();
+    this.$nextTick(() => {
+      this.updateWidth();
+      this.update();
+    });
   },
   methods: {
     init () {
@@ -738,7 +742,6 @@ var script = {
         this.activeHandle = index;
         this.update(handle);
       });
-      this.update();
     },
 
     initElements () {
@@ -923,7 +926,7 @@ var script = {
     },
 
     update (value, mute = false) {
-      if (Number(value) === this.value) return;
+      // if (Number(value) === this.value) return;
 
       if (!this.width) {
         this.updateWidth();
@@ -1016,123 +1019,85 @@ var __vue_render__ = function() {
       2
     ),
     (_vm.colorCode ? "text" : "number") === "checkbox"
-      ? _c(
-          "input",
-          _vm._g(
+      ? _c("input", {
+          directives: [
             {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.value,
-                  expression: "value"
+              name: "model",
+              rawName: "v-model",
+              value: _vm.value,
+              expression: "value"
+            }
+          ],
+          ref: "el",
+          staticClass: "slider-input",
+          attrs: { type: "checkbox" },
+          domProps: {
+            checked: Array.isArray(_vm.value)
+              ? _vm._i(_vm.value, null) > -1
+              : _vm.value
+          },
+          on: {
+            change: function($event) {
+              var $$a = _vm.value,
+                $$el = $event.target,
+                $$c = $$el.checked ? true : false;
+              if (Array.isArray($$a)) {
+                var $$v = null,
+                  $$i = _vm._i($$a, $$v);
+                if ($$el.checked) {
+                  $$i < 0 && (_vm.value = $$a.concat([$$v]));
+                } else {
+                  $$i > -1 &&
+                    (_vm.value = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
                 }
-              ],
-              ref: "el",
-              staticClass: "slider-input",
-              attrs: { type: "checkbox" },
-              domProps: {
-                checked: Array.isArray(_vm.value)
-                  ? _vm._i(_vm.value, null) > -1
-                  : _vm.value
-              },
-              on: {
-                change: function($event) {
-                  var $$a = _vm.value,
-                    $$el = $event.target,
-                    $$c = $$el.checked ? true : false;
-                  if (Array.isArray($$a)) {
-                    var $$v = null,
-                      $$i = _vm._i($$a, $$v);
-                    if ($$el.checked) {
-                      $$i < 0 && (_vm.value = $$a.concat([$$v]));
-                    } else {
-                      $$i > -1 &&
-                        (_vm.value = $$a
-                          .slice(0, $$i)
-                          .concat($$a.slice($$i + 1)));
-                    }
-                  } else {
-                    _vm.value = $$c;
-                  }
-                }
+              } else {
+                _vm.value = $$c;
               }
-            },
-            _vm.editable && !_vm.colorCode
-              ? {
-                  change: function(ev) {
-                    return _vm.update(ev.target.value, true)
-                  }
-                }
-              : {}
-          )
-        )
+            }
+          }
+        })
       : (_vm.colorCode ? "text" : "number") === "radio"
-        ? _c(
-            "input",
-            _vm._g(
+        ? _c("input", {
+            directives: [
               {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.value,
-                    expression: "value"
-                  }
-                ],
-                ref: "el",
-                staticClass: "slider-input",
-                attrs: { type: "radio" },
-                domProps: { checked: _vm._q(_vm.value, null) },
-                on: {
-                  change: function($event) {
-                    _vm.value = null;
-                  }
-                }
-              },
-              _vm.editable && !_vm.colorCode
-                ? {
-                    change: function(ev) {
-                      return _vm.update(ev.target.value, true)
-                    }
-                  }
-                : {}
-            )
-          )
-        : _c(
-            "input",
-            _vm._g(
+                name: "model",
+                rawName: "v-model",
+                value: _vm.value,
+                expression: "value"
+              }
+            ],
+            ref: "el",
+            staticClass: "slider-input",
+            attrs: { type: "radio" },
+            domProps: { checked: _vm._q(_vm.value, null) },
+            on: {
+              change: function($event) {
+                _vm.value = null;
+              }
+            }
+          })
+        : _c("input", {
+            directives: [
               {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.value,
-                    expression: "value"
-                  }
-                ],
-                ref: "el",
-                staticClass: "slider-input",
-                attrs: { type: _vm.colorCode ? "text" : "number" },
-                domProps: { value: _vm.value },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.value = $event.target.value;
-                  }
+                name: "model",
+                rawName: "v-model",
+                value: _vm.value,
+                expression: "value"
+              }
+            ],
+            ref: "el",
+            staticClass: "slider-input",
+            attrs: { type: _vm.colorCode ? "text" : "number" },
+            domProps: { value: _vm.value },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
                 }
-              },
-              _vm.editable && !_vm.colorCode
-                ? {
-                    change: function(ev) {
-                      return _vm.update(ev.target.value, true)
-                    }
-                  }
-                : {}
-            )
-          )
+                _vm.value = $event.target.value;
+              }
+            }
+          })
   ])
 };
 var __vue_staticRenderFns__ = [];
@@ -1144,7 +1109,7 @@ const __vue_template__ = typeof __vue_render__ !== 'undefined'
 /* style */
 const __vue_inject_styles__ = function (inject) {
   if (!inject) return
-  inject("data-v-e5d0a298_0", { source: "\n.slider {\n  position: relative;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  margin-bottom: 10px;\n}\n.slider-input {\n    display: none;\n    margin-bottom: 0;\n    padding: 0.6em;\n    max-width: 70px;\n    width: 20%;\n    border: 1px solid #000;\n    border-radius: 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: textfield;\n}\n.slider-input:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.slider-track {\n    position: relative;\n    flex: 1;\n    margin: 0.2em;\n    width: auto;\n    height: 0.2em;\n    background: #cccccc;\n    will-change: transfom;\n}\n.slider-handle {\n    position: relative;\n    position: absolute;\n    top: 0;\n    left: 0;\n    will-change: transform;\n    color: #000;\n    margin: -0.1em 0 0 -0.2em;\n    width: 0.4em;\n    height: 0.4em;\n    background-color: currentColor;\n}\n.slider-label {\n    position: absolute;\n    top: -3em;\n    left: 0.4em;\n    z-index: 999;\n    visibility: hidden;\n    padding: 6px;\n    min-width: 3em;\n    border-radius: 0;\n    background-color: #000;\n    color: #fff;\n    text-align: center;\n    font-size: 12px;\n    line-height: 1em;\n    opacity: 0;\n    transform: translate(-50%, 0);\n    white-space: nowrap;\n}\n.slider-label:before {\n      position: absolute;\n      bottom: -0.6em;\n      left: 50%;\n      display: block;\n      width: 0;\n      height: 0;\n      border-width: 0.6em 0.6em 0 0.6em;\n      border-style: solid;\n      border-color: #000 transparent transparent transparent;\n      content: '';\n      transform: translate3d(-50%, 0, 0);\n}\n.slider-fill {\n    width: 100%;\n    height: 100%;\n    background-color: #cccccc;\n    transform-origin: left top;\n    display: none;\n}\n.slider:hover .slider-label, .slider.is-dragging .slider-label {\n    visibility: visible;\n    opacity: 1;\n}\n.slider.is-editable .slider-input {\n    display: block;\n}\n.slider.is-reverse {\n    flex-direction: row-reverse;\n}\n\n/*# sourceMappingURL=Slider.vue.map */", map: undefined, media: undefined });
+  inject("data-v-4b42e642_0", { source: "\n.slider {\n  position: relative;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  margin-bottom: 10px;\n}\n.slider-input {\n    display: none;\n    margin-bottom: 0;\n    padding: 0.6em;\n    max-width: 70px;\n    width: 20%;\n    border: 2px solid #000;\n    border-radius: 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: textfield;\n}\n.slider-input:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.slider-track {\n    position: relative;\n    flex: 1;\n    margin: 0.2em;\n    width: auto;\n    height: 0.2em;\n    background: #cccccc;\n    will-change: transfom;\n}\n.slider-handle {\n    position: relative;\n    position: absolute;\n    top: 0;\n    left: 0;\n    will-change: transform;\n    color: #000;\n    margin: -0.1em 0 0 -0.2em;\n    width: 0.4em;\n    height: 0.4em;\n    background-color: currentColor;\n}\n.slider-label {\n    position: absolute;\n    top: -3em;\n    left: 0.4em;\n    z-index: 999;\n    visibility: hidden;\n    padding: 6px;\n    min-width: 3em;\n    border-radius: 0;\n    background-color: #000;\n    color: #fff;\n    text-align: center;\n    font-size: 12px;\n    line-height: 1em;\n    opacity: 0;\n    transform: translate(-50%, 0);\n    white-space: nowrap;\n}\n.slider-label:before {\n      position: absolute;\n      bottom: -0.6em;\n      left: 50%;\n      display: block;\n      width: 0;\n      height: 0;\n      border-width: 0.6em 0.6em 0 0.6em;\n      border-style: solid;\n      border-color: #000 transparent transparent transparent;\n      content: '';\n      transform: translate3d(-50%, 0, 0);\n}\n.slider-fill {\n    width: 100%;\n    height: 100%;\n    background-color: #cccccc;\n    transform-origin: left top;\n    display: none;\n}\n.slider:hover .slider-label, .slider.is-dragging .slider-label {\n    visibility: visible;\n    opacity: 1;\n}\n.slider.is-editable .slider-input {\n    display: block;\n}\n.slider.is-reverse {\n    flex-direction: row-reverse;\n}\n\n/*# sourceMappingURL=Slider.vue.map */", map: undefined, media: undefined });
 
 };
 /* scoped */
@@ -1286,17 +1251,22 @@ var script$1 = {
   data() {
     return {
       currentHue: 0,
+      currentSat: 0,
       currentColor: '',
+      hsl: {},
       mouse: { x: 0, y: 0 },
       cursor: { x: 0, y: 0 }
     }
   },
   watch: {
     color: function () {
-      // this.handleColor(this.color);
+      this.handleColor(this.color);
     },
     currentHue: function () {
       this.updateSquareColors();
+    },
+    currentSat: function () {
+      this.updateWheelColors();
     }
   },
   components: {
@@ -1308,9 +1278,6 @@ var script$1 = {
       this.canvas = this.$refs.canvas;
       this.strip = this.$refs.strip;
       this.cursor = this.$refs.cursor;
-
-      this.currentHue = toHsl(this.color).hue;
-
       // setup canvas
       const edge = this.edge;
       this.canvas.width = edge;
@@ -1364,19 +1331,20 @@ var script$1 = {
 
     handleColor (color) {
       this.currentColor = color;
-      const hslColor = toHsl(this.currentColor);
+      this.hsl = toHsl(this.currentColor);
 
       if (this.mode === 'wheel') {
-        const r = (100 - hslColor.lum) * (this.radius / 200);
+        this.currentSat = this.hsl.sat;
+        const r = (100 - this.hsl.lum) * (this.radius / 200);
         const ratio = this.radius / 2;
-        this.mouse = getCartesianCoords(r, hslColor.hue / 360);
+        this.mouse = getCartesianCoords(r, this.hsl.hue / 360);
         this.cursor = { x: this.mouse.x + ratio, y: this.mouse.y + ratio };
       }
   
       if (this.mode === 'square') {
-        this.currentHue = hslColor.hue;
-        const x = (hslColor.sat / 100) * (this.edge);
-        const y = ((100 - hslColor.lum) / 100) * (this.edge);
+        this.currentHue = this.hsl.hue;
+        const x = (this.hsl.sat / 100) * (this.edge);
+        const y = ((100 - this.hsl.lum) / 100) * (this.edge);
         this.cursor = this.mouse = { x, y };
       }
     },
@@ -1387,23 +1355,19 @@ var script$1 = {
       }
       let tempColor = this.getColorCanvas(this.getMouseCords(event), this.stripCtx);
       this.currentHue = toHsl(tempColor).hue;
-      this.updateSquareColors();
-      tempColor = this.getColorCanvas(this.mouse, this.ctx);
-      this.$emit('updateColor', tempColor);
     },
 
     selectColor (event) {
-      if (event.target !== this.canvas) {
-        return;
-      }
-      const { x, y } = this.getMouseCords(event);
-      if (this.mode === 'square') {
-        const squareThreshold = this.edge - 1;
-        this.mouse = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
-      }
+      if (event && event.target === this.canvas) {
+        const { x, y } = this.getMouseCords(event);
+        if (this.mode === 'square') {
+          const squareThreshold = this.edge - 1;
+          this.mouse = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
+        }
 
-      if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
-        this.mouse = { x, y };
+        if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
+          this.mouse = { x, y };
+        }
       }
 
       this.currentColor = this.getColorCanvas(this.mouse, this.ctx);
@@ -1417,7 +1381,7 @@ var script$1 = {
       const x = this.circle.xCords;
       const y = this.circle.yCords;
       const radius = this.circle.radius;
-      const saturation = this.satSlider ? this.saturation.currentValue : 100;
+      const sat = this.satSlider ? this.currentSat : 100;
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
       for (let angle = 0; angle < 360; angle += 1) {
@@ -1430,9 +1394,9 @@ var script$1 = {
         this.ctx.arc(x, y, radius, startAngle, endAngle);
         this.ctx.closePath();
 
-        gradient.addColorStop(0, `hsl(${angle}, ${saturation}%, 100%)`);
-        gradient.addColorStop(0.5, `hsl(${angle}, ${saturation}%, 50%)`);
-        gradient.addColorStop(1, `hsl(${angle}, ${saturation}%, 0%)`);
+        gradient.addColorStop(0, `hsl(${angle}, ${sat}%, 100%)`);
+        gradient.addColorStop(0.5, `hsl(${angle}, ${sat}%, 50%)`);
+        gradient.addColorStop(1, `hsl(${angle}, ${sat}%, 0%)`);
         this.ctx.fillStyle = gradient;
         this.ctx.fill();
       }
@@ -1496,7 +1460,9 @@ var script$1 = {
     if (this.mode === 'square') {
       this._initSquare();
     }
-    this.handleColor(this.color);
+    this.$nextTick(() => {
+      this.handleColor(this.color);
+    });
   }
 }
 
@@ -1550,12 +1516,21 @@ var __vue_render__$1 = function() {
             ref: "saturation",
             staticClass: "verte-picker__saturation",
             attrs: {
-              gradient: ["#FFFFFF", "#000000"],
+              gradient: [
+                "hsl(" + _vm.hsl.hue + ",0%," + _vm.hsl.lum + "%)",
+                "hsl(" + _vm.hsl.hue + ",100%," + _vm.hsl.lum + "%)"
+              ],
               editable: false,
-              max: 100,
-              value: 100
+              max: 100
             },
-            on: { change: _vm.updateWheelColors }
+            on: { change: _vm.updateWheelColors },
+            model: {
+              value: _vm.currentSat,
+              callback: function($$v) {
+                _vm.currentSat = $$v;
+              },
+              expression: "currentSat"
+            }
           })
         : _vm._e()
     ],
@@ -1571,7 +1546,7 @@ const __vue_template__$1 = typeof __vue_render__$1 !== 'undefined'
 /* style */
 const __vue_inject_styles__$1 = function (inject) {
   if (!inject) return
-  inject("data-v-1de652b6_0", { source: "\n.verte-picker {\n  position: relative;\n  margin: 10px auto 20px;\n  user-select: none;\n}\n.verte-picker__strip {\n    margin: 0 5px;\n}\n.verte-picker__cursor {\n    position: absolute;\n    top: 0;\n    left: 0;\n    margin: -6px;\n    width: 10px;\n    height: 10px;\n    border: 2px solid #fff;\n    border-radius: 50%;\n    will-change: transform;\n    pointer-events: none;\n    background-color: transparent;\n}\n.verte-picker__input {\n    display: flex;\n    margin-bottom: 10px;\n}\n\n/*# sourceMappingURL=Picker.vue.map */", map: undefined, media: undefined });
+  inject("data-v-27c67e0f_0", { source: "\n.verte-picker {\n  position: relative;\n  margin: 10px auto 20px;\n  user-select: none;\n}\n.verte-picker__strip {\n    margin: 0 5px;\n}\n.verte-picker__cursor {\n    position: absolute;\n    top: 0;\n    left: 0;\n    margin: -6px;\n    width: 10px;\n    height: 10px;\n    border: 2px solid #fff;\n    border-radius: 50%;\n    will-change: transform;\n    pointer-events: none;\n    background-color: transparent;\n}\n.verte-picker__input {\n    display: flex;\n    margin-bottom: 10px;\n}\n\n/*# sourceMappingURL=Picker.vue.map */", map: undefined, media: undefined });
 
 };
 /* scoped */
@@ -1704,8 +1679,9 @@ var Picker = __vue_normalize__$1(
 var script$2 = {
   name: 'Verte',
   props: {
+    picker: { type: String, default: 'square' },
     color: { type: String, default: '#000' },
-    modle: { type: String, default: 'rgb' },
+    model: { type: String, default: 'rgb' },
   },
   data() {
     return {
@@ -1721,20 +1697,24 @@ var script$2 = {
       },
     }
   },
+  watch: {
+    currentColor: function () {
+      this.selectColor(this.currentColor);
+    }
+  },
   methods: {
     selectColor (color, mute = false) {
       if (!isAColor(color)) return;
+
       // if (!mute) call(this.settings.events.beforeSelect);
       this.rgb = toRgb(color);
       this.hex = toHex(color);
       this.hsl = toHsl(color);
-      this.$refs.el.value =
-        this.model === 'hex' ? this.hex
-          : this.model === 'hsl' ? this.hsl
-            : this.model === 'rgb' ? this.rgb
-              : '';
+      if (!this[this.model].invalid) {
+        this.currentColor = this[this.model].toString();
+      }
 
-      this.currentColor = this.rgb.toString();
+      // this.currentColor = this.rgb.toString();
 
       if (mute) return;
       // call(this.settings.events.afterSelect);
@@ -1780,7 +1760,8 @@ var __vue_render__$2 = function() {
       "button",
       {
         staticClass: "verte__guide",
-        staticStyle: { "`color": "${color}", fill: "${color}" }
+        style:
+          "color: " + _vm.currentColor + "; fill: " + _vm.currentColor + ";"
       },
       [
         _vm._t("default", [
@@ -1798,7 +1779,7 @@ var __vue_render__$2 = function() {
       { staticClass: "verte__menu", attrs: { tabindex: "-1" } },
       [
         _c("Picker", {
-          attrs: { mode: "square", color: _vm.currentColor },
+          attrs: { mode: _vm.picker, color: _vm.currentColor },
           on: { updateColor: _vm.selectColor }
         }),
         _c("Slider", {
@@ -1835,7 +1816,27 @@ var __vue_render__$2 = function() {
           on: { change: _vm.updateSlider }
         }),
         _c("div", { staticClass: "verte__input" }, [
-          _c("input", { ref: "el", staticClass: "verte__value" }),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.currentColor,
+                expression: "currentColor"
+              }
+            ],
+            ref: "el",
+            staticClass: "verte__value",
+            domProps: { value: _vm.currentColor },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.currentColor = $event.target.value;
+              }
+            }
+          }),
           _c("button", { staticClass: "verte__submit" }, [
             _c(
               "svg",
@@ -1880,7 +1881,7 @@ const __vue_template__$2 = typeof __vue_render__$2 !== 'undefined'
 /* style */
 const __vue_inject_styles__$2 = function (inject) {
   if (!inject) return
-  inject("data-v-22a6b078_0", { source: "\n.verte {\n  position: relative;\n  display: flex;\n  justify-content: center;\n}\n.verte * {\n    box-sizing: border-box;\n}\n.verte__guide {\n    width: 24px;\n    height: 24px;\n    padding: 0;\n    border: 0;\n    background: transparent;\n}\n.verte__guide:focus {\n      outline: 0;\n}\n.verte__guide svg {\n      width: 100%;\n      height: 100%;\n      fill: inherit;\n}\n.verte__menu {\n    position: absolute;\n    top: 50px;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: stretch;\n    padding: 40px;\n    width: 300px;\n    border-radius: 0;\n    background-color: #fff;\n    will-change: transform;\n}\n.verte__menu.is-hidden {\n      display: none;\n}\n.verte__menu:focus {\n      outline: none;\n}\n.verte__recent {\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: flex-end;\n    align-items: center;\n    width: 100%;\n}\n.verte__color {\n    margin: 4px;\n    width: 28px;\n    height: 28px;\n    border-radius: 50%;\n    background-color: #000;\n}\n.verte__value {\n    padding: 0.6em;\n    width: 100%;\n    border: 2px solid #000;\n    border-radius: 0 0 0 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: textfield;\n}\n.verte__value:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.verte__icon {\n    width: 22.5px;\n    height: 18.5px;\n    fill: #fff;\n}\n.verte__input {\n    display: flex;\n    margin-bottom: 10px;\n}\n.verte__submit {\n    position: relative;\n    display: inline-flex;\n    justify-content: center;\n    align-items: center;\n    padding: 0.4em 0.75em;\n    outline-width: 2px;\n    outline-offset: 1px;\n    border-width: 2px;\n    border-style: solid;\n    border-radius: 0 0 0 0;\n    background-clip: border-box;\n    vertical-align: top;\n    text-align: center;\n    text-decoration: none;\n    cursor: pointer;\n    background-color: #000;\n    border-color: #000;\n}\n.verte__submit:hover {\n      fill: #1a3aff;\n}\n\n/*# sourceMappingURL=Verte.vue.map */", map: undefined, media: undefined });
+  inject("data-v-5820eb55_0", { source: "\n.verte {\n  position: relative;\n  display: flex;\n  justify-content: center;\n}\n.verte * {\n    box-sizing: border-box;\n}\n.verte__guide {\n    width: 24px;\n    height: 24px;\n    padding: 0;\n    border: 0;\n    background: transparent;\n}\n.verte__guide:focus {\n      outline: 0;\n}\n.verte__guide svg {\n      width: 100%;\n      height: 100%;\n      fill: inherit;\n}\n.verte__menu {\n    position: absolute;\n    top: 50px;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: stretch;\n    padding: 40px;\n    width: 300px;\n    border-radius: 0;\n    background-color: #fff;\n    will-change: transform;\n}\n.verte__menu.is-hidden {\n      display: none;\n}\n.verte__menu:focus {\n      outline: none;\n}\n.verte__recent {\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: flex-end;\n    align-items: center;\n    width: 100%;\n}\n.verte__color {\n    margin: 4px;\n    width: 28px;\n    height: 28px;\n    border-radius: 50%;\n    background-color: #000;\n}\n.verte__value {\n    padding: 0.6em;\n    width: 100%;\n    border: 2px solid #000;\n    border-radius: 0 0 0 0;\n    text-align: center;\n    font-size: 12px;\n    -webkit-appearance: none;\n    -moz-appearance: textfield;\n}\n.verte__value:focus {\n      outline: none;\n      border-color: #1a3aff;\n}\n.verte__icon {\n    width: 22.5px;\n    height: 18.5px;\n    fill: #fff;\n}\n.verte__input {\n    display: flex;\n    margin-bottom: 10px;\n}\n.verte__submit {\n    position: relative;\n    display: inline-flex;\n    justify-content: center;\n    align-items: center;\n    padding: 0.4em 0.75em;\n    outline-width: 2px;\n    outline-offset: 1px;\n    border-width: 2px;\n    border-style: solid;\n    border-radius: 0 0 0 0;\n    background-clip: border-box;\n    vertical-align: top;\n    text-align: center;\n    text-decoration: none;\n    cursor: pointer;\n    background-color: #000;\n    border-color: #000;\n}\n.verte__submit:hover {\n      fill: #1a3aff;\n}\n\n/*# sourceMappingURL=Verte.vue.map */", map: undefined, media: undefined });
 
 };
 /* scoped */

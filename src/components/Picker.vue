@@ -17,10 +17,10 @@
     ref="saturation"
     v-if="mode === 'wheel'"
     @change="updateWheelColors"
-    :gradient="['#FFFFFF', '#000000']"
+    :gradient="[`hsl(${hsl.hue},0%,${hsl.lum}%)`, `hsl(${hsl.hue},100%,${hsl.lum}%)`]"
     :editable="false"
     :max="100"
-    :value="100"
+    v-model="currentSat"
     )
 
 </template>
@@ -45,17 +45,22 @@ export default {
   data() {
     return {
       currentHue: 0,
+      currentSat: 0,
       currentColor: '',
+      hsl: {},
       mouse: { x: 0, y: 0 },
       cursor: { x: 0, y: 0 }
     }
   },
   watch: {
     color: function () {
-      // this.handleColor(this.color);
+      this.handleColor(this.color);
     },
     currentHue: function () {
       this.updateSquareColors();
+    },
+    currentSat: function () {
+      this.updateWheelColors();
     }
   },
   components: {
@@ -67,9 +72,6 @@ export default {
       this.canvas = this.$refs.canvas;
       this.strip = this.$refs.strip;
       this.cursor = this.$refs.cursor;
-
-      this.currentHue = toHsl(this.color).hue;
-
       // setup canvas
       const edge = this.edge;
       this.canvas.width = edge;
@@ -123,19 +125,20 @@ export default {
 
     handleColor (color) {
       this.currentColor = color;
-      const hslColor = toHsl(this.currentColor);
+      this.hsl = toHsl(this.currentColor);
 
       if (this.mode === 'wheel') {
-        const r = (100 - hslColor.lum) * (this.radius / 200);
+        this.currentSat = this.hsl.sat;
+        const r = (100 - this.hsl.lum) * (this.radius / 200);
         const ratio = this.radius / 2;
-        this.mouse = getCartesianCoords(r, hslColor.hue / 360);
+        this.mouse = getCartesianCoords(r, this.hsl.hue / 360);
         this.cursor = { x: this.mouse.x + ratio, y: this.mouse.y + ratio };
       }
   
       if (this.mode === 'square') {
-        this.currentHue = hslColor.hue;
-        const x = (hslColor.sat / 100) * (this.edge);
-        const y = ((100 - hslColor.lum) / 100) * (this.edge);
+        this.currentHue = this.hsl.hue;
+        const x = (this.hsl.sat / 100) * (this.edge);
+        const y = ((100 - this.hsl.lum) / 100) * (this.edge);
         this.cursor = this.mouse = { x, y };
       }
     },
@@ -146,23 +149,19 @@ export default {
       }
       let tempColor = this.getColorCanvas(this.getMouseCords(event), this.stripCtx);
       this.currentHue = toHsl(tempColor).hue;
-      this.updateSquareColors();
-      tempColor = this.getColorCanvas(this.mouse, this.ctx);
-      this.$emit('updateColor', tempColor);
     },
 
     selectColor (event) {
-      if (event.target !== this.canvas) {
-        return;
-      }
-      const { x, y } = this.getMouseCords(event);
-      if (this.mode === 'square') {
-        const squareThreshold = this.edge - 1;
-        this.mouse = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
-      }
+      if (event && event.target === this.canvas) {
+        const { x, y } = this.getMouseCords(event);
+        if (this.mode === 'square') {
+          const squareThreshold = this.edge - 1;
+          this.mouse = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
+        }
 
-      if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
-        this.mouse = { x, y };
+        if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
+          this.mouse = { x, y };
+        }
       }
 
       this.currentColor = this.getColorCanvas(this.mouse, this.ctx);
@@ -176,7 +175,7 @@ export default {
       const x = this.circle.xCords;
       const y = this.circle.yCords;
       const radius = this.circle.radius;
-      const saturation = this.satSlider ? this.saturation.currentValue : 100
+      const sat = this.satSlider ? this.currentSat : 100
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
       for (let angle = 0; angle < 360; angle += 1) {
@@ -189,9 +188,9 @@ export default {
         this.ctx.arc(x, y, radius, startAngle, endAngle);
         this.ctx.closePath();
 
-        gradient.addColorStop(0, `hsl(${angle}, ${saturation}%, 100%)`);
-        gradient.addColorStop(0.5, `hsl(${angle}, ${saturation}%, 50%)`);
-        gradient.addColorStop(1, `hsl(${angle}, ${saturation}%, 0%)`);
+        gradient.addColorStop(0, `hsl(${angle}, ${sat}%, 100%)`);
+        gradient.addColorStop(0.5, `hsl(${angle}, ${sat}%, 50%)`);
+        gradient.addColorStop(1, `hsl(${angle}, ${sat}%, 0%)`);
         this.ctx.fillStyle = gradient;
         this.ctx.fill();
       }
@@ -255,7 +254,9 @@ export default {
     if (this.mode === 'square') {
       this._initSquare();
     }
-    this.handleColor(this.color);
+    this.$nextTick(() => {
+      this.handleColor(this.color);
+    });
   }
 }
 </script>

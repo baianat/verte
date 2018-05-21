@@ -1,11 +1,11 @@
 <template lang="pug">
 .verte
-  button.verte__guide(style="`color: ${color}; fill: ${color};`")
+  button.verte__guide(:style="`color: ${currentColor}; fill: ${currentColor};`")
     slot
       svg.verte__icon(viewBox="0 0 24 24")
         circle(cx="12" cy="12" r="12")
   .verte__menu(tabindex="-1")
-    Picker(mode="square" :color="currentColor" @updateColor="selectColor")
+    Picker(:mode="picker" :color="currentColor" @updateColor="selectColor")
     Slider(
       ref="red"
       :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
@@ -23,7 +23,7 @@
       @change="updateSlider"
       )
     .verte__input
-      input.verte__value(ref="el")
+      input.verte__value(ref="el" v-model="currentColor")
       button.verte__submit
         svg.verte__icon(viewBox="0 0 24 24")
           path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
@@ -51,8 +51,9 @@ import { toRgb,
 export default {
   name: 'Verte',
   props: {
+    picker: { type: String, default: 'square' },
     color: { type: String, default: '#000' },
-    modle: { type: String, default: 'rgb' },
+    model: { type: String, default: 'rgb' },
   },
   data() {
     return {
@@ -68,20 +69,24 @@ export default {
       },
     }
   },
+  watch: {
+    currentColor: function () {
+      this.selectColor(this.currentColor);
+    }
+  },
   methods: {
     selectColor (color, mute = false) {
       if (!isAColor(color)) return;
+
       // if (!mute) call(this.settings.events.beforeSelect);
       this.rgb = toRgb(color);
       this.hex = toHex(color);
       this.hsl = toHsl(color);
-      this.$refs.el.value =
-        this.model === 'hex' ? this.hex
-          : this.model === 'hsl' ? this.hsl
-            : this.model === 'rgb' ? this.rgb
-              : '';
+      if (!this[this.model].invalid) {
+        this.currentColor = this[this.model].toString();
+      }
 
-      this.currentColor = this.rgb.toString();
+      // this.currentColor = this.rgb.toString();
 
       if (mute) return;
       // call(this.settings.events.afterSelect);
@@ -178,7 +183,7 @@ export default {
   &__value
     padding: 0.6em
     width: 100%
-    border: 2px solid $black
+    border: $border solid $black
     border-radius: $borderRadius 0 0 $borderRadius
     text-align: center
     font-size: $fontTiny

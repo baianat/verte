@@ -16,7 +16,6 @@
       ref="el"
       :type="colorCode ? 'text' : 'number'"
       v-model="value"
-      v-on="editable && !colorCode ? {  change: (ev) => update(ev.target.value, true) } : { }"
       )
 </template>
 
@@ -63,12 +62,16 @@ export default {
       this.multiple = this.values.length > 1;
       this.fill = this.multiple ? false : this.fill || {}
     },
-    // value: function () {
-    //   this.update();
-    // }
+    value: function () {
+      this.update(this.value, true);
+    }
   },
   mounted() {
     this.init();
+    this.$nextTick(() => {
+      this.updateWidth();
+      this.update();
+    });
   },
   methods: {
     init () {
@@ -91,7 +94,6 @@ export default {
         this.activeHandle = index;
         this.update(handle);
       })
-      this.update();
     },
 
     initElements () {
@@ -276,7 +278,7 @@ export default {
     },
 
     update (value, mute = false) {
-      if (Number(value) === this.value) return;
+      // if (Number(value) === this.value) return;
 
       if (!this.width) {
         this.updateWidth();
