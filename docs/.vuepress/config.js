@@ -7,6 +7,7 @@ module.exports = {
     docsRepo: 'baianat/verte',
     docsDir: 'docs',
     docsBranch: 'docs',
+    base: '/verte/',
     editLinks: true,
     sidebar: [
       '/',
