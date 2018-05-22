@@ -65,7 +65,7 @@ export default {
 ```
 
 <script>
-import verte from '../dist/verte';
+import verte from '../src/components/verte';
 
 export default {
   components: { 'VerteDemo': verte }

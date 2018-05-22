@@ -1,13 +1,13 @@
 module.exports = {
   title: 'Verte',
   description: 'Color-picker designed for Vue',
+  base: '/verte/',
   themeConfig: {
     lastUpdated: 'Last Updated',
     repo: 'baianat/verte',
     docsRepo: 'baianat/verte',
     docsDir: 'docs',
     docsBranch: 'docs',
-    base: '/verte/',
     editLinks: true,
     sidebar: [
       '/',
