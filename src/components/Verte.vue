@@ -77,7 +77,7 @@ export default {
   data() {
     return {
       currentColor: '',
-      isMenuActive: true,
+      isMenuActive: false,
       rgb: {},
       hex: {},
       hsl: {},
