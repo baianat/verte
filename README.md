@@ -1,10 +1,10 @@
 <p align="center">
   <a href="https://baianat.github.io/verte/" target="_blank">
-    <img width="200" alt="verte" src="https://baianat.github.io/verte/verte.png">
+    <img width="400" alt="verte" src="https://baianat.github.io/verte/verte.png">
   </a>
 </p>
 
-# vrete (WIP) 🐛
+# Verte (WIP) 🐛
 
 Color-picker designed for Vue
 
