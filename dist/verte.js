@@ -2101,10 +2101,4 @@ var Verte = __vue_normalize__$2(
   typeof __vue_create_injector_ssr__ !== 'undefined' ? __vue_create_injector_ssr__ : function () {}
 )
 
-const install = {
-  install (Vue, options) {
-    Vue.component(Verte.name, Verte);
-  }
-};
-
-export default install;
+export default Verte;

@@ -17,7 +17,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
   <script type="module">
     import verte from './dist/verte.js';
-    Vue.use(verte);
+    Vue.component(verte.name, verte);
 
     new Vue ({
       el: '#app'

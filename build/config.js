@@ -12,8 +12,8 @@ module.exports = {
     * @license MIT
     */`,
   paths: {
-    es: path.join(__dirname, '../src/install.js'),
-    umd: path.join(__dirname, '../src/install.js'),
+    es: path.join(__dirname, '../src/verte.js'),
+    umd: path.join(__dirname, '../src/verte.js'),
     src: path.join(__dirname, '../src/'),
     dist: path.join(__dirname, '../dist/')
   },
