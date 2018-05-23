@@ -16,19 +16,17 @@
       ref="input"
       :type="colorCode ? 'text' : 'number'"
       v-show="editable"
-      @input="updateValue($event.target.value)"
+      @change="updateValue($event.target.value)"
       )
 </template>
 
 <script>
 import { mixColors } from 'color-fns';
-import { call, getClosestValue } from '../utils';
+import { getClosestValue } from '../utils';
 
 export default {
   name: 'Slider',
   props: {
-    created: Object,
-    updated: Object,
     gradient: Array,
     classes: Array,
     colorCode: { type: Boolean, default: false },
@@ -86,7 +84,7 @@ export default {
       this.initEvents();
       this.values.forEach((handle, index) => {
         this.activeHandle = index;
-        this.updateValue(handle);
+        this.updateValue(handle, true);
       })
     },
     initElements () {
@@ -98,7 +96,6 @@ export default {
       if (this.classes) {
         this.wrapper.classList.add(...this.classes);
       }
-      call(this.created, this);
     },
     initGradient (gradient) {
       if (gradient.length > 1) {
@@ -288,7 +285,6 @@ export default {
       if (mute) return;
       this.$emit('change', this.currentValue);
       this.$emit('input', this.currentValue);
-      call(this.updated);
     },
   },
   created () {
@@ -298,7 +294,7 @@ export default {
     this.init();
     this.$nextTick(() => {
       this.updateWidth();
-      this.updateValue();
+      this.updateValue(undefined, true);
     });
   }
 }

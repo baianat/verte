@@ -17,8 +17,7 @@
   )
     Picker(
       :mode="picker"
-      :value="currentColor"
-      @updateColor="selectColor"
+      v-model="currentColor"
     )
     Slider(
       :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
@@ -103,15 +102,16 @@ export default {
   },
   methods: {
     selectColor (color, mute = false) {
-      if (!isAColor(color)) return;
+      window.requestAnimationFrame(() => {
+        if (!isAColor(color)) return;
 
-      this.rgb = toRgb(color);
-      this.hex = toHex(color);
-      this.hsl = toHsl(color);
+        this.rgb = toRgb(color);
+        this.hex = toHex(color);
+        this.hsl = toHsl(color);
 
-
-      if (mute) return;
-      this.$emit('input', this.currentColor);
+        if (mute) return;
+        this.$emit('input', this.currentColor);
+      });
       // if (!mute) call(this.settings.events.beforeSelect);
 
       // call(this.settings.events.afterSelect);

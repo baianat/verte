@@ -3,26 +3,26 @@
   canvas.verte-picker__canvas(
     ref="canvas"
     :class="`verte-picker__canvas--${mode}`"
-    @mousedown="mouseDownHandler($event, selectColor)"
-    )
+    @mousedown="mouseDownHandler($event, onMousedown)"
+  )
   canvas.verte-picker__strip(
     ref="strip"
     v-if="mode === 'square'"
     @mousedown="mouseDownHandler($event, selectHue)"
-    )
+  )
   .verte-picker__cursor(
     ref="cursor"
     :style="`transform: translate3d(${cursor.x}px, ${cursor.y}px, 0)`"
-    )
+  )
   slider.verte-picker__saturation(
     ref="saturation"
     v-if="mode === 'wheel'"
-    @change="updateWheelColors"
     :gradient="[`hsl(${hsl.hue},0%,${hsl.lum}%)`, `hsl(${hsl.hue},100%,${hsl.lum}%)`]"
     :editable="false"
     :max="100"
-    v-model="currentSat"
-    )
+    :value="currentSat"
+    @input="updateSat"
+  )
 
 </template>
 
@@ -42,70 +42,64 @@ export default {
     edge: { type: Number, default: 190 },
     radius: { type: Number, default: 200 },
     satSlider: { type: Boolean, default: true },
-    color: { type: String, default: '#fff' }
+    value: { type: String, default: '#fff' }
   },
   data: () => ({
     currentHue: 0,
     currentSat: 0,
-    currentColor: {},
+    currentColor: '',
     hsl: {},
     mouse: {},
     cursor: {}
   }),
   watch: {
-    color () {
-      this.handleColor(this.color);
-    },
-    currentHue () {
-      this.updateSquareColors();
-      this.selectColor();
-    },
-    currentSat () {
-      this.updateWheelColors();
-      this.selectColor();
+    // should only handle external changes.
+    value (val, oldVal) {
+      // TODO: Performance issue here.
+      this.handleColor(val, true);
     }
   },
   methods: {
-    initSquare () {
-      this.picker = this.$refs.picker;
-      this.canvas = this.$refs.canvas;
-      this.strip = this.$refs.strip;
+    updateSat (val) {
+      this.currentSat = val;
+      if (this.mode === 'wheel') {
+        this.updateWheelColors();
+      }
 
+      this.selectColor(true);
+    },
+    initSquare () {
       // setup canvas
       const edge = this.edge;
-      this.canvas.width = edge;
-      this.canvas.height = edge;
-      this.strip.width = this.edge / 10;
-      this.strip.height = edge;
-      this.ctx = this.canvas.getContext('2d');
-      this.stripCtx = this.strip.getContext('2d');
+      this.$refs.canvas.width = edge;
+      this.$refs.canvas.height = edge;
+      this.$refs.strip.width = this.edge / 10;
+      this.$refs.strip.height = edge;
+      this.ctx = this.$refs.canvas.getContext('2d');
+      this.$refs.stripCtx = this.$refs.strip.getContext('2d');
 
-      this.stripCtx.rect(0, 0, this.strip.width, this.strip.height);
-      const hue = this.stripCtx.createLinearGradient(0, 0, 0, this.strip.height);
+      this.$refs.stripCtx.rect(0, 0, this.$refs.strip.width, this.$refs.strip.height);
+      const hue = this.$refs.stripCtx.createLinearGradient(0, 0, 0, this.$refs.strip.height);
       for (let angle = 0; angle < 360; angle += 1) {
         hue.addColorStop(angle / 359, `hsl(${angle}, 100%, 50%)`);
       }
-      this.stripCtx.fillStyle = hue;
-      this.stripCtx.fill();
+      this.$refs.stripCtx.fillStyle = hue;
+      this.$refs.stripCtx.fill();
 
       this.updateSquareColors();
     },
     initWheel () {
-      this.picker = this.$refs.picker;
-      this.saturation = this.$refs.saturation;
-      this.canvas = this.$refs.canvas;
-
       // setup canvas
-      this.canvas.width = this.radius;
-      this.canvas.height = this.radius;
-      this.ctx = this.canvas.getContext('2d');
+      this.$refs.canvas.width = this.radius;
+      this.$refs.canvas.height = this.radius;
+      this.ctx = this.$refs.canvas.getContext('2d');
 
       // draw wheel circle path
       this.circle = {
         path: new Path2D(), // eslint-disable-line
-        xCords: this.canvas.width / 2,
-        yCords: this.canvas.height / 2,
-        radius: this.canvas.width / 2
+        xCords: this.$refs.canvas.width / 2,
+        yCords: this.$refs.canvas.height / 2,
+        radius: this.$refs.canvas.width / 2
       }
       this.circle.path.moveTo(this.circle.xCords, this.circle.yCords);
       this.circle.path.arc(
@@ -118,7 +112,7 @@ export default {
       this.circle.path.closePath();
       this.updateWheelColors();
     },
-    handleColor (color) {
+    handleColor (color, muted = false) {
       this.currentColor = color;
       this.hsl = toHsl(this.currentColor);
 
@@ -128,6 +122,8 @@ export default {
         const ratio = this.radius / 2;
         const coords = getCartesianCoords(r, this.hsl.hue / 360);
         this.mouse = { x: coords.x + ratio, y: coords.y + ratio }
+        this.updateWheelColors();
+        this.selectColor(muted);
       }
 
       if (this.mode === 'square') {
@@ -136,33 +132,47 @@ export default {
         const y = ((100 - this.hsl.lum) / 100) * (this.edge);
         const squareEdge = this.edge - 1;
         this.mouse = { x: Math.min(x, squareEdge) , y: Math.min(y - 2) };
+        this.updateSquareColors();
+        this.selectColor(muted);
       }
 
       this.updateCursor(this.mouse);
     },
     selectHue (event) {
-      if (event.target !== this.strip) {
+      if (event.target !== this.$refs.strip) {
         return;
       }
-      let tempColor = this.getColorCanvas(this.getMouseCords(event), this.stripCtx);
+      let tempColor = this.getColorCanvas(this.getMouseCords(event), this.$refs.stripCtx);
       this.currentHue = toHsl(tempColor).hue;
+      this.updateWheelColors();
+      this.selectColor();
     },
-    selectColor (event) {
-      if (event && event.target === this.canvas) {
-        const { x, y } = this.getMouseCords(event);
-        if (this.mode === 'square') {
-          const squareThreshold = this.edge - 1;
-          this.mouse = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
-        }
-
-        if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
-          this.mouse = { x, y };
-        }
+    onMousedown (event) {
+      if (event.target !== this.$refs.canvas) {
+        return;
       }
 
+      const { x, y } = this.getMouseCords(event);
+      if (this.mode === 'square') {
+        const squareThreshold = this.edge - 1;
+        this.mouse = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
+      }
+
+      if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
+        this.mouse = { x, y };
+      }
+
+      this.selectColor();
+    },
+    selectColor (mute = false) {
       this.currentColor = this.getColorCanvas(this.mouse, this.ctx);
       this.updateCursor(this.mouse);
-      this.$emit('updateColor', this.currentColor );
+      // stops propgation
+      if (mute) {
+        return;
+      }
+
+      this.$emit('input', this.currentColor);
     },
     updateWheelColors () {
       if (!this.circle) return;
@@ -170,7 +180,7 @@ export default {
       const y = this.circle.yCords;
       const radius = this.circle.radius;
       const sat = this.satSlider ? this.currentSat : 100
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
 
       for (let angle = 0; angle < 360; angle += 1) {
         const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
@@ -190,24 +200,24 @@ export default {
       }
     },
     updateSquareColors () {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
 
       this.ctx.fillStyle = `hsl(${this.currentHue}, 100%, 50%)`;
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fillRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
 
-      let grdBlack = this.ctx.createLinearGradient(0, 0, this.canvas.width, 0);
+      let grdBlack = this.ctx.createLinearGradient(0, 0, this.$refs.canvas.width, 0);
       grdBlack.addColorStop(0, `hsl(0, 0%, 50%)`);
       grdBlack.addColorStop(1, `hsla(0, 0%, 50%, 0)`);
       this.ctx.fillStyle = grdBlack;
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fillRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
 
-      let grdWhite = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+      let grdWhite = this.ctx.createLinearGradient(0, 0, 0, this.$refs.canvas.height);
       grdWhite.addColorStop(0, `hsl(0, 0%, 100%)`);
       grdWhite.addColorStop(0.5, `hsla(0, 0%, 100%, 0)`);
       grdWhite.addColorStop(0.5, `hsla(0, 0%, 0%, 0)`);
       grdWhite.addColorStop(1, `hsl(0, 0%, 0%) `);
       this.ctx.fillStyle = grdWhite;
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fillRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
     },
     updateCursor (mouse) {
       if (!mouse) return;
@@ -244,7 +254,7 @@ export default {
       this.initSquare();
     }
     this.$nextTick(() => {
-      this.handleColor(this.color);
+      this.handleColor(this.value);
     });
   }
 };
