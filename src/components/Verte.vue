@@ -11,7 +11,7 @@
   .verte__menu(
     ref="menu"
     tabindex="-1"
-    @mousedown="dargMenu"
+    @mousedown="dragMenu"
     :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
     :class="{'verte__menu--active': isMenuActive}"
     )
@@ -54,42 +54,34 @@
 <script>
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
-import {
-  getArray,
-  call,
-  isElementClosest
-} from '../utils'
-import {
-  toRgb,
-  toHex,
-  toHsl,
-  getRandomColor,
-  isAColor
-} from 'color-fns';
+import { toRgb, toHex, toHsl, getRandomColor, isAColor } from 'color-fns';
+import { getArray, call, isElementClosest } from '../utils'
 
 export default {
   name: 'Verte',
+  components: {
+    Picker,
+    Slider
+  },
   props: {
     picker: { type: String, default: 'wheel' },
-    color: { type: String, default: '#000' },
+    value: { type: String, default: '#000' },
     model: { type: String, default: 'rgb' },
   },
-  data() {
-    return {
-      currentColor: '',
-      isMenuActive: false,
-      rgb: {},
-      hex: {},
-      hsl: {},
-      delta: { x: 0, y: 0 },
-      recentColors: {
-        max: 6,
-        colors: getArray(6, getRandomColor)
-      },
+  data: () => ({
+    currentColor: '',
+    isMenuActive: false,
+    rgb: {},
+    hex: {},
+    hsl: {},
+    delta: { x: 0, y: 0 },
+    recentColors: {
+      max: 6,
+      colors: getArray(6, getRandomColor)
     }
-  },
+  }),
   watch: {
-    currentColor: function () {
+    currentColor () {
       this.selectColor(this.currentColor);
     }
   },
@@ -109,7 +101,6 @@ export default {
       // call(this.settings.events.afterSelect);
       // this.events.forEach((event) => this.el.dispatchEvent(event));
     },
-
     getColorFromSliders () {
       const red = this.$refs.red.currentValue;
       const green = this.$refs.green.currentValue;
@@ -123,8 +114,7 @@ export default {
         this.selectColor(color);
       });
     },
-
-    dargMenu (event) {
+    dragMenu (event) {
       if (event.target !== this.menu || event.button !== 0) return;
       let startPosition = {}
       let endPosition = {}
@@ -149,7 +139,6 @@ export default {
       document.addEventListener('mousemove', mousemoveHandler);
       document.addEventListener('mouseup', mouseupHandler);
     },
-
     toggleMenu () {
       if (this.isMenuActive) {
         this.closeMenu();
@@ -157,12 +146,10 @@ export default {
       }
       this.openMenu();
     },
-
     closeMenu () {
       this.isMenuActive = false;
       document.removeEventListener('click', this.closeCallback);
     },
-
     openMenu () {
       this.isMenuActive = true;
       this.closeCallback = (evnt) => {
@@ -178,10 +165,6 @@ export default {
       document.addEventListener('click', this.closeCallback);
       // call(this.settings.events.afterOpen);
     }
-  },
-  components: {
-    Picker,
-    Slider
   },
   created() {
     this.currentColor = this.color;
@@ -238,7 +221,7 @@ export default {
 
     &:focus
       outline: none
-    
+
 
   &__recent
     display: flex
