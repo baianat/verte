@@ -102,20 +102,14 @@ export default {
   },
   methods: {
     selectColor (color, mute = false) {
-      window.requestAnimationFrame(() => {
-        if (!isAColor(color)) return;
+      if (!isAColor(color)) return;
 
-        this.rgb = toRgb(color);
-        this.hex = toHex(color);
-        this.hsl = toHsl(color);
+      this.rgb = toRgb(color);
+      this.hex = toHex(color);
+      this.hsl = toHsl(color);
 
-        if (mute) return;
-        this.$emit('input', this.currentColor);
-      });
-      // if (!mute) call(this.settings.events.beforeSelect);
-
-      // call(this.settings.events.afterSelect);
-      // this.events.forEach((event) => this.el.dispatchEvent(event));
+      if (mute) return;
+      this.$emit('input', this.currentColor);
     },
     dragMenu (event) {
       if (event.target !== this.$refs.menu || event.button !== 0) return;
@@ -163,10 +157,8 @@ export default {
           this.closeMenu();
           return;
         }
-        // call(this.settings.events.clicked);
       };
       document.addEventListener('click', this.closeCallback);
-      // call(this.settings.events.afterOpen);
     }
   },
   created () {
