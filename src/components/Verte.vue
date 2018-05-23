@@ -168,7 +168,7 @@ export default {
     // give sliders time to
     // calculate its visible width
     this.$nextTick(() => {
-      this.isMenuActive = false;
+      this.isMenuActive = true;
     })
   }
 }

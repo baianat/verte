@@ -50,12 +50,17 @@ export default {
     currentColor: '',
     hsl: {},
     mouse: {},
-    cursor: {}
+    cursor: {},
+    stopUpdating: false
   }),
   watch: {
     // should only handle external changes.
     value (val, oldVal) {
       // TODO: Performance issue here.
+      if (this.stopUpdating) {
+        this.stopUpdating = false;
+        return;
+      }
       this.handleColor(val, true);
     }
   },
@@ -115,7 +120,6 @@ export default {
         const coords = getCartesianCoords(r, this.hsl.hue / 360);
         this.mouse = { x: coords.x + ratio, y: coords.y + ratio }
         this.updateWheelColors();
-        this.selectColor(muted);
       }
 
       if (this.mode === 'square') {
@@ -125,10 +129,9 @@ export default {
         const squareEdge = this.edge - 1;
         this.mouse = { x: Math.min(x, squareEdge) , y: Math.min(y - 2) };
         this.updateSquareColors();
-        this.selectColor(muted);
       }
 
-      this.updateCursor(this.mouse);
+      this.selectColor(muted);
     },
     selectHue (event) {
       if (event.target !== this.$refs.strip) {
@@ -140,7 +143,6 @@ export default {
       this.selectColor();
     },
     selectSat (val) {
-      console.log('dd')
       this.currentSat = val;
       this.updateWheelColors();
       this.selectColor();
@@ -149,7 +151,7 @@ export default {
       if (event.target !== this.$refs.canvas) {
         return;
       }
-
+      this.stopUpdating = true;
       const { x, y } = this.getMouseCords(event);
       if (this.mode === 'square') {
         const squareThreshold = this.edge - 1;
@@ -219,7 +221,9 @@ export default {
     },
     updateCursor (mouse) {
       if (!mouse) return;
-      this.cursor = mouse;
+      if (!this.stopCursorUpdating) {
+        this.cursor = mouse;
+      }
     },
     getMouseCords ({ offsetX, offsetY }) {
       return {
