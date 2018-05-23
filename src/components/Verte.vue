@@ -48,12 +48,11 @@
 
 </template>
 
-
 <script>
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
 import { toRgb, toHex, toHsl, getRandomColor, isAColor } from 'color-fns';
-import { getArray, call, isElementClosest } from '../utils'
+import { getArray, isElementClosest } from '../utils';
 
 export default {
   name: 'Verte',
@@ -66,7 +65,7 @@ export default {
     value: { type: String, default: '#000' },
     model: { type: String, default: 'rgb' },
     menuOnly: { type: Boolean, default: false },
-    draggableMenu: { type: Boolean, default: true },
+    draggableMenu: { type: Boolean, default: true }
   },
   data: () => ({
     isMenuActive: true,
@@ -116,8 +115,8 @@ export default {
     },
     dragMenu (event) {
       if (event.target !== this.$refs.menu || event.button !== 0) return;
-      const startPosition = {}
-      const endPosition = {}
+      const startPosition = {};
+      const endPosition = {};
       const lastMove = Object.assign({}, this.delta);
 
       event.preventDefault();
@@ -131,11 +130,11 @@ export default {
           this.delta.x = lastMove.x + endPosition.x - startPosition.x;
           this.delta.y = lastMove.y + endPosition.y - startPosition.y;
         });
-      }
+      };
       const mouseupHandler = () => {
         document.removeEventListener('mousemove', mousemoveHandler);
         document.removeEventListener('mouseup', mouseupHandler);
-      }
+      };
       document.addEventListener('mousemove', mousemoveHandler);
       document.addEventListener('mouseup', mouseupHandler);
     },
@@ -156,9 +155,8 @@ export default {
         if (
           !isElementClosest(evnt.target, this.$refs.menu) &&
           !isElementClosest(evnt.target, this.$refs.guide)
-          ) {
+        ) {
           this.closeMenu();
-          return;
         }
       };
       document.addEventListener('click', this.closeCallback);
@@ -173,11 +171,10 @@ export default {
     if (this.menuOnly) return;
     this.$nextTick(() => {
       this.isMenuActive = false;
-    })
+    });
   }
-}
+};
 </script>
-
 
 <style lang="sass">
 @import 'variables';
@@ -223,7 +220,6 @@ export default {
 
     &:focus
       outline: none
-
 
   &__recent
     display: flex
@@ -281,4 +277,3 @@ export default {
       fill: $blue
 
 </style>
-

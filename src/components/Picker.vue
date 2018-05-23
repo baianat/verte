@@ -26,11 +26,10 @@
 
 </template>
 
-
 <script>
 import Slider from './Slider.vue';
 import { toHsl } from 'color-fns';
-import { getCartesianCoords } from '../utils'
+import { getCartesianCoords } from '../utils';
 
 export default {
   name: 'Picker',
@@ -96,7 +95,7 @@ export default {
         xCords: this.$refs.canvas.width / 2,
         yCords: this.$refs.canvas.height / 2,
         radius: this.$refs.canvas.width / 2
-      }
+      };
       this.circle.path.moveTo(this.circle.xCords, this.circle.yCords);
       this.circle.path.arc(
         this.circle.xCords,
@@ -117,7 +116,7 @@ export default {
         const r = (100 - this.hsl.lum) * (this.radius / 200);
         const ratio = this.radius / 2;
         const coords = getCartesianCoords(r, this.hsl.hue / 360);
-        this.cursor = { x: coords.x + ratio, y: coords.y + ratio }
+        this.cursor = { x: coords.x + ratio, y: coords.y + ratio };
         this.updateWheelColors();
       }
 
@@ -126,7 +125,7 @@ export default {
         const x = (this.hsl.sat / 100) * (this.edge);
         const y = ((100 - this.hsl.lum) / 100) * (this.edge);
         const squareEdge = this.edge - 1;
-        this.cursor = { x: Math.min(x, squareEdge) , y: Math.min(y - 2) };
+        this.cursor = { x: Math.min(x, squareEdge), y: Math.min(y - 2) };
         this.updateSquareColors();
       }
 
@@ -167,7 +166,7 @@ export default {
       this.currentColor = this.getColorCanvas(this.cursor, this.ctx);
       // stops propgation
       if (mute) {
-        return
+        return;
       }
 
       this.$emit('input', this.currentColor);
@@ -177,7 +176,7 @@ export default {
       const x = this.circle.xCords;
       const y = this.circle.yCords;
       const radius = this.circle.radius;
-      const sat = this.satSlider ? this.currentSat : 100
+      const sat = this.satSlider ? this.currentSat : 100;
       this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
 
       for (let angle = 0; angle < 360; angle += 1) {
@@ -229,7 +228,6 @@ export default {
     },
     mouseDownHandler (event, func) {
       event.preventDefault();
-      const el = event.target;
       func(event);
       const mouseupHandler = () => {
         document.removeEventListener('mousemove', func);
@@ -254,7 +252,6 @@ export default {
   }
 };
 </script>
-
 
 <style lang="sass">
 @import 'variables';
@@ -290,4 +287,3 @@ export default {
     margin-bottom: $margin
 
 </style>
-

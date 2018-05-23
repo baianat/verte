@@ -57,7 +57,7 @@ export default {
     },
     values () {
       this.multiple = this.values.length > 1;
-      this.fill = this.multiple ? false : this.fill || {}
+      this.fill = this.multiple ? false : this.fill || {};
     },
     value (val, oldVal) {
       if (val === oldVal || val === this.currentValue) return;
@@ -85,7 +85,7 @@ export default {
       this.values.forEach((handle, index) => {
         this.activeHandle = index;
         this.updateValue(handle, true);
-      })
+      });
     },
     initElements () {
       this.wrapper = this.$refs.wrapper;
@@ -251,7 +251,7 @@ export default {
         const positionPercentage = this.getPositionPercentage(handle.value);
         const color = this.getHandleColor(positionPercentage);
         this.handles[index].color = color.toString();
-      })
+      });
     },
 
     updateValue (value, mute = false) {
@@ -298,7 +298,7 @@ export default {
       this.updateValue(undefined, true);
     });
   }
-}
+};
 </script>
 
 <style lang="sass">
@@ -392,6 +392,5 @@ export default {
     .slider-label
       visibility: visible
       opacity: 1
-
 
 </style>
