@@ -80,6 +80,14 @@ export default {
       colors: getArray(6, getRandomColor)
     }
   }),
+  watch: {
+    value (val, oldVal) {
+      if (val === oldVal || val === this.currentColor) return;
+
+      // value was updated externally.
+      this.selectColor(val);
+    }
+  },
   methods: {
     selectColor (color, mute = false) {
       if (!isAColor(color)) return;
