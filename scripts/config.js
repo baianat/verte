@@ -1,7 +1,6 @@
 const path = require('path');
 const replace = require('rollup-plugin-replace');
 const vue = require('rollup-plugin-vue').default;
-const postcss = require('rollup-plugin-postcss');
 const resolve = require('rollup-plugin-node-resolve');
 const css = require('rollup-plugin-css-only');
 
