@@ -66,7 +66,7 @@ export default {
     model: { type: String, default: 'rgb' },
   },
   data: () => ({
-    isMenuActive: false,
+    isMenuActive: true,
     rgb: toRgb('#000'),
     hex: toHex('#000'),
     hsl: toHsl('#000'),
@@ -163,6 +163,13 @@ export default {
   },
   created () {
     this.selectColor(this.value || '#000');
+  },
+  mounted () {
+    // give sliders time to
+    // calculate its visible width
+    this.$nextTick(() => {
+      this.isMenuActive = false;
+    })
   }
 }
 </script>
