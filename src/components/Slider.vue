@@ -2,7 +2,7 @@
   .slider(ref="wrapper")
     .slider__track(
       ref="track"
-      v-on="trackSlide ?  { mousedown: select, touchstrat: select } : { }"
+      v-on="trackSlide ? { mousedown: select, touchstrat: select } : { }"
       )
       .slider__fill(v-if="fill" :style="`transform: translate(${fill.translate}px, 0) scale(${fill.scale}, 1)`")
       .slider__handle(
@@ -42,28 +42,26 @@ export default {
     value: { type: Number, default: 0 },
     handlesValue: { type: Array, default: () => [0] }
   },
-  data() {
-    return {
-      fill: {
-        translate: 0,
-        scale: 0
-      },
-      multiple: false,
-      currentValue: 0,
-      handles: [],
-      values: []
-    }
-  },
+  data: () => ({
+    fill: {
+      translate: 0,
+      scale: 0
+    },
+    multiple: false,
+    currentValue: 0,
+    handles: [],
+    values: []
+  }),
   watch: {
-    gradient: function (val) {
+    gradient (val) {
       this.initGradient(val);
       this.reloadHandlesColor();
     },
-    values: function () {
+    values () {
       this.multiple = this.values.length > 1;
       this.fill = this.multiple ? false : this.fill || {}
     },
-    value: function () {
+    value () {
       this.update(this.value, true);
     }
   },
@@ -96,7 +94,6 @@ export default {
         this.update(handle);
       })
     },
-
     initElements () {
       this.wrapper = this.$refs.wrapper;
       this.track = this.$refs.track;
@@ -108,7 +105,6 @@ export default {
       }
       call(this.created, this);
     },
-
     initGradient (gradient) {
       if (gradient.length > 1) {
         this.track.style.backgroundImage = `linear-gradient(90deg, ${gradient})`;
@@ -120,14 +116,12 @@ export default {
         handle.style.color = gradient[0];
       });
     },
-
     initEvents () {
       window.addEventListener('resize', () => {
         this.updateWidth();
         this.update(this.currentValue, true);
       });
     },
-
     /**
      * fire select events
      */
@@ -154,7 +148,6 @@ export default {
       document.addEventListener('touchend', this.tempRelease);
       document.addEventListener('mouseup', this.tempRelease);
     },
-
     /**
      * dragging motion
      */
@@ -170,7 +163,6 @@ export default {
         this.ticking = true;
       }
     },
-
     /**
      * release handler
      */
@@ -181,7 +173,6 @@ export default {
       document.removeEventListener('mouseup', this.tempRelease);
       document.removeEventListener('touchend', this.tempRelease);
     },
-
     getStepValue (event) {
       const eventX = event.type.includes('mouse')
         ? event.clientX : event.type.includes('touch')
@@ -192,14 +183,12 @@ export default {
       const stepValue = parseInt((stepCount + this.min) / this.step, 10) * this.step;
       return stepValue;
     },
-
     updateWidth () {
       const trackRect = this.track.getBoundingClientRect();
       this.currentX = trackRect.left;
       this.width = trackRect.width;
       this.stepWidth = (this.width / (this.max - this.min));
     },
-
     /**
      * get the filled area percentage
      * @param  {Object} slider
@@ -209,7 +198,6 @@ export default {
     getPositionPercentage (value) {
       return (value - this.min) / (this.max - this.min);
     },
-
     normalizeValue (value) {
       if (isNaN(Number(value))) {
         return this.value;
@@ -221,7 +209,6 @@ export default {
       }
       return Math.min(Math.max(Number(value), this.min), this.max);
     },
-
     addHandle (value) {
       const closest = getClosestValue(this.values, value);
       const closestIndex = this.values.indexOf(closest);
@@ -238,17 +225,15 @@ export default {
       this.currentValue = null;
       this.update(value);
     },
-
     removeHandle (index) {
       this.handles.splice(index, 1);
       this.values.splice(index, 1);
       this.activeHandle = index === 0 ? index + 1 : index - 1;
     },
-
     /**
      * get the handle color
      * @param  {Number} positionPercentage
-     * @return {Number}                handle hex color code
+     * @return {Number} handle hex color code
      */
     getHandleColor (positionPercentage) {
       const colorCount = this.gradient.length - 1;
@@ -264,7 +249,6 @@ export default {
       }
       return 'rgb(0, 0, 0)';
     },
-
     /**
      * update the slider fill, value and color
      * @param {Number} value
