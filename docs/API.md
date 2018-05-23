@@ -31,4 +31,6 @@ The guide icon color and fill style will change to the current selected color, i
 
 ## Events
 
-comming soon...
+|  Name | Payload Type | Description |
+|:------|:------------:|:------------|
+|`input`| `string`     | Emits a string representation of the model for the selected color value |
