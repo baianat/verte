@@ -38,7 +38,7 @@
       )
     .verte__input
       input.verte__value(ref="el" v-model="currentColor")
-      button.verte__submit
+      button.verte__submit(type="button" @click="closeMenu")
         svg.verte__icon(viewBox="0 0 24 24")
           path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
     .verte__recent(ref="recent")
@@ -90,7 +90,7 @@ export default {
       this.hsl = toHsl(color);
       if (!this[this.model].invalid) {
         this.currentColor = this[this.model].toString();
-        this.$emit('input', val);
+        this.$emit('input', this.currentColor);
       }
 
 
@@ -112,10 +112,10 @@ export default {
       });
     },
     dragMenu (event) {
-      if (event.target !== this.menu || event.button !== 0) return;
-      let startPosition = {}
-      let endPosition = {}
-      let lastMove = { ...this.delta };
+      if (event.target !== this.$refs.menu || event.button !== 0) return;
+      const startPosition = {}
+      const endPosition = {}
+      const lastMove = Object.assign({}, this.delta);
 
       event.preventDefault();
       startPosition.x = event.clientX;
@@ -151,8 +151,8 @@ export default {
       this.isMenuActive = true;
       this.closeCallback = (evnt) => {
         if (
-          !isElementClosest(evnt.target, this.menu) &&
-          !isElementClosest(evnt.target, this.guide)
+          !isElementClosest(evnt.target, this.$refs.menu) &&
+          !isElementClosest(evnt.target, this.$refs.guide)
           ) {
           this.closeMenu();
           return;
@@ -163,14 +163,8 @@ export default {
       // call(this.settings.events.afterOpen);
     }
   },
-  created() {
-    this.currentColor = this.color;
-    this.rgb = toRgb(this.color);
-  },
-  mounted() {
-    this.el = this.$refs.el;
-    this.menu = this.$refs.menu;
-    this.guide = this.$refs.guide;
+  created () {
+    this.selectColor(this.value || '#000');
   }
 }
 </script>
