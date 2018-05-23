@@ -21,7 +21,7 @@
     :editable="false"
     :max="100"
     :value="currentSat"
-    @input="updateSat"
+    @input="selectSat"
   )
 
 </template>
@@ -60,14 +60,6 @@ export default {
     }
   },
   methods: {
-    updateSat (val) {
-      this.currentSat = val;
-      if (this.mode === 'wheel') {
-        this.updateWheelColors();
-      }
-
-      this.selectColor(true);
-    },
     initSquare () {
       // setup canvas
       const edge = this.edge;
@@ -144,6 +136,12 @@ export default {
       }
       let tempColor = this.getColorCanvas(this.getMouseCords(event), this.$refs.stripCtx);
       this.currentHue = toHsl(tempColor).hue;
+      this.updateSquareColors();
+      this.selectColor();
+    },
+    selectSat (val) {
+      console.log('dd')
+      this.currentSat = val;
       this.updateWheelColors();
       this.selectColor();
     },
