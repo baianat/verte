@@ -1,5 +1,5 @@
 node_modules
 .vscode
 docs/.vuepress/dist
-
+.vscode
 dist
