@@ -49,19 +49,18 @@ export default {
     currentSat: 0,
     currentColor: '',
     hsl: {},
-    mouse: {},
     cursor: {},
     stopUpdating: false
   }),
   watch: {
     // should only handle external changes.
     value (val, oldVal) {
-      // TODO: Performance issue here.
       if (this.stopUpdating) {
         this.stopUpdating = false;
         return;
       }
-      this.handleColor(val, true);
+      // TODO: Performance issue here.
+      this.handleValue(val, true);
     }
   },
   methods: {
@@ -109,7 +108,7 @@ export default {
       this.circle.path.closePath();
       this.updateWheelColors();
     },
-    handleColor (color, muted = false) {
+    handleValue (color, muted = false) {
       this.currentColor = color;
       this.hsl = toHsl(this.currentColor);
 
@@ -118,7 +117,7 @@ export default {
         const r = (100 - this.hsl.lum) * (this.radius / 200);
         const ratio = this.radius / 2;
         const coords = getCartesianCoords(r, this.hsl.hue / 360);
-        this.mouse = { x: coords.x + ratio, y: coords.y + ratio }
+        this.cursor = { x: coords.x + ratio, y: coords.y + ratio }
         this.updateWheelColors();
       }
 
@@ -127,7 +126,7 @@ export default {
         const x = (this.hsl.sat / 100) * (this.edge);
         const y = ((100 - this.hsl.lum) / 100) * (this.edge);
         const squareEdge = this.edge - 1;
-        this.mouse = { x: Math.min(x, squareEdge) , y: Math.min(y - 2) };
+        this.cursor = { x: Math.min(x, squareEdge) , y: Math.min(y - 2) };
         this.updateSquareColors();
       }
 
@@ -155,21 +154,20 @@ export default {
       const { x, y } = this.getMouseCords(event);
       if (this.mode === 'square') {
         const squareThreshold = this.edge - 1;
-        this.mouse = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
+        this.cursor = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
       }
 
       if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
-        this.mouse = { x, y };
+        this.cursor = { x, y };
       }
 
       this.selectColor();
     },
     selectColor (mute = false) {
-      this.currentColor = this.getColorCanvas(this.mouse, this.ctx);
-      this.updateCursor(this.mouse);
+      this.currentColor = this.getColorCanvas(this.cursor, this.ctx);
       // stops propgation
       if (mute) {
-        return;
+        return
       }
 
       this.$emit('input', this.currentColor);
@@ -219,12 +217,6 @@ export default {
       this.ctx.fillStyle = grdWhite;
       this.ctx.fillRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
     },
-    updateCursor (mouse) {
-      if (!mouse) return;
-      if (!this.stopCursorUpdating) {
-        this.cursor = mouse;
-      }
-    },
     getMouseCords ({ offsetX, offsetY }) {
       return {
         x: offsetX,
@@ -257,7 +249,7 @@ export default {
       this.initSquare();
     }
     this.$nextTick(() => {
-      this.handleColor(this.value);
+      this.handleValue(this.value);
     });
   }
 };
