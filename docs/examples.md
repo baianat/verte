@@ -2,9 +2,9 @@
 
 ## Default Example
 
-<VerteDemo></VerteDemo>
+<verte-demo></verte-demo>
 
-```html
+```vue
 <template>
   <verte></verte>
 </template>
@@ -20,9 +20,9 @@ export default {
 
 ## Start Color
 
-<VerteDemo color="#f0f""></VerteDemo>
+<verte-demo color="#f0f"></verte-demo>
 
-```html {3}
+```vue {3}
 <template>
   <verte
     color="#f0f"
@@ -33,9 +33,9 @@ export default {
 
 ## Square Picker
 
-<VerteDemo picker="square"></VerteDemo>
+<verte-demo picker="square"></verte-demo>
 
-```html {3}
+```vue {3}
 <template>
   <verte
     picker="square"
@@ -46,12 +46,12 @@ export default {
 
 ## Custom Guide Icon
 
-<VerteDemo color="#f0f">
+<verte-demo color="#f0f">
   <svg viewBox="0 0 24 24">
     <path d="M0 20h24v4H0z"/>
     <path style="fill: #000" d="M11 3L5.5 17h2.25l1.12-3h6.25l1.12 3h2.25L13 3h-2zm-1.38 9L12 5.67 14.38 12H9.62z"/>
   </svg>
-</VerteDemo>
+</verte-demo>
 
 ```html
 <template>
@@ -63,14 +63,6 @@ export default {
   </verte>
 </template>
 ```
-
-<script>
-import verte from '../src/components/verte';
-
-export default {
-  components: { 'VerteDemo': verte }
-}
-</script>
 
 <style>
 .verte__menu {
