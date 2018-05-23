@@ -283,7 +283,6 @@ export default {
       }
 
       if (mute) return;
-      this.$emit('change', this.currentValue);
       this.$emit('input', this.currentValue);
     },
   },
