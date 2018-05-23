@@ -62,14 +62,14 @@ export default {
       this.fill = this.multiple ? false : this.fill || {}
     },
     value () {
-      this.update(this.value, true);
+      this.updateValue(this.value, true);
     }
   },
   mounted() {
     this.init();
     this.$nextTick(() => {
       this.updateWidth();
-      this.update();
+      this.updateValue();
     });
   },
   methods: {
@@ -91,7 +91,7 @@ export default {
       this.initEvents();
       this.values.forEach((handle, index) => {
         this.activeHandle = index;
-        this.update(handle);
+        this.updateValue(handle);
       })
     },
     initElements () {
@@ -119,7 +119,7 @@ export default {
     initEvents () {
       window.addEventListener('resize', () => {
         this.updateWidth();
-        this.update(this.currentValue, true);
+        this.updateValue(this.currentValue, true);
       });
     },
     /**
@@ -139,7 +139,7 @@ export default {
         let closest = getClosestValue(this.values, stepValue);
         this.activeHandle = this.values.indexOf(closest);
       }
-      this.update(stepValue);
+      this.updateValue(stepValue);
 
       this.tempDrag = this.dragging.bind(this);
       this.tempRelease = this.release.bind(this);
@@ -156,7 +156,7 @@ export default {
       const stepValue = this.getStepValue(event);
       if (!this.ticking) {
         window.requestAnimationFrame(() => {
-          this.update(stepValue);
+          this.updateValue(stepValue);
           this.ticking = false;
         });
 
@@ -223,7 +223,7 @@ export default {
 
       this.activeHandle = newIndex;
       this.currentValue = null;
-      this.update(value);
+      this.updateValue(value);
     },
     removeHandle (index) {
       this.handles.splice(index, 1);
@@ -262,7 +262,7 @@ export default {
       })
     },
 
-    update (value, mute = false) {
+    updateValue (value, mute = false) {
       // if (Number(value) === this.value) return;
 
       if (!this.width) {
