@@ -57,7 +57,7 @@ export default {
     },
     values () {
       this.multiple = this.values.length > 1;
-      this.fill = this.multiple ? false : this.fill || {}
+      this.fill = this.multiple ? false : this.fill || {};
     },
     value (val, oldVal) {
       if (val === oldVal || val === this.currentValue) return;
@@ -85,7 +85,7 @@ export default {
       this.values.forEach((handle, index) => {
         this.activeHandle = index;
         this.updateValue(handle, true);
-      })
+      });
     },
     initElements () {
       this.wrapper = this.$refs.wrapper;
@@ -251,41 +251,42 @@ export default {
         const positionPercentage = this.getPositionPercentage(handle.value);
         const color = this.getHandleColor(positionPercentage);
         this.handles[index].color = color.toString();
-      })
+      });
     },
 
     updateValue (value, mute = false) {
       // if (Number(value) === this.value) return;
 
-      if (!this.width) {
-        this.updateWidth();
-      }
-      const normalized = this.normalizeValue(value);
-      const positionPercentage = this.getPositionPercentage(normalized);
-
-      if (this.fill) {
-        this.fill.translate = positionPercentage * this.width;
-        this.fill.scale = 1 - positionPercentage;
-      }
-
-      this.values[this.activeHandle] = normalized;
-      this.handles[this.activeHandle].value = normalized;
-      this.handles[this.activeHandle].positoin = positionPercentage * this.width;
-      this.currentValue = normalized;
-      this.$refs.input.value = this.currentValue;
-
-      if (this.gradient) {
-        const color = this.getHandleColor(positionPercentage);
-        this.handles[this.activeHandle].color = color.toString();
-        if (this.colorCode) {
-          this.currentValue = color;
+      window.requestAnimationFrame(() => {
+        if (!this.width) {
+          this.updateWidth();
         }
-      }
+        const normalized = this.normalizeValue(value);
+        const positionPercentage = this.getPositionPercentage(normalized);
 
-      if (mute) return;
-      this.$emit('change', this.currentValue);
-      this.$emit('input', this.currentValue);
-    },
+        if (this.fill) {
+          this.fill.translate = positionPercentage * this.width;
+          this.fill.scale = 1 - positionPercentage;
+        }
+
+        this.values[this.activeHandle] = normalized;
+        this.handles[this.activeHandle].value = normalized;
+        this.handles[this.activeHandle].positoin = positionPercentage * this.width;
+        this.currentValue = normalized;
+        this.$refs.input.value = this.currentValue;
+
+        if (this.gradient) {
+          const color = this.getHandleColor(positionPercentage);
+          this.handles[this.activeHandle].color = color.toString();
+          if (this.colorCode) {
+            this.currentValue = color;
+          }
+        }
+
+        if (mute) return;
+        this.$emit('input', this.currentValue);
+      });
+    }
   },
   created () {
     this.currentValue = this.value;
@@ -297,7 +298,7 @@ export default {
       this.updateValue(undefined, true);
     });
   }
-}
+};
 </script>
 
 <style lang="sass">
@@ -391,6 +392,5 @@ export default {
     .slider-label
       visibility: visible
       opacity: 1
-
 
 </style>
