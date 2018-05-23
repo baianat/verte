@@ -257,34 +257,36 @@ export default {
     updateValue (value, mute = false) {
       // if (Number(value) === this.value) return;
 
-      if (!this.width) {
-        this.updateWidth();
-      }
-      const normalized = this.normalizeValue(value);
-      const positionPercentage = this.getPositionPercentage(normalized);
-
-      if (this.fill) {
-        this.fill.translate = positionPercentage * this.width;
-        this.fill.scale = 1 - positionPercentage;
-      }
-
-      this.values[this.activeHandle] = normalized;
-      this.handles[this.activeHandle].value = normalized;
-      this.handles[this.activeHandle].positoin = positionPercentage * this.width;
-      this.currentValue = normalized;
-      this.$refs.input.value = this.currentValue;
-
-      if (this.gradient) {
-        const color = this.getHandleColor(positionPercentage);
-        this.handles[this.activeHandle].color = color.toString();
-        if (this.colorCode) {
-          this.currentValue = color;
+      window.requestAnimationFrame(() => {
+        if (!this.width) {
+          this.updateWidth();
         }
-      }
+        const normalized = this.normalizeValue(value);
+        const positionPercentage = this.getPositionPercentage(normalized);
 
-      if (mute) return;
-      this.$emit('input', this.currentValue);
-    },
+        if (this.fill) {
+          this.fill.translate = positionPercentage * this.width;
+          this.fill.scale = 1 - positionPercentage;
+        }
+
+        this.values[this.activeHandle] = normalized;
+        this.handles[this.activeHandle].value = normalized;
+        this.handles[this.activeHandle].positoin = positionPercentage * this.width;
+        this.currentValue = normalized;
+        this.$refs.input.value = this.currentValue;
+
+        if (this.gradient) {
+          const color = this.getHandleColor(positionPercentage);
+          this.handles[this.activeHandle].color = color.toString();
+          if (this.colorCode) {
+            this.currentValue = color;
+          }
+        }
+
+        if (mute) return;
+        this.$emit('input', this.currentValue);
+      });
+    }
   },
   created () {
     this.currentValue = this.value;
