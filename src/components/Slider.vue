@@ -13,10 +13,10 @@
         )
         .slider__label(v-if="label") {{ handle.value }}
     input.slider__input(
-      ref="el"
+      ref="input"
       :type="colorCode ? 'text' : 'number'"
       v-show="editable"
-      v-model="value"
+      @input="updateValue($event.target.value)"
       )
 </template>
 
@@ -61,16 +61,11 @@ export default {
       this.multiple = this.values.length > 1;
       this.fill = this.multiple ? false : this.fill || {}
     },
-    value () {
+    value (val, oldVal) {
+      if (val === oldVal || val === this.currentValue) return;
+
       this.updateValue(this.value, true);
     }
-  },
-  mounted() {
-    this.init();
-    this.$nextTick(() => {
-      this.updateWidth();
-      this.updateValue();
-    });
   },
   methods: {
     init () {
@@ -280,6 +275,7 @@ export default {
       this.handles[this.activeHandle].value = normalized;
       this.handles[this.activeHandle].positoin = positionPercentage * this.width;
       this.currentValue = normalized;
+      this.$refs.input.value = this.currentValue;
 
       if (this.gradient) {
         const color = this.getHandleColor(positionPercentage);
@@ -294,6 +290,16 @@ export default {
       this.$emit('input', this.currentValue);
       call(this.updated);
     },
+  },
+  created () {
+    this.currentValue = this.value;
+  },
+  mounted () {
+    this.init();
+    this.$nextTick(() => {
+      this.updateWidth();
+      this.updateValue();
+    });
   }
 }
 </script>
