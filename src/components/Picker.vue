@@ -14,7 +14,7 @@
     ref="cursor"
     :style="`transform: translate3d(${cursor.x}px, ${cursor.y}px, 0)`"
     )
-  Slider.verte-picker__saturation(
+  slider.verte-picker__saturation(
     ref="saturation"
     v-if="mode === 'wheel'"
     @change="updateWheelColors"
@@ -30,12 +30,13 @@
 <script>
 import Slider from './Slider.vue';
 import { toHsl } from 'color-fns';
-import {
-  getCartesianCoords,
-} from '../utils'
+import { getCartesianCoords } from '../utils'
 
 export default {
   name: 'Picker',
+  components: {
+    Slider
+  },
   props: {
     mode: { type: String, default: 'wheel' },
     edge: { type: Number, default: 190 },
@@ -43,34 +44,29 @@ export default {
     satSlider: { type: Boolean, default: true },
     color: { type: String, default: '#fff' }
   },
-  data() {
-    return {
-      currentHue: 0,
-      currentSat: 0,
-      currentColor: {},
-      hsl: {},
-      mouse: {},
-      cursor: {}
-    }
-  },
+  data: () => ({
+    currentHue: 0,
+    currentSat: 0,
+    currentColor: {},
+    hsl: {},
+    mouse: {},
+    cursor: {}
+  }),
   watch: {
-    color: function () {
+    color () {
       this.handleColor(this.color);
     },
-    currentHue: function () {
+    currentHue () {
       this.updateSquareColors();
       this.selectColor();
     },
-    currentSat: function () {
+    currentSat () {
       this.updateWheelColors();
       this.selectColor();
     }
   },
-  components: {
-    Slider
-  },
   methods: {
-    _initSquare () {
+    initSquare () {
       this.picker = this.$refs.picker;
       this.canvas = this.$refs.canvas;
       this.strip = this.$refs.strip;
@@ -94,8 +90,7 @@ export default {
 
       this.updateSquareColors();
     },
-
-    _initWheel () {
+    initWheel () {
       this.picker = this.$refs.picker;
       this.saturation = this.$refs.saturation;
       this.canvas = this.$refs.canvas;
@@ -123,8 +118,6 @@ export default {
       this.circle.path.closePath();
       this.updateWheelColors();
     },
-
-
     handleColor (color) {
       this.currentColor = color;
       this.hsl = toHsl(this.currentColor);
@@ -136,7 +129,7 @@ export default {
         const coords = getCartesianCoords(r, this.hsl.hue / 360);
         this.mouse = { x: coords.x + ratio, y: coords.y + ratio }
       }
-  
+
       if (this.mode === 'square') {
         this.currentHue = this.hsl.hue;
         const x = (this.hsl.sat / 100) * (this.edge);
@@ -147,7 +140,6 @@ export default {
 
       this.updateCursor(this.mouse);
     },
-
     selectHue (event) {
       if (event.target !== this.strip) {
         return;
@@ -155,7 +147,6 @@ export default {
       let tempColor = this.getColorCanvas(this.getMouseCords(event), this.stripCtx);
       this.currentHue = toHsl(tempColor).hue;
     },
-
     selectColor (event) {
       if (event && event.target === this.canvas) {
         const { x, y } = this.getMouseCords(event);
@@ -173,8 +164,6 @@ export default {
       this.updateCursor(this.mouse);
       this.$emit('updateColor', this.currentColor );
     },
-
-
     updateWheelColors () {
       if (!this.circle) return;
       const x = this.circle.xCords;
@@ -200,7 +189,6 @@ export default {
         this.ctx.fill();
       }
     },
-
     updateSquareColors () {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -221,24 +209,20 @@ export default {
       this.ctx.fillStyle = grdWhite;
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     },
-
     updateCursor (mouse) {
       if (!mouse) return;
       this.cursor = mouse;
     },
-
     getMouseCords ({ offsetX, offsetY }) {
       return {
         x: offsetX,
         y: offsetY
       };
     },
-
     getColorCanvas ({ x, y }, ctx) {
       const imageData = ctx.getImageData(x, y, 1, 1).data;
       return `rgb(${imageData[0]}, ${imageData[1]}, ${imageData[2]})`;
     },
-
     mouseDownHandler (event, func) {
       event.preventDefault();
       const el = event.target;
@@ -252,18 +236,18 @@ export default {
     }
 
   },
-  mounted() {
+  mounted () {
     if (this.mode === 'wheel') {
-      this._initWheel();
+      this.initWheel();
     }
     if (this.mode === 'square') {
-      this._initSquare();
+      this.initSquare();
     }
     this.$nextTick(() => {
       this.handleColor(this.color);
     });
   }
-}
+};
 </script>
 
 
