@@ -247,6 +247,7 @@ export default {
   mounted () {
     if (this.mode === 'wheel') {
       this.initWheel();
+      this.$refs.picker.style.width = `${this.radius}px`;
     }
     if (this.mode === 'square') {
       this.initSquare();
@@ -270,10 +271,7 @@ export default {
 
   &__canvas
     &--wheel
-      display: block
       margin-bottom: 10px
-      margin-left: auto
-      margin-right: auto
 
   &__strip
     margin: 0 5px
