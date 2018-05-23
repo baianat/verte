@@ -1,6 +1,6 @@
 module.exports = {
   title: 'Verte',
-  description: 'Color-picker designed for Vue',
+  description: 'A Complete Vue.js Color Picker Component',
   base: '/verte/',
   themeConfig: {
     lastUpdated: 'Last Updated',
