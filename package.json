@@ -5,11 +5,15 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint ./src --fix",
-    "build": "MODE=production node build/build",
-    "dev": "MODE=dev node build/watcher",
+    "build": "MODE=production node scripts/build",
+    "dev": "MODE=dev node scripts/watch",
     "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:build": "vuepress build docs",
+    "docs:deploy": "scripts/deploy"
   },
+  "files": [
+    "dist/*.js"
+  ],
   "devDependencies": {
     "browser-sync": "^2.23.6",
     "chalk": "^2.3.2",
