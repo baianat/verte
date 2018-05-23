@@ -5,7 +5,7 @@
 |  Name  | Values | Default | Description |
 |--------|--------|---------|-------------|
 |`picker`| 'wheel' \| 'square' | 'wheel' | chose between pickers style |
-|`color` | a valid color string |'#000' | the starter verte color |
+|`value` | a valid color string |'#000' | the initial color value |
 |`model` | 'rgb' \| 'hex' \| 'hsl' | 'rgb' | the output color model |
 
 ## Slots
