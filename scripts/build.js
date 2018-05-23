@@ -1,12 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
+const mkdirpNode = require('mkdirp');
+const { promisify } = require('util');
 const { rollup } = require('rollup');
 const { paths, inputOptions, banner } = require('./config');
+
+const mkdirp = promisify(mkdirpNode);
 
 // const isProduction = process.env.MODE === 'production';
 
 async function buildScripts (format) {
+  await mkdirp(paths.dist);
   console.log(chalk.cyan(`📦  Generating ${format} builds...`));
 
   // get the rollup bundle.
