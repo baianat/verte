@@ -14,28 +14,24 @@
     @mousedown="dragMenu"
     :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
     :class="{'verte__menu--active': isMenuActive}"
-    )
+  )
     Picker(
       :mode="picker"
-      :color="currentColor"
+      :value="currentColor"
       @updateColor="selectColor"
-      )
+    )
     Slider(
-      ref="red"
       :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
-      :value="rgb.red"
-      @change="updateSlider"
-      )
+      v-model="rgb.red"
+    )
     Slider(ref="green"
       :gradient="[`rgb(${rgb.red},0,${rgb.blue})`, `rgb(${rgb.red},255,${rgb.blue})`]"
-      :value="rgb.green"
-      @change="updateSlider"
-      )
+      v-model="rgb.green"
+    )
     Slider(ref="blue"
       :gradient="[`rgb(${rgb.red},${rgb.green},0)`, `rgb(${rgb.red},${rgb.green},255)`]"
-      :value="rgb.blue"
-      @change="updateSlider"
-      )
+      v-model="rgb.blue"
+    )
     .verte__input
       input.verte__value(ref="el" v-model="currentColor")
       button.verte__submit(type="button" @click="closeMenu")
@@ -43,10 +39,12 @@
           path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
     .verte__recent(ref="recent")
       a.verte__color(
+        role="button"
+        href="#"
         v-for="clr in recentColors.colors"
         :style="`background: ${clr}`"
         @click.prevent="selectColor(clr)"
-        )
+      )
 
 </template>
 
@@ -69,55 +67,55 @@ export default {
     model: { type: String, default: 'rgb' },
   },
   data: () => ({
-    currentColor: '',
     isMenuActive: false,
-    rgb: {},
-    hex: {},
-    hsl: {},
+    rgb: toRgb('#000'),
+    hex: toHex('#000'),
+    hsl: toHsl('#000'),
     delta: { x: 0, y: 0 },
     recentColors: {
       max: 6,
       colors: getArray(6, getRandomColor)
     }
   }),
+  computed: {
+    currentColor: {
+      get () {
+        return this[this.model].toString();
+      },
+      set (val) {
+        this.selectColor(val);
+      }
+    }
+  },
   watch: {
     value (val, oldVal) {
       if (val === oldVal || val === this.currentColor) return;
 
       // value was updated externally.
       this.selectColor(val);
+    },
+    rgb: {
+      handler (val) {
+        this.$emit('input', this.currentColor);
+      },
+      deep: true
     }
   },
   methods: {
     selectColor (color, mute = false) {
       if (!isAColor(color)) return;
 
-      // if (!mute) call(this.settings.events.beforeSelect);
       this.rgb = toRgb(color);
       this.hex = toHex(color);
       this.hsl = toHsl(color);
-      if (!this[this.model].invalid) {
-        this.currentColor = this[this.model].toString();
-        this.$emit('input', this.currentColor);
-      }
 
 
       if (mute) return;
+      this.$emit('input', this.currentColor);
+      // if (!mute) call(this.settings.events.beforeSelect);
+
       // call(this.settings.events.afterSelect);
       // this.events.forEach((event) => this.el.dispatchEvent(event));
-    },
-    getColorFromSliders () {
-      const red = this.$refs.red.currentValue;
-      const green = this.$refs.green.currentValue;
-      const blue = this.$refs.blue.currentValue;
-      return `rgb(${red}, ${green}, ${blue})`;
-    },
-
-    updateSlider () {
-      const color = this.getColorFromSliders();
-      window.requestAnimationFrame(() => {
-        this.selectColor(color);
-      });
     },
     dragMenu (event) {
       if (event.target !== this.$refs.menu || event.button !== 0) return;
