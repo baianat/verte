@@ -80,11 +80,6 @@ export default {
       colors: getArray(6, getRandomColor)
     }
   }),
-  watch: {
-    currentColor () {
-      this.selectColor(this.currentColor);
-    }
-  },
   methods: {
     selectColor (color, mute = false) {
       if (!isAColor(color)) return;
@@ -95,7 +90,9 @@ export default {
       this.hsl = toHsl(color);
       if (!this[this.model].invalid) {
         this.currentColor = this[this.model].toString();
+        this.$emit('input', val);
       }
+
 
       if (mute) return;
       // call(this.settings.events.afterSelect);
