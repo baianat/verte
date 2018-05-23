@@ -2,6 +2,7 @@
 .verte
   button.verte__guide(
     ref="guide"
+    v-if="!menuOnly"
     :style="`color: ${currentColor}; fill: ${currentColor};`"
     @click="toggleMenu"
     )
@@ -11,9 +12,9 @@
   .verte__menu(
     ref="menu"
     tabindex="-1"
-    @mousedown="dragMenu"
+    v-on="draggableMenu ? {mousedown: dragMenu} : { }"
     :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
-    :class="{'verte__menu--active': isMenuActive}"
+    :class="{'verte__menu--active': isMenuActive, 'verte__menu--static': !draggableMenu }"
   )
     Picker(
       :mode="picker"
@@ -64,6 +65,8 @@ export default {
     picker: { type: String, default: 'wheel' },
     value: { type: String, default: '#000' },
     model: { type: String, default: 'rgb' },
+    menuOnly: { type: Boolean, default: false },
+    draggableMenu: { type: Boolean, default: true },
   },
   data: () => ({
     isMenuActive: true,
@@ -167,6 +170,7 @@ export default {
   mounted () {
     // give sliders time to
     // calculate its visible width
+    if (this.menuOnly) return;
     this.$nextTick(() => {
       this.isMenuActive = false;
     })
@@ -214,6 +218,8 @@ export default {
     box-shadow: 0 10px 15px -5px rgba($black, 0.1)
     &--active
       display: flex
+    &--static
+      position: static
 
     &:focus
       outline: none
