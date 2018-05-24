@@ -104,7 +104,7 @@ export default {
   },
   methods: {
     selectColor (color, mute = false) {
-      if (!isAColor(color)) return;
+      if (toRgb(color).invalid) return;
 
       this.rgb = toRgb(color);
       this.hex = toHex(color);
