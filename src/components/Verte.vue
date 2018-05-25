@@ -51,7 +51,7 @@
 <script>
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
-import { toRgb, toHex, toHsl, getRandomColor, isAColor } from 'color-fns';
+import { toRgb, toHex, toHsl, getRandomColor } from 'color-fns';
 import { getArray, isElementClosest } from '../utils';
 
 export default {
