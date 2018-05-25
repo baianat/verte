@@ -9,13 +9,16 @@
     "dev": "MODE=dev node scripts/watch",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "docs:deploy": "scripts/deploy"
+    "docs:deploy": "scripts/deploy",
+    "test": "jest",
+    "cover": "jest --coverage"
   },
   "files": [
     "dist/*.js",
     "dist/*.css"
   ],
   "devDependencies": {
+    "@vue/test-utils": "^1.0.0-beta.16",
     "browser-sync": "^2.23.6",
     "chalk": "^2.3.2",
     "eslint": "^4.19.1",
@@ -26,6 +29,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "eslint-plugin-vue": "^4.5.0",
     "fs": "0.0.1-security",
+    "jest": "^23.0.0",
     "mkdirp": "^0.5.1",
     "node-sass": "^4.9.0",
     "pug": "^2.0.3",
