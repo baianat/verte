@@ -53,6 +53,11 @@
     "color-fns": "^0.0.4"
   },
   "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/*.{js,vue}",
+      "!**/node_modules/**"
+    ],
     "moduleFileExtensions": [
       "js",
       "json",
