@@ -42,6 +42,7 @@
     "rollup-plugin-vue": "^4.1.4",
     "sass-loader": "^7.0.1",
     "stylus": "^0.54.5",
+    "vue-jest": "^2.6.0",
     "vue-template-compiler": "^2.5.16",
     "vuepress": "^0.8.4"
   },
@@ -49,5 +50,15 @@
   "license": "ISC",
   "dependencies": {
     "color-fns": "^0.0.4"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest"
+    }
   }
 }
