@@ -3,3 +3,5 @@ node_modules
 docs/.vuepress/dist
 .vscode
 dist
+
+*.log
