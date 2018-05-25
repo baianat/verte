@@ -4,6 +4,10 @@
   </a>
 </p>
 
+[![Build Status](https://img.shields.io/travis/baianat/verte.svg?style=flat-square)](https://travis-ci.org/baianat/verte)
+[![Codecov](https://img.shields.io/codecov/c/github/baianat/verte.svg?style=flat-square)](https://codecov.io/github/baianat/verte)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/32d598bdf1094532baf51ac7d89aebfd)](https://www.codacy.com/app/logaretm/verte?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=baianat/verte&amp;utm_campaign=Badge_Grade)
+
 # Verte (WIP) 🐛
 
 Color-picker designed for Vue
