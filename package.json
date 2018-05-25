@@ -18,19 +18,24 @@
     "dist/*.css"
   ],
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.48",
+    "@babel/preset-env": "^7.0.0-beta.48",
     "@vue/test-utils": "^1.0.0-beta.16",
+    "babel-core": "^7.0.0-0",
     "babel-jest": "^23.0.0",
     "browser-sync": "^2.23.6",
     "chalk": "^2.3.2",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-jest": "^21.15.2",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.1",
     "eslint-plugin-vue": "^4.5.0",
     "fs": "0.0.1-security",
     "jest": "^23.0.0",
+    "jest-canvas-mock": "^1.0.2",
     "mkdirp": "^0.5.1",
     "node-sass": "^4.9.0",
     "pug": "^2.0.3",
@@ -48,16 +53,23 @@
     "vuepress": "^0.8.4"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "color-fns": "^0.0.4"
   },
   "jest": {
+    "setupFiles": [
+      "<rootDir>/test/setupTests.js",
+      "jest-canvas-mock"
+    ],
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "**/*.{js,vue}",
+      "src/**/**.{js,vue}",
       "!**/node_modules/**"
     ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    },
     "moduleFileExtensions": [
       "js",
       "json",
