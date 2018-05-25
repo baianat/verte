@@ -323,6 +323,10 @@ export default {
     font-size: $fontTiny
     -webkit-appearance: none
     -moz-appearance: textfield
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button
+      -webkit-appearance: none
+      margin: 0
 
     &:focus
       outline: none
