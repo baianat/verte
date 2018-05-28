@@ -38,7 +38,7 @@
         svg.verte__icon(viewBox="0 0 24 24")
           path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
     .verte__recent(ref="recent")
-      a.verte__color(
+      a.verte__recent-color(
         role="button"
         href="#"
         v-for="clr in recentColors.colors"
@@ -148,6 +148,9 @@ export default {
     },
     addRecentColor (newColor) {
       const { colors, max } = this.recentColors;
+      if (colors.includes(newColor)) {
+        return;
+      }
       if (colors.length >= max ) {
         colors.shift();
       }
@@ -247,12 +250,13 @@ export default {
     align-items: center
     width: 100%
 
-  &__color
-    margin: 4px
-    width: 28px
-    height: 28px
-    border-radius: 50%
-    background-color: $black
+    &-color
+      margin: 4px
+      width: 28px
+      height: 28px
+      border-radius: 50%
+      background-color: $black
+      box-shadow: 0 2px 4px rgba($black, 0.1)
 
   &__value
     padding: 0.6em
