@@ -64,15 +64,14 @@ export default {
 </template>
 ```
 
-## Custom Guide Icon
+## Menu only
 
-<verte-demo value="#f0f" :menuOnly="true"></verte-demo>
+<verte-demo value="#f0f" :menuOnly="true" :draggableMenu="false"></verte-demo>
 
 ```html
 <template>
   <verte
     :menuOnly="true"
-    :draggableMenu="false"
   >
   </verte>
 </template>
