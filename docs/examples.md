@@ -64,9 +64,24 @@ export default {
 </template>
 ```
 
+## Custom Guide Icon
+
+<verte-demo value="#f0f" :menuOnly="true"></verte-demo>
+
+```html
+<template>
+  <verte
+    :menuOnly="true"
+    :draggableMenu="false"
+  >
+  </verte>
+</template>
+```
+
+
 <style>
 .verte__menu {
-  z-index: 100;
+  z-index: 15;
 }
 .verte {
   margin-top: 10px;
