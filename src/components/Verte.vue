@@ -14,7 +14,7 @@
     tabindex="-1"
     v-on="draggableMenu ? {mousedown: dragMenu} : { }"
     :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
-    :class="{'verte__menu--active': isMenuActive, 'verte__menu--static': !draggableMenu }"
+    :class="{'verte__menu--active': isMenuActive, 'verte__menu--static': !draggableMenu || menuOnly }"
   )
     Picker(
       :mode="picker"
@@ -34,7 +34,7 @@
     )
     .verte__input
       input.verte__value(ref="el" v-model="currentColor")
-      button.verte__submit(type="button" @click="closeMenu")
+      button.verte__submit(type="button" @click="submit")
         svg.verte__icon(viewBox="0 0 24 24")
           path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
     .verte__recent(ref="recent")
@@ -137,6 +137,19 @@ export default {
       };
       document.addEventListener('mousemove', mousemoveHandler);
       document.addEventListener('mouseup', mouseupHandler);
+    },
+    submit () {
+      if (!this.menuOnly) {
+        this.closeMenu();
+      }
+      this.addRecentColor(this.currentColor);
+    },
+    addRecentColor (newColor) {
+      const { colors, max } = this.recentColors;
+      if (colors.length >= max ) {
+        colors.shift();
+      }
+      colors.push(newColor);
     },
     toggleMenu () {
       if (this.isMenuActive) {
