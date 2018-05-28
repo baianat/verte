@@ -1921,9 +1921,9 @@ color-convert@^1.3.0, color-convert@^1.9.0:
   dependencies:
     color-name "^1.1.1"
 
-color-fns@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/color-fns/-/color-fns-0.0.4.tgz#065f20675ba0ec923580759dcd0f1d172f8df612"
+color-fns@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/color-fns/-/color-fns-0.0.6.tgz#b7a1be01a5495da803414b6a5d4e1d04fc2e10a7"
 
 color-name@^1.0.0, color-name@^1.1.1:
   version "1.1.3"

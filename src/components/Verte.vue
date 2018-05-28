@@ -33,7 +33,7 @@
       v-model="rgb.blue"
     )
     .verte__input
-      input.verte__value(ref="el" v-model="currentColor")
+      input.verte__value(ref="input" @keypress.enter="submit" :value="currentColor")
       button.verte__submit(type="button" @click="submit")
         svg.verte__icon(viewBox="0 0 24 24")
           path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
@@ -51,7 +51,7 @@
 <script>
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
-import { toRgb, toHex, toHsl, getRandomColor } from 'color-fns';
+import { toRgb, toHex, toHsl, getRandomColor, isValidColor, isHexShorthand } from 'color-fns';
 import { getArray, isElementClosest } from '../utils';
 
 export default {
@@ -104,7 +104,8 @@ export default {
   },
   methods: {
     selectColor (color, mute = false) {
-      if (toRgb(color).invalid) return;
+      console.log(isValidColor(color))
+      if (!isValidColor(color)) return;
 
       this.rgb = toRgb(color);
       this.hex = toHex(color);
@@ -142,6 +143,7 @@ export default {
       if (!this.menuOnly) {
         this.closeMenu();
       }
+      this.selectColor(this.$refs.input.value);
       this.addRecentColor(this.currentColor);
     },
     addRecentColor (newColor) {
