@@ -1,5 +1,5 @@
 <template lang="pug">
-.verte
+.verte(:class="{ 'verte--loading': isLoading }")
   button.verte__guide(
     ref="guide"
     v-if="!menuOnly"
@@ -69,6 +69,7 @@ export default {
   },
   data: () => ({
     isMenuActive: true,
+    isLoading: true,
     rgb: toRgb('#000'),
     hex: toHex('#000'),
     hsl: toHsl('#000'),
@@ -104,7 +105,6 @@ export default {
   },
   methods: {
     selectColor (color, mute = false) {
-      console.log(isValidColor(color))
       if (!isValidColor(color)) return;
 
       this.rgb = toRgb(color);
@@ -183,8 +183,9 @@ export default {
   mounted () {
     // give sliders time to
     // calculate its visible width
-    if (this.menuOnly) return;
     this.$nextTick(() => {
+      this.isLoading = false;
+      if (this.menuOnly) return;
       this.isMenuActive = false;
     });
   }
@@ -200,6 +201,9 @@ export default {
   justify-content: center
   *
     box-sizing: border-box
+
+  &--loading
+    opacity: 0
   &__guide
     width: 24px
     height: 24px
