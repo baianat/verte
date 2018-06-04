@@ -5,3 +5,4 @@ docs/.vuepress/dist
 dist
 *.log
 coverage
+yarn-error.*
