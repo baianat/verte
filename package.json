@@ -2,7 +2,8 @@
   "name": "verte",
   "version": "0.0.1",
   "description": "Vue Color Picker",
-  "main": "index.js",
+  "main": "dist/verte.js",
+  "style": "dist/verte.css",
   "scripts": {
     "lint": "eslint ./src --fix",
     "build": "MODE=production node scripts/build",
