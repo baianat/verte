@@ -4,35 +4,34 @@ const chalk = require('chalk');
 const mkdirpNode = require('mkdirp');
 const { promisify } = require('util');
 const { rollup } = require('rollup');
-const { paths, inputOptions, banner } = require('./config');
-
+const { paths, builds, banner } = require('./config');
 const mkdirp = promisify(mkdirpNode);
 
-// const isProduction = process.env.MODE === 'production';
 
-async function buildScripts (format) {
+async function buildScripts (build) {
   await mkdirp(paths.dist);
-  console.log(chalk.cyan(`📦  Generating ${format} builds...`));
+  console.log(chalk.cyan(`📦  Generating ${build.output}...`));
 
-  // get the rollup bundle.
-  const bundle = await rollup({
-    input: paths[format],
-    ...inputOptions
-  });
+  const inputOptions = {
+    input: paths.input,
+    plugins: build.plugins
+  }
 
-  // pass the desired output config
-  const { code } = await bundle.generate({
-    format: format,
+  const outputOptions = {
+    file: path.join(paths.dist, build.output),
+    format: build.format,
     name: 'Verte',
     banner: banner
-  });
+  }
 
-  let filePath = path.join(paths.dist, 'verte.js');
+  const bundle = await rollup(inputOptions);
+  await bundle.write(outputOptions);
 
-  fs.writeFileSync(filePath, code);
-  console.log(chalk.green('👍  verte.js'));
+  console.log(chalk.green(`👍  ${build.output}`));
 }
 
-buildScripts('es');
+Object.keys(builds).forEach(key => {
+  buildScripts(builds[key]);
+});
 
 module.exports = { buildScripts };

@@ -8,6 +8,12 @@
   dependencies:
     "@babel/highlight" "7.0.0-beta.48"
 
+"@babel/code-frame@^7.0.0-beta.47":
+  version "7.0.0-beta.49"
+  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0-beta.49.tgz#becd805482734440c9d137e46d77340e64d7f51b"
+  dependencies:
+    "@babel/highlight" "7.0.0-beta.49"
+
 "@babel/core@^7.0.0-beta.48":
   version "7.0.0-beta.48"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.0.0-beta.48.tgz#1f5977bcde2cac1de02bad8fb1506babe3ed4c36"
@@ -187,6 +193,14 @@
 "@babel/highlight@7.0.0-beta.48":
   version "7.0.0-beta.48"
   resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.0.0-beta.48.tgz#2f225dc995899858f27858d9011fdb75f70bcf96"
+  dependencies:
+    chalk "^2.0.0"
+    esutils "^2.0.2"
+    js-tokens "^3.0.0"
+
+"@babel/highlight@7.0.0-beta.49":
+  version "7.0.0-beta.49"
+  resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.0.0-beta.49.tgz#96bdc6b43e13482012ba6691b1018492d39622cc"
   dependencies:
     chalk "^2.0.0"
     esutils "^2.0.2"
@@ -1540,7 +1554,7 @@ buble-loader@^0.5.0:
   dependencies:
     loader-utils "^1.1.0"
 
-buble@^0.19.3:
+buble@^0.19.2, buble@^0.19.3:
   version "0.19.3"
   resolved "https://registry.yarnpkg.com/buble/-/buble-0.19.3.tgz#01e9412062cff1da6f20342b6ecd72e7bf699d02"
   dependencies:
@@ -7367,6 +7381,13 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
+rollup-plugin-buble@^0.19.2:
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-buble/-/rollup-plugin-buble-0.19.2.tgz#c0590c7d3d475b5ed59f129764ec93710cc6e8dd"
+  dependencies:
+    buble "^0.19.2"
+    rollup-pluginutils "^2.0.1"
+
 rollup-plugin-css-only@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/rollup-plugin-css-only/-/rollup-plugin-css-only-0.4.0.tgz#eaf10c79b17c88dc95712fe91518e3afedfb657a"
@@ -7390,9 +7411,16 @@ rollup-plugin-replace@^2.0.0:
     minimatch "^3.0.2"
     rollup-pluginutils "^2.0.1"
 
-rollup-plugin-vue@^4.1.4:
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-vue/-/rollup-plugin-vue-4.1.4.tgz#e154d3bc1e2575ad15e8f2ec6456ef93e516d9bc"
+rollup-plugin-uglify@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-uglify/-/rollup-plugin-uglify-4.0.0.tgz#6eb471738f1ce9ba7d9d4bc43b71cba02417c8fb"
+  dependencies:
+    "@babel/code-frame" "^7.0.0-beta.47"
+    uglify-js "^3.3.25"
+
+rollup-plugin-vue@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-vue/-/rollup-plugin-vue-4.2.0.tgz#83cf392c5e929c34d5f4992e75c2ed32aa600c09"
   dependencies:
     "@babel/runtime" "^7.0.0-beta.46"
     "@vue/component-compiler" "^3.3.2"
@@ -8400,6 +8428,13 @@ uglify-js@^2.6, uglify-js@^2.6.1:
     yargs "~3.10.0"
   optionalDependencies:
     uglify-to-browserify "~1.0.0"
+
+uglify-js@^3.3.25:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.0.tgz#796762282b5b5f0eafe7d5c8c708d1d7bd5ba11d"
+  dependencies:
+    commander "~2.15.0"
+    source-map "~0.6.1"
 
 uglify-to-browserify@~1.0.0:
   version "1.0.2"
