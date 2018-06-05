@@ -1,6 +1,6 @@
 {
   "name": "verte",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Vue Color Picker",
   "main": "dist/verte.js",
   "style": "dist/verte.css",
