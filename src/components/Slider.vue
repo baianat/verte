@@ -172,14 +172,18 @@ export default {
 
       const mouseValue = (eventX - this.currentX);
       const stepCount = parseInt((mouseValue / this.stepWidth) + 0.5, 10);
-      const stepValue = parseInt((stepCount + this.min) / this.step, 10) * this.step;
-      return stepValue;
+      const stepValue = (stepCount * this.step) + this.min;
+      if (!this.decimalsCount) {
+        return stepValue;
+      }
+      return Number(stepValue.toFixed(this.decimalsCount));
     },
     updateWidth () {
       const trackRect = this.track.getBoundingClientRect();
       this.currentX = trackRect.left;
       this.width = trackRect.width;
-      this.stepWidth = (this.width / (this.max - this.min));
+      this.stepWidth = (this.width / (this.max - this.min)) * this.step;
+      console.log(this.width, this.stepWidth)
     },
     /**
      * get the filled area percentage
@@ -289,7 +293,9 @@ export default {
     }
   },
   created () {
+    const stepSplited = this.step.toString().split('.')[1]; 
     this.currentValue = this.value;
+    this.decimalsCount = stepSplited ? stepSplited.length : 0;
   },
   mounted () {
     this.init();
