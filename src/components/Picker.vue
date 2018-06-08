@@ -1,19 +1,20 @@
 <template lang="pug">
 .verte-picker(ref="picker")
-  canvas.verte-picker__canvas(
-    ref="canvas"
-    :class="`verte-picker__canvas--${mode}`"
-    @mousedown="mouseDownHandler($event, onMousedown)"
-  )
-  canvas.verte-picker__strip(
-    ref="strip"
-    v-if="mode === 'square'"
-    @mousedown="mouseDownHandler($event, selectHue)"
-  )
-  .verte-picker__cursor(
-    ref="cursor"
-    :style="`transform: translate3d(${cursor.x}px, ${cursor.y}px, 0)`"
-  )
+  .verte-picker__origin(ref="origin")
+    canvas.verte-picker__canvas(
+      ref="canvas"
+      :class="`verte-picker__canvas--${mode}`"
+      @mousedown="mouseDownHandler($event, onMousedown)"
+    )
+    canvas.verte-picker__strip(
+      ref="strip"
+      v-if="mode === 'square'"
+      @mousedown="mouseDownHandler($event, selectHue)"
+    )
+    .verte-picker__cursor(
+      ref="cursor"
+      :style="`transform: translate3d(${cursor.x}px, ${cursor.y}px, 0)`"
+    )
   slider.verte-picker__saturation(
     ref="saturation"
     v-if="mode === 'wheel'"
@@ -241,7 +242,7 @@ export default {
   mounted () {
     if (this.mode === 'wheel') {
       this.initWheel();
-      this.$refs.picker.style.width = `${this.radius}px`;
+      this.$refs.origin.style.width = `${this.radius}px`;
     }
     if (this.mode === 'square') {
       this.initSquare();
@@ -257,10 +258,13 @@ export default {
 @import 'variables';
 
 .verte-picker
-  position: relative
-  margin: 0 auto 10px
-  user-select: none
   width: 100%
+  margin: 0 auto 10px
+  
+  &__origin
+    user-select: none
+    position: relative
+    margin: 0 auto
 
   &__canvas
     &--wheel

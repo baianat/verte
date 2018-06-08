@@ -4,7 +4,7 @@
       ref="track"
       v-on="trackSlide ? { mousedown: select, touchstrat: select } : { }"
       )
-      .slider__fill(v-if="fill" :style="`transform: translate(${fill.translate}px, 0) scale(${fill.scale}, 1)`")
+      .slider__fill(ref="fill")
       .slider__handle(
         v-for="handle in handles"
         @mousedown.native="select"
@@ -90,6 +90,7 @@ export default {
     initElements () {
       this.wrapper = this.$refs.wrapper;
       this.track = this.$refs.track;
+      this.fill = this.$refs.fill;
 
       this.wrapper.classList.toggle('slider--editable', this.editable);
       this.wrapper.classList.toggle('slider--reverse', this.reverse);
@@ -99,11 +100,11 @@ export default {
     },
     initGradient (gradient) {
       if (gradient.length > 1) {
-        this.track.style.backgroundImage = `linear-gradient(90deg, ${gradient})`;
+        this.fill.style.backgroundImage = `linear-gradient(90deg, ${gradient})`;
         return;
       }
-      this.track.style.backgroundImage = '';
-      this.track.style.backgroundColor = gradient[0];
+      this.fill.style.backgroundImage = '';
+      this.fill.style.backgroundColor = gradient[0];
       this.handles.forEach(handle => {
         handle.style.color = gradient[0];
       });
@@ -344,8 +345,11 @@ export default {
     margin: 0.2em
     width: auto
     height: 0.2em
-    background: $gray
+    background: $white
     will-change: transfom
+    background-image: linear-gradient(45deg, $gray 25%, transparent 25%), linear-gradient(45deg, transparent 75%, $gray 75%), linear-gradient(-45deg, $gray 25%, transparent 25%), linear-gradient(-45deg, transparent 75%, $gray 75%)
+    background-size: 6px 6px
+    background-position: 0 0, 3px -3px, 0 3px, -3px 0px
 
   &__handle
     position: relative
@@ -358,6 +362,7 @@ export default {
     width: 0.4em
     height: 0.4em
     background-color: currentColor
+    box-shadow: 1px 2px 8px -2px rgba($black, 0.5)
 
   &__label
     position: absolute
@@ -393,9 +398,7 @@ export default {
   &__fill
     width: 100%
     height: 100%
-    background-color: $gray
     transform-origin: left top
-    display: none
 
   &:hover,
   &--dragging

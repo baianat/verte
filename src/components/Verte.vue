@@ -21,14 +21,22 @@
       v-model="currentColor"
     )
     Slider(
+      :gradient="[`rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, 0)`, `rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, 1)`]"
+      :min="0"
+      :max="1"
+      :step="0.01"
+      :editable="false"
+      v-model="alpha"
+    )
+    Slider(
       :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
       v-model="rgb.red"
     )
-    Slider(ref="green"
+    Slider(
       :gradient="[`rgb(${rgb.red},0,${rgb.blue})`, `rgb(${rgb.red},255,${rgb.blue})`]"
       v-model="rgb.green"
     )
-    Slider(ref="blue"
+    Slider(
       :gradient="[`rgb(${rgb.red},${rgb.green},0)`, `rgb(${rgb.red},${rgb.green},255)`]"
       v-model="rgb.blue"
     )
@@ -51,7 +59,7 @@
 <script>
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
-import { toRgb, toHex, toHsl, getRandomColor, isValidColor, isHexShorthand } from 'color-fns';
+import { toRgb, toHex, toHsl, getRandomColor, isValidColor, isHexShorthand, alpha } from 'color-fns';
 import { getArray, isElementClosest } from '../utils';
 
 export default {
@@ -65,6 +73,7 @@ export default {
     value: { type: String, default: '#000' },
     model: { type: String, default: 'rgb' },
     menuOnly: { type: Boolean, default: false },
+    enableAlpha: { type: Boolean, default: false },
     draggableMenu: { type: Boolean, default: true }
   },
   data: () => ({
@@ -86,6 +95,17 @@ export default {
       },
       set (val) {
         this.selectColor(val);
+      }
+    },
+    alpha: {
+      get () {
+        if (isNaN(this[this.model].alpha)) {
+          return 1;
+        }
+        return this[this.model].alpha
+      },
+      set (val) {
+        this[this.model].alpha = val;
       }
     }
   },
