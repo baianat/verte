@@ -38,11 +38,6 @@ module.exports = {
       format: 'umd',
       plugins: plugins.concat([uglify()])
     },
-    cjs: {
-      output: 'verte.common.js',
-      format: 'cjs',
-      plugins
-    },
     esm: {
       output: 'verte.esm.js',
       format: 'es',
