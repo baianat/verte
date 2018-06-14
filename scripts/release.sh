@@ -22,8 +22,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
   git commit -m "build: build $VERSION"
 
-  # generate release note
-  npm run release:note
   # tag version
   npm version "$VERSION" --message "build: release $VERSION"
 
