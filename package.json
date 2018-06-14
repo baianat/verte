@@ -6,13 +6,13 @@
   "style": "dist/verte.css",
   "module": "dist/verte.esm.js",
   "scripts": {
-    "lint": "eslint ./src --fix",
     "build": "MODE=production node scripts/build",
     "dev": "MODE=dev node scripts/watch",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "docs:deploy": "scripts/deploy",
     "test": "jest",
+    "lint": "eslint --fix src scripts test",
     "cover": "jest --coverage"
   },
   "files": [
