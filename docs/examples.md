@@ -64,9 +64,19 @@ export default {
 </template>
 ```
 
-## Menu only
+## Layout Customization
 
-<verte-demo value="#f0f" :menuOnly="true" :draggableMenu="false"></verte-demo>
+### Vertical
+
+Display the component vertically using a trigger button and allow dragging.
+
+<verte-demo value="#f0f" display="vertical" :draggable="true"></verte-demo>
+
+### Vertical Widget
+
+Display the component vertically at all times and disable dragging.
+
+<verte-demo value="#f0f" display="vertical-widget" :draggable="false"></verte-demo>
 
 ```html
 <template>
