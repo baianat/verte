@@ -48,7 +48,7 @@ function genConfig (options) {
     input: {
       input: common.paths.input,
       plugins: [
-        replace({ __VERSION__: version }),
+        replace({ __VERSION__: process.env.VERSION }),
         css({ output: 'dist/verte.css' }),
         vue({ css: false }),
         resolve(),
