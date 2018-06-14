@@ -15,12 +15,14 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
   if [[ -z $SKIP_TESTS ]]; then
     npm run lint
+    npm run test --maxWorkers=1
   fi
 
   # build
   VERSION=$VERSION npm run build
 
-  git commit -m "build: build $VERSION"
+  git add .
+  git diff --quiet && git diff --staged --quiet || git commit -am "build: build $VERSION"
 
   # tag version
   npm version "$VERSION" --message "build: release $VERSION"
