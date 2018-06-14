@@ -7,9 +7,8 @@
 |`picker`| 'wheel' \| 'square' | 'wheel' | chose between pickers style |
 |`value` | a valid color string |'#000' | the initial color value |
 |`model` | 'rgb' \| 'hex' \| 'hsl' | 'rgb' | the output color model |
-|`model` | 'rgb' \| 'hex' \| 'hsl' | 'rgb' | the output color model |
 |`menu-only` | Boolean | false | display verte menu only or when width guide button |
-|`draggable-menu` | Boolean | true | turn on/off dragging the picker menu |
+|`draggable` | Boolean | true | turn on/off dragging the picker menu |
 
 ## Slots
 
