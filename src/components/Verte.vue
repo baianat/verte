@@ -12,9 +12,9 @@
   .verte__menu(
     ref="menu"
     tabindex="-1"
-    v-on="draggableMenu ? {mousedown: dragMenu} : { }"
+    v-on="draggable ? {mousedown: dragMenu} : { }"
     :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
-    :class="{'verte__menu--active': isMenuActive, 'verte__menu--static': !draggableMenu || menuOnly }"
+    :class="{'verte__menu--active': isMenuActive, 'verte__menu--static': !draggable || menuOnly }"
   )
     Picker(
       :mode="picker"
@@ -59,8 +59,8 @@
 <script>
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
-import { toRgb, toHex, toHsl, getRandomColor, isValidColor, isHexShorthand, alpha } from 'color-fns';
-import { getArray, isElementClosest } from '../utils';
+import { toRgb, toHex, toHsl, getRandomColor, isValidColor } from 'color-fns';
+import { getArray, isElementClosest, warn } from '../utils';
 
 export default {
   name: 'Verte',
@@ -72,9 +72,21 @@ export default {
     picker: { type: String, default: 'wheel' },
     value: { type: String, default: '#000' },
     model: { type: String, default: 'rgb' },
-    menuOnly: { type: Boolean, default: false },
+    display: {
+      type: String,
+      default: 'vertical',
+      validator: value => {
+        const list = ['vertical', 'vertical-widget'];
+        const isValid = list.indexOf(value) !== -1;
+        if (!isValid && process.env.NODE_ENV !== 'production') {
+          warn(`The "display" property can be only one of: ${list.map(l => "'" + l + "' ").toString().trim()}.`);
+        }
+
+        return isValid;
+      }
+    },
     enableAlpha: { type: Boolean, default: false },
-    draggableMenu: { type: Boolean, default: true }
+    draggable: { type: Boolean, default: true }
   },
   data: () => ({
     isMenuActive: true,
@@ -102,11 +114,14 @@ export default {
         if (isNaN(this[this.model].alpha)) {
           return 1;
         }
-        return this[this.model].alpha
+        return this[this.model].alpha;
       },
       set (val) {
         this[this.model].alpha = val;
       }
+    },
+    menuOnly () {
+      return this.display === 'vertical-widget';
     }
   },
   watch: {
@@ -171,7 +186,7 @@ export default {
       if (colors.includes(newColor)) {
         return;
       }
-      if (colors.length >= max ) {
+      if (colors.length >= max) {
         colors.shift();
       }
       colors.push(newColor);
