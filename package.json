@@ -13,6 +13,7 @@
     "docs:deploy": "scripts/deploy",
     "test": "jest",
     "lint": "eslint --fix src scripts test",
+    "release": "bash scripts/release.sh",
     "cover": "jest --coverage"
   },
   "files": [
