@@ -7,12 +7,13 @@ const mkdirp = promisify(mkdirpNode);
 
 async function buildScripts (build) {
   await mkdirp(paths.dist);
-  console.log(chalk.cyan(`📦  Generating ${build.output.file}...`));
+  const bundleName = build.output.file.replace(paths.dist, '');
+  console.log(chalk.cyan(`📦  Generating ${bundleName}...`));
 
   const bundle = await rollup(build.input);
   await bundle.write(build.output);
 
-  console.log(chalk.green(`👍  ${build.output.file} ${utils.stats({ path: build.output.file })}`));
+  console.log(chalk.green(`👍  ${bundleName} ${utils.stats({ path: build.output.file })}`));
 }
 
 Object.keys(configs).forEach(key => {

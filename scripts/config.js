@@ -59,7 +59,7 @@ function genConfig (options) {
       banner: common.banner,
       name: options.name,
       format: options.format,
-      file: options.file
+      file: path.join(common.paths.dist, options.file)
     }
   };
 
