@@ -184,7 +184,6 @@ export default {
       this.currentX = trackRect.left;
       this.width = trackRect.width;
       this.stepWidth = (this.width / (this.max - this.min)) * this.step;
-      console.log(this.width, this.stepWidth)
     },
     /**
      * get the filled area percentage
@@ -294,7 +293,7 @@ export default {
     }
   },
   created () {
-    const stepSplited = this.step.toString().split('.')[1]; 
+    const stepSplited = this.step.toString().split('.')[1];
     this.currentValue = this.value;
     this.decimalsCount = stepSplited ? stepSplited.length : 0;
   },
