@@ -1,11 +1,13 @@
 const path = require('path');
+const fs = require('fs');
 const replace = require('rollup-plugin-replace');
 const vue = require('rollup-plugin-vue').default;
 const resolve = require('rollup-plugin-node-resolve');
 const css = require('rollup-plugin-css-only');
 const buble = require('rollup-plugin-buble');
+const filesize = require('filesize');
+const gzipSize = require('gzip-size');
 const { uglify } = require('rollup-plugin-uglify');
-
 const { version } = require('../package.json');
 
 const common = {
@@ -22,17 +24,19 @@ const common = {
   },
   builds: {
     umd: {
-      output: 'verte.js',
+      file: 'verte.js',
       format: 'umd',
+      name: 'Verte',
       env: 'development'
     },
     umdMin: {
-      output: 'verte.min.js',
+      file: 'verte.min.js',
       format: 'umd',
+      name: 'Verte',
       env: 'production'
     },
     esm: {
-      output: 'verte.esm.js',
+      file: 'verte.esm.js',
       format: 'es'
     }
   }
@@ -40,8 +44,9 @@ const common = {
 
 function genConfig (options) {
   const config = {
+    description: '',
     input: {
-      input: options.input,
+      input: common.paths.input,
       plugins: [
         replace({ __VERSION__: version }),
         css({ output: 'dist/verte.css' }),
@@ -52,8 +57,9 @@ function genConfig (options) {
     },
     output: {
       banner: common.banner,
+      name: options.name,
       format: options.format,
-      name: options.name
+      file: options.file
     }
   };
 
@@ -78,7 +84,15 @@ const configs = Object.keys(common.builds).reduce((prev, key) => {
 
 module.exports = {
   configs,
-  utils: common.utils,
   uglifyOptions: common.uglifyOptions,
-  paths: common.paths
+  paths: common.paths,
+  utils: {
+    stats ({ path }) {
+      const code = fs.readFileSync(path);
+      const { size } = fs.statSync(path);
+      const gzipped = gzipSize.sync(code);
+
+      return `| Size: ${filesize(size)} | Gzip: ${filesize(gzipped)}`;
+    }
+  }
 };
