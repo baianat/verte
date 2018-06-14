@@ -8,7 +8,8 @@ const buble = require('rollup-plugin-buble');
 const filesize = require('filesize');
 const gzipSize = require('gzip-size');
 const { uglify } = require('rollup-plugin-uglify');
-const { version } = require('../package.json');
+
+const version = process.env.VERSION || require('../package.json').version;
 
 const common = {
   banner:
@@ -48,7 +49,7 @@ function genConfig (options) {
     input: {
       input: common.paths.input,
       plugins: [
-        replace({ __VERSION__: process.env.VERSION }),
+        replace({ __VERSION__: version }),
         css({ output: 'dist/verte.css' }),
         vue({ css: false }),
         resolve(),
