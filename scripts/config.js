@@ -14,7 +14,7 @@ const version = process.env.VERSION || require('../package.json').version;
 const common = {
   banner:
     `/**
-    * v${version}
+    * Verte v${version}
     * (c) ${new Date().getFullYear()} Baianat
     * @license MIT
     */`,
