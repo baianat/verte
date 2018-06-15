@@ -22,7 +22,7 @@
 
 <script>
 import { mixColors } from 'color-fns';
-import { getClosestValue } from '../utils';
+import { getClosestValue, debounce } from '../utils';
 
 export default {
   name: 'Slider',
@@ -67,6 +67,9 @@ export default {
   },
   methods: {
     init () {
+      this.$emitInputEvent = debounce(() => {
+        this.$emit('input', this.currentValue);
+      });
       this.multiple = this.values.length > 1;
       this.values = this.handlesValue;
       this.handles = this.handlesValue.map((value, index) => {
@@ -192,6 +195,7 @@ export default {
      * @return {Number}
      */
     getPositionPercentage (value) {
+      console.log(value, `${(value - this.min) / (this.max - this.min)}%`);
       return (value - this.min) / (this.max - this.min);
     },
     normalizeValue (value) {
@@ -288,7 +292,7 @@ export default {
         }
 
         if (mute) return;
-        this.$emit('input', this.currentValue);
+        this.$emitInputEvent();
       });
     }
   },
