@@ -28,18 +28,41 @@
       :editable="false"
       v-model="alpha"
     )
-    Slider(
-      :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
-      v-model="rgb.red"
-    )
-    Slider(
-      :gradient="[`rgb(${rgb.red},0,${rgb.blue})`, `rgb(${rgb.red},255,${rgb.blue})`]"
-      v-model="rgb.green"
-    )
-    Slider(
-      :gradient="[`rgb(${rgb.red},${rgb.green},0)`, `rgb(${rgb.red},${rgb.green},255)`]"
-      v-model="rgb.blue"
-    )
+    template(v-if="model === 'hsl'")
+      Slider(
+        :gradient="[`hsl(0,${hsl.sat}%,${hsl.lum}%)`, `hsl(360,${hsl.sat}%,${hsl.lum}%)`]"
+        :min="0"
+        :max="360"
+        :step="1"
+        v-model="hsl.hue"
+      )
+      Slider(
+        :gradient="[`hsl(${hsl.hue},0%,${hsl.lum}%)`, `hsl(${hsl.hue},100%,${hsl.lum}%)`]"
+        :min="0"
+        :max="100"
+        :step="1"
+        v-model="hsl.sat"
+      )
+      Slider(
+        :gradient="[`hsl(${hsl.hue},${hsl.sat}%,0%)`, `hsl(${hsl.hue},${hsl.sat}%,100%)`]"
+        :min="0"
+        :max="100"
+        :step="1"
+        v-model="hsl.lum"
+      )
+    template(v-if="model === 'rgb'")
+      Slider(
+        :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
+        v-model="rgb.red"
+      )
+      Slider(
+        :gradient="[`rgb(${rgb.red},0,${rgb.blue})`, `rgb(${rgb.red},255,${rgb.blue})`]"
+        v-model="rgb.green"
+      )
+      Slider(
+        :gradient="[`rgb(${rgb.red},${rgb.green},0)`, `rgb(${rgb.red},${rgb.green},255)`]"
+        v-model="rgb.blue"
+      )
     .verte__input
       input.verte__value(ref="input" @keypress.enter="submit" :value="currentColor")
       button.verte__submit(type="button" @click="submit")
