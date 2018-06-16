@@ -9,7 +9,7 @@
         v-for="handle in handles"
         @mousedown.native="select"
         @touchstart.native="select"
-        :style="`transform: translate(${handle.positoin}px, 0); background-color: ${handle.color};`"
+        :style="`transform: translate(${handle.position}px, 0); background-color: ${handle.color};`"
         )
         .slider__label(v-if="label") {{ handle.value }}
     input.slider__input(
@@ -22,7 +22,7 @@
 
 <script>
 import { mixColors } from 'color-fns';
-import { getClosestValue } from '../utils';
+import { getClosestValue, debounce } from '../utils';
 
 export default {
   name: 'Slider',
@@ -67,6 +67,9 @@ export default {
   },
   methods: {
     init () {
+      this.$emitInputEvent = debounce(() => {
+        this.$emit('input', this.currentValue);
+      });
       this.multiple = this.values.length > 1;
       this.values = this.handlesValue;
       this.handles = this.handlesValue.map((value, index) => {
@@ -192,7 +195,7 @@ export default {
      * @return {Number}
      */
     getPositionPercentage (value) {
-      return (value - this.min) / (this.max - this.min);
+      return ((value - this.min) / (this.max - this.min)).toFixed(2);
     },
     normalizeValue (value) {
       if (isNaN(Number(value))) {
@@ -275,7 +278,7 @@ export default {
 
         this.values[this.activeHandle] = normalized;
         this.handles[this.activeHandle].value = normalized;
-        this.handles[this.activeHandle].positoin = positionPercentage * this.width;
+        this.handles[this.activeHandle].position = positionPercentage * this.width;
         this.currentValue = normalized;
         this.$refs.input.value = this.currentValue;
 
@@ -288,7 +291,7 @@ export default {
         }
 
         if (mute) return;
-        this.$emit('input', this.currentValue);
+        this.$emitInputEvent();
       });
     }
   },
