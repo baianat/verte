@@ -2,6 +2,7 @@
 .verte(:class="{ 'verte--loading': isLoading }")
   button.verte__guide(
     ref="guide"
+    type="button"
     v-if="!menuOnly"
     :style="`color: ${currentColor}; fill: ${currentColor};`"
     @click="toggleMenu"
