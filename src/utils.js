@@ -50,3 +50,14 @@ export function getCartesianCoords (r, theta) {
 export function warn (message) {
   console.warn(`[Verte]: ${message}`);
 }
+
+export function makeListValidator (propName, list) {
+  return value => {
+    const isValid = list.indexOf(value) !== -1;
+    if (!isValid && process.env.NODE_ENV !== 'production') {
+      warn(`The "${propName}" property can be only one of: ${list.map(l => "'" + l + "'").join(', ')}.`);
+    }
+
+    return isValid;
+  };
+};

@@ -84,7 +84,7 @@
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
 import { toRgb, toHex, toHsl, getRandomColor, isValidColor } from 'color-fns';
-import { makeArray, isElementClosest, warn } from '../utils';
+import { makeArray, isElementClosest, warn, makeListValidator } from '../utils';
 
 export default {
   name: 'Verte',
@@ -93,37 +93,33 @@ export default {
     Slider
   },
   props: {
-    picker: { type: String, default: 'wheel' },
-    value: { type: String, default: '#000' },
+    picker: {
+      type: String,
+      default: 'wheel',
+      validator: makeListValidator('picker', ['wheel', 'square'])
+    },
+    value: {
+      type: String,
+      default: '#000'
+    },
     model: {
       type: String,
-      default: 'rgb',
-      validator: value => {
-        const list = ['rgb', 'hex', 'hsl'];
-        const isValid = list.indexOf(value) !== -1;
-
-        if (!isValid && process.env.NODE_ENV !== 'production') {
-          warn(`The "model" property can be only one of: ${list.map(l => "'" + l + "'").join(', ').trim()}.`);
-        }
-
-        return isValid;
-      }
+      default: 'rgb',      
+      validator: makeListValidator('model',  ['rgb', 'hex', 'hsl'])
     },
     display: {
       type: String,
       default: 'vertical',
-      validator: value => {
-        const list = ['vertical', 'vertical-widget'];
-        const isValid = list.indexOf(value) !== -1;
-        if (!isValid && process.env.NODE_ENV !== 'production') {
-          warn(`The "display" property can be only one of: ${list.map(l => "'" + l + "'").join(', ').trim()}.`);
-        }
-
-        return isValid;
-      }
+      validator: makeListValidator('display', ['vertical', 'vertical-widget'])
     },
-    enableAlpha: { type: Boolean, default: false },
-    draggable: { type: Boolean, default: true }
+    enableAlpha: {
+      type: Boolean,
+      default: false
+    },
+    draggable: {
+      type: Boolean,
+      default: true
+    }
   },
   data: () => ({
     isMenuActive: true,
