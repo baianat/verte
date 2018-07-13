@@ -136,6 +136,11 @@ export default {
   computed: {
     currentColor: {
       get () {
+        if (!this[this.model] && process.env.NODE_ENV !== 'production') {
+          warn(`You are using a non-supported color model: "${this.model}", the supported models are: "rgb", "hsl" and "hex"`);
+          return `rgb(0, 0, 0)`;
+        }
+
         return this[this.model].toString();
       },
       set (val) {
@@ -144,9 +149,14 @@ export default {
     },
     alpha: {
       get () {
+        if (!this[this.model]) {
+          return 1;
+        }
+
         if (isNaN(this[this.model].alpha)) {
           return 1;
         }
+
         return this[this.model].alpha;
       },
       set (val) {
