@@ -33,7 +33,7 @@ import { toHsl } from 'color-fns';
 import { getCartesianCoords } from '../utils';
 
 export default {
-  name: 'Picker',
+  name: 'VertePicker',
   components: {
     Slider
   },

@@ -25,7 +25,7 @@ import { mixColors } from 'color-fns';
 import { getClosestValue, debounce } from '../utils';
 
 export default {
-  name: 'Slider',
+  name: 'VerteSlider',
   props: {
     gradient: Array,
     classes: Array,
