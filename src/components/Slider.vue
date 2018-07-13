@@ -311,7 +311,7 @@ export default {
 </script>
 
 <style lang="sass">
-@import 'variables';
+@import '../sass/variables';
 
 .slider
   position: relative
