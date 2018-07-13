@@ -157,6 +157,7 @@ export default {
     },
     rgb: {
       handler (val) {
+        this.hex = toHex(val.toString());
         this.$emit('input', this.currentColor);
       },
       deep: true
