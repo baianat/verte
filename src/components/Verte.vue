@@ -84,7 +84,7 @@
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
 import { toRgb, toHex, toHsl, getRandomColor, isValidColor } from 'color-fns';
-import { getArray, isElementClosest, warn } from '../utils';
+import { makeArray, isElementClosest, warn } from '../utils';
 
 export default {
   name: 'Verte',
@@ -121,7 +121,7 @@ export default {
     delta: { x: 0, y: 0 },
     recentColors: {
       max: 6,
-      colors: getArray(6, getRandomColor)
+      colors: makeArray(6, getRandomColor)
     }
   }),
   computed: {
