@@ -164,14 +164,14 @@ export default {
     }
   },
   methods: {
-    selectColor (color, mute = false) {
+    selectColor (color, muted = false) {
       if (!isValidColor(color)) return;
 
       this.rgb = toRgb(color);
       this.hex = toHex(color);
       this.hsl = toHsl(color);
 
-      if (mute) return;
+      if (muted) return;
       this.$emit('input', this.currentColor);
     },
     dragMenu (event) {

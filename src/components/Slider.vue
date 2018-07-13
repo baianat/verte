@@ -261,7 +261,7 @@ export default {
       });
     },
 
-    updateValue (value, mute = false) {
+    updateValue (value, muted = false) {
       // if (Number(value) === this.value) return;
 
       window.requestAnimationFrame(() => {
@@ -290,7 +290,7 @@ export default {
           }
         }
 
-        if (mute) return;
+        if (muted) return;
         this.$emitInputEvent();
       });
     }

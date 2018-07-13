@@ -163,12 +163,10 @@ export default {
 
       this.selectColor();
     },
-    selectColor (mute = false) {
+    selectColor (muted = false) {
       this.currentColor = this.getCanvasColor(this.cursor, this.ctx);
       // stops propgation
-      if (mute) {
-        return;
-      }
+      if (muted) return;
 
       this.$emit('input', this.currentColor);
     },
