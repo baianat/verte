@@ -104,8 +104,8 @@ export default {
     },
     model: {
       type: String,
-      default: 'rgb',      
-      validator: makeListValidator('model',  ['rgb', 'hex', 'hsl'])
+      default: 'rgb',
+      validator: makeListValidator('model', ['rgb', 'hex', 'hsl'])
     },
     display: {
       type: String,
@@ -137,7 +137,7 @@ export default {
     currentColor: {
       get () {
         if (!this[this.model] && process.env.NODE_ENV !== 'production') {
-          warn(`You are using a non-supported color model: "${this.model}", the supported models are: "rgb", "hsl" and "hex"`);
+          warn(`You are using a non-supported color model: "${this.model}", the supported models are: "rgb", "hsl" and "hex".`);
           return `rgb(0, 0, 0)`;
         }
 
