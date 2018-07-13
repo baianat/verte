@@ -6,8 +6,8 @@
   "style": "dist/verte.css",
   "module": "dist/verte.esm.js",
   "scripts": {
-    "build": "MODE=production node scripts/build",
-    "dev": "MODE=dev node scripts/watch",
+    "build": "node scripts/build",
+    "dev": "node scripts/watch",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "docs:deploy": "scripts/deploy",
