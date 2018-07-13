@@ -51,7 +51,7 @@
         :step="1"
         v-model="hsl.lum"
       )
-    template(v-if="model === 'rgb'")
+    template(v-if="model === 'rgb' || model === 'hex'")
       Slider(
         :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
         v-model="rgb.red"
