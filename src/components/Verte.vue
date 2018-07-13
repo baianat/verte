@@ -95,7 +95,20 @@ export default {
   props: {
     picker: { type: String, default: 'wheel' },
     value: { type: String, default: '#000' },
-    model: { type: String, default: 'rgb' },
+    model: {
+      type: String,
+      default: 'rgb',
+      validator: value => {
+        const list = ['rgb', 'hex', 'hsl'];
+        const isValid = list.indexOf(value) !== -1;
+
+        if (!isValid && process.env.NODE_ENV !== 'production') {
+          warn(`The "model" property can be only one of: ${list.map(l => "'" + l + "'").join(', ').trim()}.`);
+        }
+
+        return isValid;
+      }
+    },
     display: {
       type: String,
       default: 'vertical',
@@ -103,7 +116,7 @@ export default {
         const list = ['vertical', 'vertical-widget'];
         const isValid = list.indexOf(value) !== -1;
         if (!isValid && process.env.NODE_ENV !== 'production') {
-          warn(`The "display" property can be only one of: ${list.map(l => "'" + l + "' ").toString().trim()}.`);
+          warn(`The "display" property can be only one of: ${list.map(l => "'" + l + "'").join(', ').trim()}.`);
         }
 
         return isValid;
