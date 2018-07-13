@@ -241,7 +241,7 @@ export default {
     }
   },
   created () {
-    this.selectColor(this.value || '#000');
+    this.selectColor(this.value || '#000', true);
   },
   mounted () {
     // give sliders time to
