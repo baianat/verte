@@ -23,6 +23,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.51",
     "@babel/preset-env": "^7.0.0-beta.51",
+    "@commitlint/cli": "^7.0.0",
     "@vue/test-utils": "^1.0.0-beta.18",
     "babel-core": "^7.0.0-0",
     "babel-jest": "^23.0.1",
@@ -39,8 +40,10 @@
     "filesize": "^3.6.1",
     "fs": "0.0.1-security",
     "gzip-size": "^4.1.0",
+    "husky": "^1.0.0-rc.13",
     "jest": "^23.1.0",
     "jest-canvas-mock": "^1.0.3",
+    "lint-staged": "^7.2.0",
     "mkdirp": "^0.5.1",
     "node-sass": "^4.9.0",
     "pug": "^2.0.3",
@@ -86,5 +89,17 @@
       ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest",
       "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
     }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint --edit -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
