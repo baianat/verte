@@ -136,7 +136,7 @@ export default {
       if (event.target !== this.$refs.strip) {
         return;
       }
-      let tempColor = this.getColorCanvas(this.getMouseCords(event), this.$refs.stripCtx);
+      let tempColor = this.getCanvasColor(this.getMouseCords(event), this.$refs.stripCtx);
       this.currentHue = toHsl(tempColor).hue;
       this.updateSquareColors();
       this.selectColor();
@@ -164,7 +164,7 @@ export default {
       this.selectColor();
     },
     selectColor (mute = false) {
-      this.currentColor = this.getColorCanvas(this.cursor, this.ctx);
+      this.currentColor = this.getCanvasColor(this.cursor, this.ctx);
       // stops propgation
       if (mute) {
         return;
@@ -223,7 +223,7 @@ export default {
         y: offsetY
       };
     },
-    getColorCanvas ({ x, y }, ctx) {
+    getCanvasColor ({ x, y }, ctx) {
       const imageData = ctx.getImageData(x, y, 1, 1).data;
       return `rgb(${imageData[0]}, ${imageData[1]}, ${imageData[2]})`;
     },
