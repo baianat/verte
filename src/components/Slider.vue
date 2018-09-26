@@ -326,7 +326,7 @@ export default {
     padding: 0.6em
     max-width: 70px
     width: 20%
-    border: $border solid $black
+    border: $border solid $gray
     border-radius: $borderRadius
     text-align: center
     font-size: $fontTiny
@@ -344,14 +344,15 @@ export default {
   &__track
     position: relative
     flex: 1
-    margin: 0.2em
+    margin: 3px
     width: auto
-    height: 0.2em
+    height: 8px
     background: $white
     will-change: transfom
     background-image: linear-gradient(45deg, $gray 25%, transparent 25%), linear-gradient(45deg, transparent 75%, $gray 75%), linear-gradient(-45deg, $gray 25%, transparent 25%), linear-gradient(-45deg, transparent 75%, $gray 75%)
     background-size: 6px 6px
     background-position: 0 0, 3px -3px, 0 3px, -3px 0px
+    border-radius: 10px
 
   &__handle
     position: relative
@@ -360,11 +361,13 @@ export default {
     left: 0
     will-change: transform
     color: $black
-    margin: -0.1em 0 0 -0.2em
-    width: 0.4em
-    height: 0.4em
+    margin: -2px 0 0 -8px
+    width: 12px
+    height: 12px
+    border: 2px solid $white
     background-color: currentColor
-    box-shadow: 1px 2px 8px -2px rgba($black, 0.5)
+    border-radius: 50%
+    box-shadow: 0 1px 4px -2px rgba($black, 10%)
 
   &__label
     position: absolute
@@ -401,6 +404,7 @@ export default {
     width: 100%
     height: 100%
     transform-origin: left top
+    border-radius: 10px
 
   &:hover,
   &--dragging

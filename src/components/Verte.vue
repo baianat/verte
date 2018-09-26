@@ -21,62 +21,63 @@
       :mode="picker"
       v-model="currentColor"
     )
-    Slider(
-      :gradient="[`rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, 0)`, `rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, 1)`]"
-      :min="0"
-      :max="1"
-      :step="0.01"
-      :editable="false"
-      v-model="alpha"
-    )
-    template(v-if="model === 'hsl'")
+    .verte__controller
       Slider(
-        :gradient="[`hsl(0,${hsl.sat}%,${hsl.lum}%)`, `hsl(360,${hsl.sat}%,${hsl.lum}%)`]"
+        :gradient="[`rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, 0)`, `rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, 1)`]"
         :min="0"
-        :max="360"
-        :step="1"
-        v-model="hsl.hue"
+        :max="1"
+        :step="0.01"
+        :editable="false"
+        v-model="alpha"
       )
-      Slider(
-        :gradient="[`hsl(${hsl.hue},0%,${hsl.lum}%)`, `hsl(${hsl.hue},100%,${hsl.lum}%)`]"
-        :min="0"
-        :max="100"
-        :step="1"
-        v-model="hsl.sat"
-      )
-      Slider(
-        :gradient="[`hsl(${hsl.hue},${hsl.sat}%,0%)`, `hsl(${hsl.hue},${hsl.sat}%,100%)`]"
-        :min="0"
-        :max="100"
-        :step="1"
-        v-model="hsl.lum"
-      )
-    template(v-if="model === 'rgb' || model === 'hex'")
-      Slider(
-        :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
-        v-model="rgb.red"
-      )
-      Slider(
-        :gradient="[`rgb(${rgb.red},0,${rgb.blue})`, `rgb(${rgb.red},255,${rgb.blue})`]"
-        v-model="rgb.green"
-      )
-      Slider(
-        :gradient="[`rgb(${rgb.red},${rgb.green},0)`, `rgb(${rgb.red},${rgb.green},255)`]"
-        v-model="rgb.blue"
-      )
-    .verte__input
-      input.verte__value(ref="input" @keypress.enter="submit" :value="currentColor")
-      button.verte__submit(type="button" @click="submit")
-        svg.verte__icon(viewBox="0 0 24 24")
-          path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
-    .verte__recent(ref="recent")
-      a.verte__recent-color(
-        role="button"
-        href="#"
-        v-for="clr in recentColors.colors"
-        :style="`background: ${clr}`"
-        @click.prevent="selectColor(clr)"
-      )
+      template(v-if="model === 'hsl'")
+        Slider(
+          :gradient="[`hsl(0,${hsl.sat}%,${hsl.lum}%)`, `hsl(360,${hsl.sat}%,${hsl.lum}%)`]"
+          :min="0"
+          :max="360"
+          :step="1"
+          v-model="hsl.hue"
+        )
+        Slider(
+          :gradient="[`hsl(${hsl.hue},0%,${hsl.lum}%)`, `hsl(${hsl.hue},100%,${hsl.lum}%)`]"
+          :min="0"
+          :max="100"
+          :step="1"
+          v-model="hsl.sat"
+        )
+        Slider(
+          :gradient="[`hsl(${hsl.hue},${hsl.sat}%,0%)`, `hsl(${hsl.hue},${hsl.sat}%,100%)`]"
+          :min="0"
+          :max="100"
+          :step="1"
+          v-model="hsl.lum"
+        )
+      template(v-if="model === 'rgb' || model === 'hex'")
+        Slider(
+          :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
+          v-model="rgb.red"
+        )
+        Slider(
+          :gradient="[`rgb(${rgb.red},0,${rgb.blue})`, `rgb(${rgb.red},255,${rgb.blue})`]"
+          v-model="rgb.green"
+        )
+        Slider(
+          :gradient="[`rgb(${rgb.red},${rgb.green},0)`, `rgb(${rgb.red},${rgb.green},255)`]"
+          v-model="rgb.blue"
+        )
+      .verte__input
+        input.verte__value(ref="input" @keypress.enter="submit" :value="currentColor")
+        button.verte__submit(type="button" @click="submit")
+          svg.verte__icon(viewBox="0 0 24 24")
+            path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
+      .verte__recent(ref="recent")
+        a.verte__recent-color(
+          role="button"
+          href="#"
+          v-for="clr in recentColors.colors"
+          :style="`background: ${clr}`"
+          @click.prevent="selectColor(clr)"
+        )
 
 </template>
 
@@ -308,12 +309,12 @@ export default {
     flex-direction: column
     justify-content: center
     align-items: stretch
-    padding: 40px
-    width: 300px
+    width: 250px
     border-radius: $borderRadius
     background-color: $white
     will-change: transform
     box-shadow: 0 10px 15px -5px rgba($black, 0.1)
+    overflow: hidden
     &--active
       display: flex
     &--static
@@ -321,6 +322,8 @@ export default {
 
     &:focus
       outline: none
+  &__controller
+    padding: 0 20px 20px
 
   &__recent
     display: flex
@@ -331,8 +334,8 @@ export default {
 
     &-color
       margin: 4px
-      width: 28px
-      height: 28px
+      width: 27px
+      height: 27px
       border-radius: 50%
       background-color: $black
       box-shadow: 0 2px 4px rgba($black, 0.1)
@@ -340,7 +343,7 @@ export default {
   &__value
     padding: 0.6em
     width: 100%
-    border: $border solid $black
+    border: $border solid $gray
     border-radius: $borderRadius 0 0 $borderRadius
     text-align: center
     font-size: $fontTiny
@@ -352,11 +355,11 @@ export default {
   &__icon
     width: 22.5px
     height: 18.5px
-    fill: $white
 
   &__input
     display: flex
     margin-bottom: $margin
+
   &__submit
     position: relative
     display: inline-flex
@@ -373,8 +376,9 @@ export default {
     text-align: center
     text-decoration: none
     cursor: pointer
-    background-color: $black
-    border-color: $black
+    background-color: $gray
+    border-color: $gray
+    fill: $white
     &:hover
       fill: $blue
 

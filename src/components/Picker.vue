@@ -1,28 +1,30 @@
 <template lang="pug">
-.verte-picker(ref="picker")
+.verte-picker(
+  ref="picker"
+  :class="`verte-picker--${mode}`"
+)
   .verte-picker__origin(ref="origin")
     canvas.verte-picker__canvas(
       ref="canvas"
-      :class="`verte-picker__canvas--${mode}`"
       @mousedown="mouseDownHandler($event, onMousedown)"
-    )
-    canvas.verte-picker__strip(
-      ref="strip"
-      v-if="mode === 'square'"
-      @mousedown="mouseDownHandler($event, selectHue)"
     )
     .verte-picker__cursor(
       ref="cursor"
       :style="`transform: translate3d(${cursor.x}px, ${cursor.y}px, 0)`"
     )
-  slider.verte-picker__saturation(
-    ref="saturation"
+  slider.verte-picker__slider(
+    v-if="mode === 'square'"
+    :gradient="['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f', '#f00']"
+    :editable="false"
+    :max="360"
+    v-model="currentHue"
+  )
+  slider.verte-picker__slider(
     v-if="mode === 'wheel'"
     :gradient="[`hsl(${hsl.hue},0%,${hsl.lum}%)`, `hsl(${hsl.hue},100%,${hsl.lum}%)`]"
     :editable="false"
     :max="100"
-    :value="currentSat"
-    @input="selectSat"
+    v-model="currentSat"
   )
 
 </template>
@@ -39,8 +41,8 @@ export default {
   },
   props: {
     mode: { type: String, default: 'wheel' },
-    edge: { type: Number, default: 190 },
-    radius: { type: Number, default: 200 },
+    edge: { type: Number, default: 250 },
+    radius: { type: Number, default: 180 },
     satSlider: { type: Boolean, default: true },
     value: { type: String, default: '#fff' }
   },
@@ -61,6 +63,14 @@ export default {
       }
       // TODO: Performance issue here.
       this.handleValue(val, true);
+    },
+    currentSat () {
+      this.updateWheelColors();
+      this.selectColor();
+    },
+    currentHue () {
+      this.updateSquareColors();
+      this.selectColor();
     }
   },
   methods: {
@@ -68,20 +78,8 @@ export default {
       // setup canvas
       const edge = this.edge;
       this.$refs.canvas.width = edge;
-      this.$refs.canvas.height = edge;
-      this.$refs.strip.width = this.edge / 10;
-      this.$refs.strip.height = edge;
+      this.$refs.canvas.height = edge - 100;
       this.ctx = this.$refs.canvas.getContext('2d');
-      this.$refs.stripCtx = this.$refs.strip.getContext('2d');
-
-      this.$refs.stripCtx.rect(0, 0, this.$refs.strip.width, this.$refs.strip.height);
-      const hue = this.$refs.stripCtx.createLinearGradient(0, 0, 0, this.$refs.strip.height);
-      for (let angle = 0; angle < 360; angle += 1) {
-        hue.addColorStop(angle / 359, `hsl(${angle}, 100%, 50%)`);
-      }
-      this.$refs.stripCtx.fillStyle = hue;
-      this.$refs.stripCtx.fill();
-
       this.updateSquareColors();
     },
     initWheel () {
@@ -123,28 +121,14 @@ export default {
 
       if (this.mode === 'square') {
         this.currentHue = this.hsl.hue;
-        const x = (this.hsl.sat / 100) * (this.edge);
-        const y = ((100 - this.hsl.lum) / 100) * (this.edge);
+        const x = (this.hsl.sat / 100) * (this.$refs.canvas.width);
+        const y = ((100 - this.hsl.lum) / 100) * (this.$refs.canvas.height);
         const squareEdge = this.edge - 1;
         this.cursor = { x: Math.min(x, squareEdge), y: Math.min(y - 2) };
         this.updateSquareColors();
       }
 
       this.selectColor(muted);
-    },
-    selectHue (event) {
-      if (event.target !== this.$refs.strip) {
-        return;
-      }
-      let tempColor = this.getCanvasColor(this.getMouseCords(event), this.$refs.stripCtx);
-      this.currentHue = toHsl(tempColor).hue;
-      this.updateSquareColors();
-      this.selectColor();
-    },
-    selectSat (val) {
-      this.currentSat = val;
-      this.updateWheelColors();
-      this.selectColor();
     },
     onMousedown (event) {
       if (event.target !== this.$refs.canvas) {
@@ -258,26 +242,26 @@ export default {
 .verte-picker
   width: 100%
   margin: 0 auto 10px
-  
+  &--wheel
+    margin-top: 20px
+
   &__origin
     user-select: none
     position: relative
     margin: 0 auto
+  &__slider
+    margin: 10px 20px 0
 
   &__canvas
-    &--wheel
-      margin-bottom: 10px
-
-  &__strip
-    margin: 0 5px
-
+    display: block
+    margin: 0
   &__cursor
     position: absolute
     top: 0
     left: 0
     margin: -6px
-    width: 10px
-    height: 10px
+    width: 12px
+    height: 12px
     border: 2px solid $white
     border-radius: 50%
     will-change: transform
