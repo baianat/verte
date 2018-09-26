@@ -313,7 +313,7 @@ export default {
     border-radius: $borderRadius
     background-color: $white
     will-change: transform
-    box-shadow: 0 10px 15px -5px rgba($black, 0.1)
+    box-shadow: 0 8px 15px rgba($black, 0.1)
     overflow: hidden
     &--active
       display: flex

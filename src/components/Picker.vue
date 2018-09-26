@@ -6,7 +6,7 @@
   .verte-picker__origin(ref="origin")
     canvas.verte-picker__canvas(
       ref="canvas"
-      @mousedown="mouseDownHandler($event, onMousedown)"
+      @mousedown="handleMouseDown"
     )
     .verte-picker__cursor(
       ref="cursor"
@@ -42,7 +42,7 @@ export default {
   props: {
     mode: { type: String, default: 'wheel' },
     edge: { type: Number, default: 250 },
-    radius: { type: Number, default: 180 },
+    diameter: { type: Number, default: 180 },
     satSlider: { type: Boolean, default: true },
     value: { type: String, default: '#fff' }
   },
@@ -52,25 +52,25 @@ export default {
     currentColor: '',
     hsl: {},
     cursor: {},
-    stopUpdating: false
+    preventUpdating: false,
+    preventEcho: false
   }),
   watch: {
-    // should only handle external changes.
+    // handles external changes.
     value (val, oldVal) {
-      if (this.stopUpdating) {
-        this.stopUpdating = false;
+      if (this.preventUpdating) {
+        this.preventUpdating = false;
         return;
       }
-      // TODO: Performance issue here.
       this.handleValue(val, true);
     },
     currentSat () {
       this.updateWheelColors();
-      this.selectColor();
+      this.updateColor();
     },
     currentHue () {
       this.updateSquareColors();
-      this.selectColor();
+      this.updateColor();
     }
   },
   methods: {
@@ -84,16 +84,16 @@ export default {
     },
     initWheel () {
       // setup canvas
-      this.$refs.canvas.width = this.radius;
-      this.$refs.canvas.height = this.radius;
+      this.$refs.canvas.width = this.diameter;
+      this.$refs.canvas.height = this.diameter;
       this.ctx = this.$refs.canvas.getContext('2d');
 
       // draw wheel circle path
       this.circle = {
         path: new Path2D(), // eslint-disable-line
-        xCords: this.$refs.canvas.width / 2,
-        yCords: this.$refs.canvas.height / 2,
-        radius: this.$refs.canvas.width / 2
+        xCords: this.diameter / 2,
+        yCords: this.diameter / 2,
+        radius: this.diameter / 2
       };
       this.circle.path.moveTo(this.circle.xCords, this.circle.yCords);
       this.circle.path.arc(
@@ -109,49 +109,53 @@ export default {
     handleValue (color, muted = false) {
       this.currentColor = color;
       this.hsl = toHsl(this.currentColor);
+      // prvent upadtion picker slider for causing
+      // echo udationg to the current color value
+      this.preventEcho = true;
 
       if (this.mode === 'wheel') {
-        this.currentSat = this.hsl.sat;
-        const r = (100 - this.hsl.lum) * (this.radius / 200);
-        const ratio = this.radius / 2;
+        const r = (100 - this.hsl.lum) * (this.diameter / 200);
+        const radius = this.diameter / 2;
         const coords = getCartesianCoords(r, this.hsl.hue / 360);
-        this.cursor = { x: coords.x + ratio, y: coords.y + ratio };
-        this.updateWheelColors();
+        this.cursor = { x: coords.x + radius, y: coords.y + radius };
+        this.currentSat = this.hsl.sat;
       }
 
       if (this.mode === 'square') {
-        this.currentHue = this.hsl.hue;
         const x = (this.hsl.sat / 100) * (this.$refs.canvas.width);
         const y = ((100 - this.hsl.lum) / 100) * (this.$refs.canvas.height);
-        const squareEdge = this.edge - 1;
-        this.cursor = { x: Math.min(x, squareEdge), y: Math.min(y - 2) };
-        this.updateSquareColors();
+        this.cursor = { x, y };
+        this.currentHue = this.hsl.hue;
+      }
+    },
+    selectColor (event) {
+      const { x, y } = event;
+      const { left, top } = this.pickerRect;
+      const normalized = {
+        x: Math.min(Math.max(x - left, 0), this.$refs.canvas.width - 1),
+        y: Math.min(Math.max(y - top, 0), this.$refs.canvas.height)
       }
 
-      this.selectColor(muted);
+      if (this.mode === 'square') {
+        this.cursor = { x: normalized.x, y: normalized.y };
+      }
+      if (
+        this.mode === 'wheel'&&
+        this.ctx.isPointInPath(this.circle.path, normalized.x, normalized.y)
+      ) {
+        // Todo: handle cursor better
+        this.cursor = { x: normalized.x, y: normalized.y };
+      }
+
+      this.updateColor();
     },
-    onMousedown (event) {
-      if (event.target !== this.$refs.canvas) {
+    updateColor (muted = false) {
+      if (this.preventEcho) {
+        this.preventEcho = false;
         return;
       }
-      this.stopUpdating = true;
-      const { x, y } = this.getMouseCords(event);
-      if (this.mode === 'square') {
-        const squareThreshold = this.edge - 1;
-        this.cursor = { x: Math.min(x, squareThreshold), y: Math.min(y, squareThreshold) };
-      }
-
-      if (this.mode === 'wheel' && this.ctx.isPointInPath(this.circle.path, x, y)) {
-        this.cursor = { x, y };
-      }
-
-      this.selectColor();
-    },
-    selectColor (muted = false) {
       this.currentColor = this.getCanvasColor(this.cursor, this.ctx);
-      // stops propgation
-      if (muted) return;
-
+      this.preventUpdating = true;
       this.$emit('input', this.currentColor);
     },
     updateWheelColors () {
@@ -209,14 +213,18 @@ export default {
       const imageData = ctx.getImageData(x, y, 1, 1).data;
       return `rgb(${imageData[0]}, ${imageData[1]}, ${imageData[2]})`;
     },
-    mouseDownHandler (event, func) {
+    handleMouseDown (event) {
       event.preventDefault();
-      func(event);
+      this.pickerRect = this.$refs.canvas.getBoundingClientRect();
+      this.selectColor(event);
+      let tempFunc = (evnt) => {
+        window.requestAnimationFrame(() => this.selectColor(evnt));
+      }
       const mouseupHandler = () => {
-        document.removeEventListener('mousemove', func);
+        document.removeEventListener('mousemove', tempFunc);
         document.removeEventListener('mouseup', mouseupHandler);
       };
-      document.addEventListener('mousemove', func);
+      document.addEventListener('mousemove', tempFunc);
       document.addEventListener('mouseup', mouseupHandler);
     }
 
@@ -242,6 +250,9 @@ export default {
 .verte-picker
   width: 100%
   margin: 0 auto 10px
+  display: flex
+  flex-direction: column
+
   &--wheel
     margin-top: 20px
 
@@ -254,7 +265,7 @@ export default {
 
   &__canvas
     display: block
-    margin: 0
+
   &__cursor
     position: absolute
     top: 0
