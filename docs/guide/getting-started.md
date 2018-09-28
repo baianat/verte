@@ -38,11 +38,12 @@ You can also use a CDN:
 
 ```vue {2,8,13}
 <template>
-  <verte :picker="wheel" :model="rgb"></verte>
+  <verte picker="square" model="rgb"></verte>
 </template>
 
 <script>
   import Verte from 'verte';
+  import 'verte/dist/verte.css';
   // register component globally
   Vue.component('verte', Verte);
 
@@ -57,21 +58,27 @@ You can also use a CDN:
 ### Script Tag
 
 ```html
-<div id="#app">
-  <verte :picker="wheel" :model="rgb"></verte>
-</div>
+<head>
+  <link rel="stylesheet" type="text/css" href="path/to/verte.css">
+</head>
 
-<script src="path/to/verte.js"></script>
-<script>
-  // register component globally
-  Vue.component('verte', Verte);
-
-  new Vue ({
-    el: '#app',
-    // OR register locally
-    components: { Verte }
-  });
-</script>
+<body>
+  <div id="#app">
+    <verte picker="square" model="rgb"></verte>
+  </div>
+  
+  <script src="path/to/verte.js"></script>
+  <script>
+    // register component globally
+    Vue.component('verte', Verte);
+  
+    new Vue ({
+      el: '#app',
+      // OR register locally
+      components: { Verte }
+    });
+  </script>
+</body>
 ```
 
 <style>

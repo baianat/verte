@@ -4,7 +4,7 @@
 
 |  Name  | Values | Default | Description |
 |--------|--------|---------|-------------|
-|`picker`| 'wheel' \| 'square' | 'wheel' | chose between pickers style |
+|`picker`| 'wheel' \| 'square' | 'square' | chose between pickers style |
 |`value` | a valid color string |'#000' | the initial color value |
 |`model` | 'rgb' \| 'hex' \| 'hsl' | 'rgb' | the output color model |
 |`display` | String | 'vertical' | controls the layout of the component. [List of allowed values](#display-modes). |
@@ -29,7 +29,7 @@ The guide icon color and fill style will change to the current selected color, i
 
 ```html {4,5,6,7}
 <template>
-  <verte :picker="wheel" :model="rgb">
+  <verte picker="square" model="rgb">
 
     <svg viewBox="0 0 24 24">
       <path d="M0 20h24v4H0z"/>

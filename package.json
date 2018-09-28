@@ -10,7 +10,7 @@
     "dev": "node scripts/watch",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "docs:deploy": "scripts/deploy",
+    "docs:deploy": "bash scripts/deploy.sh",
     "test": "jest",
     "lint": "eslint --fix src scripts test",
     "release": "bash scripts/release.sh",

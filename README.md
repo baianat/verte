@@ -29,11 +29,12 @@ yarn add verte
 
 ```html {2,8,13}
 <template>
-  <verte :picker="wheel" :model="rgb"></verte>
+  <verte picker="square" model="rgb"></verte>
 </template>
 
 <script>
-  import Verte from './dist/verte.js';
+  import Verte from 'verte';
+  import 'verte/dist/verte.css';
   // register component globally
   Vue.component(Verte.name, Verte);
 
