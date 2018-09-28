@@ -4,7 +4,7 @@
 
 |  Name  | Values | Default | Description |
 |--------|--------|---------|-------------|
-|`picker`| 'wheel' \| 'square' | 'wheel' | chose between pickers style |
+|`picker`| 'wheel' \| 'square' | 'square' | chose between pickers style |
 |`value` | a valid color string |'#000' | the initial color value |
 |`model` | 'rgb' \| 'hex' \| 'hsl' | 'rgb' | the output color model |
 |`display` | String | 'vertical' | controls the layout of the component. [List of allowed values](#display-modes). |

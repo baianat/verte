@@ -31,14 +31,14 @@ export default {
 </template>
 ```
 
-## Square Picker
+## Wheel Picker
 
-<verte-demo picker="square"></verte-demo>
+<verte-demo picker="wheel"></verte-demo>
 
 ```vue {3}
 <template>
   <verte
-    picker="square"
+    picker="wheel"
   >
   </verte>
 </template>

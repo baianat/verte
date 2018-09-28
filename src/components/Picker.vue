@@ -40,7 +40,7 @@ export default {
     Slider
   },
   props: {
-    mode: { type: String, default: 'wheel' },
+    mode: { type: String, default: 'square' },
     edge: { type: Number, default: 250 },
     diameter: { type: Number, default: 180 },
     satSlider: { type: Boolean, default: true },
