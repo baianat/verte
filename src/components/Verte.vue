@@ -13,10 +13,10 @@
   .verte__menu(
     ref="menu"
     tabindex="-1"
-    v-on="draggable ? {mousedown: dragMenu} : { }"
     :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
-    :class="{'verte__menu--active': isMenuActive, 'verte__menu--static': !draggable || menuOnly }"
+    :class="{'verte__menu--active': isMenuActive, 'verte__menu--static': menuOnly }"
   )
+    .verte__draggable(v-if="draggable" @mousedown="dragMenu")
     Picker(
       :mode="picker"
       v-model="currentColor"
@@ -259,7 +259,7 @@ export default {
       this.currentModel = models[indx + 1] || models[0];
     },
     dragMenu (event) {
-      if (event.target !== this.$refs.menu || event.button !== 0) return;
+      if (event.button !== 0) return;
       const startPosition = {};
       const endPosition = {};
       const lastMove = Object.assign({}, this.delta);
@@ -354,6 +354,9 @@ export default {
 <style lang="sass">
 @import '../sass/variables';
 
+$dot-size: 2px;
+$dot-space: 4px;
+
 .verte
   position: relative
   display: flex
@@ -361,112 +364,118 @@ export default {
   *
     box-sizing: border-box
 
-  &--loading
-    opacity: 0
-  &__guide
-    width: 24px
-    height: 24px
-    padding: 0
-    border: 0
-    background: transparent
+.verte--loading
+  opacity: 0
+.verte__guide
+  width: 24px
+  height: 24px
+  padding: 0
+  border: 0
+  background: transparent
 
-    &:focus
-      outline: 0
+  &:focus
+    outline: 0
 
-    svg
-      width: 100%
-      height: 100%
-      fill: inherit
-
-  &__menu
-    position: absolute
-    top: 50px
-    display: none
-    flex-direction: column
-    justify-content: center
-    align-items: stretch
-    width: 250px
-    border-radius: $borderRadius
-    background-color: $white
-    will-change: transform
-    box-shadow: 0 8px 15px rgba($black, 0.1)
-    overflow: hidden
-    &--active
-      display: flex
-    &--static
-      position: static
-
-    &:focus
-      outline: none
-  &__controller
-    padding: 0 20px 20px
-
-  &__recent
-    display: flex
-    flex-wrap: wrap
-    justify-content: flex-end
-    align-items: center
+  svg
     width: 100%
+    height: 100%
+    fill: inherit
 
-    &-color
-      margin: 4px
-      width: 27px
-      height: 27px
-      border-radius: 50%
-      background-color: $black
-      box-shadow: 0 2px 4px rgba($black, 0.1)
-
-  &__value
-    padding: 0.6em
-    width: 100%
-    border: $border solid $gray
-    border-radius: $borderRadius 0 0 $borderRadius
-    text-align: center
-    font-size: $fontTiny
-    -webkit-appearance: none
-    -moz-appearance: textfield
-    &:focus
-      outline: none
-      border-color: $blue
-  &__icon
-    width: 22.5px
-    height: 18.5px
-
-  &__input
-    padding: 5px
-    margin: 0 3px
-    min-width: 0
-    text-align: center
-    border-width: 0 0 1px 0
-    &::-webkit-inner-spin-button, 
-    &::-webkit-outer-spin-button
-      -webkit-appearance: none
-      margin: 0
-    appearance: none
-    -moz-appearance: textfield
-
-  &__inputs
+.verte__menu
+  position: absolute
+  top: 50px
+  display: none
+  flex-direction: column
+  justify-content: center
+  align-items: stretch
+  width: 250px
+  border-radius: $borderRadius
+  background-color: $white
+  will-change: transform
+  box-shadow: 0 8px 15px rgba($black, 0.1)
+  overflow: hidden
+  &--active
     display: flex
-    font-size: 16px
-    margin-bottom: 5px
+  &--static
+    position: static
 
-  &__model,
-  &__submit
-    position: relative
-    display: inline-flex
-    justify-content: center
-    align-items: center
-    padding: 0
-    border: 0
-    text-align: center
-    cursor: pointer
-    background-color: transparent
-    font-weight: 700
-    color: $gray
-    fill: $gray
+  &:focus
     outline: none
-    &:hover
-      fill: $blue
-      color: $blue
+.verte__controller
+  padding: 0 20px 20px
+
+.verte__recent
+  display: flex
+  flex-wrap: wrap
+  justify-content: flex-end
+  align-items: center
+  width: 100%
+
+  &-color
+    margin: 4px
+    width: 27px
+    height: 27px
+    border-radius: 50%
+    background-color: $black
+    box-shadow: 0 2px 4px rgba($black, 0.1)
+
+.verte__value
+  padding: 0.6em
+  width: 100%
+  border: $border solid $gray
+  border-radius: $borderRadius 0 0 $borderRadius
+  text-align: center
+  font-size: $fontTiny
+  -webkit-appearance: none
+  -moz-appearance: textfield
+  &:focus
+    outline: none
+    border-color: $blue
+.verte__icon
+  width: 22.5px
+  height: 18.5px
+
+.verte__input
+  padding: 5px
+  margin: 0 3px
+  min-width: 0
+  text-align: center
+  border-width: 0 0 1px 0
+  &::-webkit-inner-spin-button, 
+  &::-webkit-outer-spin-button
+    -webkit-appearance: none
+    margin: 0
+  appearance: none
+  -moz-appearance: textfield
+
+.verte__inputs
+  display: flex
+  font-size: 16px
+  margin-bottom: 5px
+.verte__draggable
+  height: 10px
+  width: 100%
+  cursor: grab
+  background: linear-gradient(90deg, $white ($dot-space - $dot-size), transparent 1%) center, linear-gradient($white ($dot-space - $dot-size), transparent 1%) center, $gray
+  background-size: $dot-space $dot-space
+
+.verte__model,
+.verte__submit
+  position: relative
+  display: inline-flex
+  justify-content: center
+  align-items: center
+  padding: 0
+  border: 0
+  text-align: center
+  cursor: pointer
+  background-color: transparent
+  font-weight: 700
+  color: $gray
+  fill: $gray
+  outline: none
+  &:hover
+    fill: $blue
+    color: $blue
 
 </style>
