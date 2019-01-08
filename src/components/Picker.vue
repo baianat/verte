@@ -260,6 +260,7 @@ export default {
     user-select: none
     position: relative
     margin: 0 auto
+    overflow: hidden
   &__slider
     margin: 10px 20px 0
 
@@ -273,11 +274,12 @@ export default {
     margin: -6px
     width: 12px
     height: 12px
-    border: 2px solid $white
+    border: 1px solid $white
     border-radius: 50%
     will-change: transform
     pointer-events: none
     background-color: transparent
+    box-shadow: $white 0px 0px 0px 1.5px, rgba($black, 0.3) 0px 0px 1px 1px inset, rgba($black, 0.4) 0px 0px 1px 2px
 
   &__input
     display: flex
