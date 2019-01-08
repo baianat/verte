@@ -126,6 +126,8 @@ export default {
       event.stopPropagation();
       // check if  left mouse is clicked
       if (event.buttons !== 1) return;
+
+      this.updateWidth();
       this.track.classList.add('slider--dragging');
       this.ticking = false;
 
@@ -265,9 +267,6 @@ export default {
       // if (Number(value) === this.value) return;
 
       window.requestAnimationFrame(() => {
-        if (!this.width) {
-          this.updateWidth();
-        }
         const normalized = this.normalizeValue(value);
         const positionPercentage = this.getPositionPercentage(normalized);
 
