@@ -41,7 +41,7 @@ module.exports = {
         selectText: 'Languages',
         editLinkText: 'Help us improve this page!',
         nav: [
-          { text: 'Guide', link: '/getting-started' },
+          { text: 'Guide', link: '/guide/' },
           { text: 'API', link: '/api' },
           { text: 'Examples', link: '/examples' },
         ],

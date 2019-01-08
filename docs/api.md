@@ -7,8 +7,11 @@
 |`picker`| 'wheel' \| 'square' | 'wheel' | chose between pickers style |
 |`value` | a valid color string |'#000' | the initial color value |
 |`model` | 'rgb' \| 'hex' \| 'hsl' | 'rgb' | the output color model |
+|`menuPosition` | 'top' \| 'bottom' \| 'left' \| 'right' \| 'center' | 'top' | the output color model |
 |`display` | String | 'vertical' | controls the layout of the component. [List of allowed values](#display-modes). |
 |`draggable` | Boolean | true | turn on/off dragging the picker menu |
+|`enableAlpha` | Boolean | true | turn on/off the alpha slider |
+|`enableSliders` | Boolean | false | show/hide rgb sliders |
 
 ## Display Modes
 
