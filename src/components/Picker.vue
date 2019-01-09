@@ -262,7 +262,7 @@ export default {
     margin: 0 auto
     overflow: hidden
   &__slider
-    margin: 10px 20px 0
+    margin: 20px 20px 0
 
   &__canvas
     display: block

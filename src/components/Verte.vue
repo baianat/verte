@@ -125,7 +125,10 @@
             )
           button.verte__submit(@click="submit")
             svg.verte__icon(viewBox="0 0 24 24")
-              path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
+              path(d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z")
+          button.verte__close(@click="closeMenu")
+            svg.verte__icon(viewBox="0 0 24 24")
+              path(d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z")
         .verte__recent(ref="recent")
           a.verte__recent-color(
             role="button"
@@ -171,7 +174,8 @@ export default {
     },
     menuPosition: {
       type: String,
-      default: 'top'
+      default: 'top',
+      validator: makeListValidator('menuPosition', ['top', 'bottom', 'left', 'right', 'center'])
     },
     enableAlpha: {
       type: Boolean,
@@ -291,10 +295,8 @@ export default {
     },
     submit () {
       this.$emit('beforeSubmit', this.currentColor);
-      if (!this.menuOnly) {
-        this.closeMenu();
-      }
       this.addRecentColor(this.currentColor);
+      this.$emit('input', this.currentColor);
       this.$emit('submitted', this.currentColor);
     },
     inputChanged (event, value) {
@@ -326,7 +328,7 @@ export default {
     },
     closeMenu () {
       this.isMenuActive = false;
-      document.removeEventListener('click', this.closeCallback);
+      document.removeEventListener('mousedown', this.closeCallback);
     },
     openMenu () {
       this.isMenuActive = true;
@@ -338,7 +340,7 @@ export default {
           this.closeMenu();
         }
       };
-      document.addEventListener('click', this.closeCallback);
+      document.addEventListener('mousedown', this.closeCallback);
     }
   },
   created () {
@@ -397,6 +399,8 @@ $dot-space: 4px;
   will-change: transform
   box-shadow: 0 8px 15px rgba($black, 0.1)
   overflow: hidden
+  &:focus
+    outline: none
 
 
 .verte__menu-origin
@@ -459,8 +463,8 @@ $dot-space: 4px;
     outline: none
     border-color: $blue
 .verte__icon
-  width: 22.5px
-  height: 18.5px
+  width: 20px
+  height: 20px
 
 .verte__input
   padding: 5px
@@ -480,19 +484,20 @@ $dot-space: 4px;
   font-size: 16px
   margin-bottom: 5px
 .verte__draggable
-  height: 10px
+  height: 8px
   width: 100%
   cursor: grab
-  background: linear-gradient(90deg, $white ($dot-space - $dot-size), transparent 1%) center, linear-gradient($white ($dot-space - $dot-size), transparent 1%) center, $gray
+  background: linear-gradient(90deg, $white ($dot-space - $dot-size), transparent 1%) center, linear-gradient($white ($dot-space - $dot-size), transparent 1%) center, rgba($gray, 0.2)
   background-size: $dot-space $dot-space
 
 .verte__model,
-.verte__submit
+.verte__submit,
+.verte__close
   position: relative
   display: inline-flex
   justify-content: center
   align-items: center
-  padding: 0
+  padding: 1px
   border: 0
   text-align: center
   cursor: pointer
