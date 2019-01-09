@@ -10,128 +10,130 @@
     slot
       svg.verte__icon(viewBox="0 0 24 24")
         circle(cx="12" cy="12" r="12")
-  .verte__menu(
-    ref="menu"
-    tabindex="-1"
-    :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
-    :class="{'verte__menu--active': isMenuActive, 'verte__menu--static': menuOnly }"
+  .verte__menu-origin(
+    :class="[`verte__menu-origin--${menuPosition}`, { 'verte__menu-origin--static': menuOnly, 'verte__menu-origin--active': isMenuActive }]"
   )
-    .verte__draggable(v-if="draggable" @mousedown="dragMenu")
-    Picker(
-      :mode="picker"
-      v-model="currentColor"
+    .verte__menu(
+      ref="menu"
+      tabindex="-1"
+      :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
     )
-    .verte__controller
-      Slider(
-        v-if="enableAlpha"
-        :gradient="[`rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, 0)`, `rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, 1)`]"
-        :min="0"
-        :max="1"
-        :step="0.01"
-        :editable="false"
-        v-model="alpha"
+      .verte__draggable(v-if="draggable" @mousedown="dragMenu")
+      Picker(
+        :mode="picker"
+        v-model="currentColor"
       )
-      template(v-if="enableSliders")
-        template(v-if="model === 'hsl'")
-          Slider(
-            :gradient="[`hsl(0,${hsl.sat}%,${hsl.lum}%)`, `hsl(360,${hsl.sat}%,${hsl.lum}%)`]"
-            :min="0"
-            :max="360"
-            :step="1"
-            v-model="hsl.hue"
-          )
-          Slider(
-            :gradient="[`hsl(${hsl.hue},0%,${hsl.lum}%)`, `hsl(${hsl.hue},100%,${hsl.lum}%)`]"
-            :min="0"
-            :max="100"
-            :step="1"
-            v-model="hsl.sat"
-          )
-          Slider(
-            :gradient="[`hsl(${hsl.hue},${hsl.sat}%,0%)`, `hsl(${hsl.hue},${hsl.sat}%,100%)`]"
-            :min="0"
-            :max="100"
-            :step="1"
-            v-model="hsl.lum"
-          )
-        template(v-if="model === 'rgb' || model === 'hex'")
-          Slider(
-            :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
-            v-model="rgb.red"
-          )
-          Slider(
-            :gradient="[`rgb(${rgb.red},0,${rgb.blue})`, `rgb(${rgb.red},255,${rgb.blue})`]"
-            v-model="rgb.green"
-          )
-          Slider(
-            :gradient="[`rgb(${rgb.red},${rgb.green},0)`, `rgb(${rgb.red},${rgb.green},255)`]"
-            v-model="rgb.blue"
-          )
-
-      //- verte inputs
-      .verte__inputs
-        button.verte__model(@click="switchModel") {{currentModel}}
-        template(v-if="currentModel === 'hsl'")
-          input.verte__input(
-            @change="inputChanged($event, 'hue')"
-            :value="hsl.hue"
-            type="number"
-            max="360"
-            min="0"
-          )
-          input.verte__input(
-            @change="inputChanged($event, 'sat')"
-            :value="hsl.sat"
-            type="number"
-            min="0"
-            max="100"
-          )
-          input.verte__input(
-            @change="inputChanged($event, 'lum')"
-            :value="hsl.lum"
-            type="number"
-            min="0"
-            max="100"
-          )
-        template(v-if="currentModel === 'rgb'")
-          input.verte__input(
-            @change="inputChanged($event, 'red')"
-            :value="rgb.red"
-            type="number"
-            min="0"
-            max="255"
-          )
-          input.verte__input(
-            @change="inputChanged($event, 'green')"
-            :value="rgb.green"
-            type="number"
-            min="0"
-            max="255"
-          )
-          input.verte__input(
-            @change="inputChanged($event, 'blue')"
-            :value="rgb.blue"
-            type="number"
-            min="0"
-            max="255"
-          )
-        template(v-if="currentModel === 'hex'")
-          input.verte__input(
-            @change="inputChanged($event, 'hex')"
-            :value="hex"
-            type="text"
-          )
-        button.verte__submit(@click="submit")
-          svg.verte__icon(viewBox="0 0 24 24")
-            path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
-      .verte__recent(ref="recent")
-        a.verte__recent-color(
-          role="button"
-          href="#"
-          v-for="clr in recentColors.colors"
-          :style="`background: ${clr}`"
-          @click.prevent="selectColor(clr)"
+      .verte__controller
+        Slider(
+          v-if="enableAlpha"
+          :gradient="[`rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, 0)`, `rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, 1)`]"
+          :min="0"
+          :max="1"
+          :step="0.01"
+          :editable="false"
+          v-model="alpha"
         )
+        template(v-if="enableSliders")
+          template(v-if="model === 'hsl'")
+            Slider(
+              :gradient="[`hsl(0,${hsl.sat}%,${hsl.lum}%)`, `hsl(360,${hsl.sat}%,${hsl.lum}%)`]"
+              :min="0"
+              :max="360"
+              :step="1"
+              v-model="hsl.hue"
+            )
+            Slider(
+              :gradient="[`hsl(${hsl.hue},0%,${hsl.lum}%)`, `hsl(${hsl.hue},100%,${hsl.lum}%)`]"
+              :min="0"
+              :max="100"
+              :step="1"
+              v-model="hsl.sat"
+            )
+            Slider(
+              :gradient="[`hsl(${hsl.hue},${hsl.sat}%,0%)`, `hsl(${hsl.hue},${hsl.sat}%,100%)`]"
+              :min="0"
+              :max="100"
+              :step="1"
+              v-model="hsl.lum"
+            )
+          template(v-if="model === 'rgb' || model === 'hex'")
+            Slider(
+              :gradient="[`rgb(0,${rgb.green},${rgb.blue})`, `rgb(255,${rgb.green},${rgb.blue})`]"
+              v-model="rgb.red"
+            )
+            Slider(
+              :gradient="[`rgb(${rgb.red},0,${rgb.blue})`, `rgb(${rgb.red},255,${rgb.blue})`]"
+              v-model="rgb.green"
+            )
+            Slider(
+              :gradient="[`rgb(${rgb.red},${rgb.green},0)`, `rgb(${rgb.red},${rgb.green},255)`]"
+              v-model="rgb.blue"
+            )
+
+        //- verte inputs
+        .verte__inputs
+          button.verte__model(@click="switchModel") {{currentModel}}
+          template(v-if="currentModel === 'hsl'")
+            input.verte__input(
+              @change="inputChanged($event, 'hue')"
+              :value="hsl.hue"
+              type="number"
+              max="360"
+              min="0"
+            )
+            input.verte__input(
+              @change="inputChanged($event, 'sat')"
+              :value="hsl.sat"
+              type="number"
+              min="0"
+              max="100"
+            )
+            input.verte__input(
+              @change="inputChanged($event, 'lum')"
+              :value="hsl.lum"
+              type="number"
+              min="0"
+              max="100"
+            )
+          template(v-if="currentModel === 'rgb'")
+            input.verte__input(
+              @change="inputChanged($event, 'red')"
+              :value="rgb.red"
+              type="number"
+              min="0"
+              max="255"
+            )
+            input.verte__input(
+              @change="inputChanged($event, 'green')"
+              :value="rgb.green"
+              type="number"
+              min="0"
+              max="255"
+            )
+            input.verte__input(
+              @change="inputChanged($event, 'blue')"
+              :value="rgb.blue"
+              type="number"
+              min="0"
+              max="255"
+            )
+          template(v-if="currentModel === 'hex'")
+            input.verte__input(
+              @change="inputChanged($event, 'hex')"
+              :value="hex"
+              type="text"
+            )
+          button.verte__submit(@click="submit")
+            svg.verte__icon(viewBox="0 0 24 24")
+              path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
+        .verte__recent(ref="recent")
+          a.verte__recent-color(
+            role="button"
+            href="#"
+            v-for="clr in recentColors.colors"
+            :style="`background: ${clr}`"
+            @click.prevent="selectColor(clr)"
+          )
 
 </template>
 
@@ -166,6 +168,10 @@ export default {
       type: String,
       default: 'vertical',
       validator: makeListValidator('display', ['vertical', 'vertical-widget'])
+    },
+    menuPosition: {
+      type: String,
+      default: 'top'
     },
     enableAlpha: {
       type: Boolean,
@@ -382,9 +388,6 @@ $dot-space: 4px;
     fill: inherit
 
 .verte__menu
-  position: absolute
-  top: 50px
-  display: none
   flex-direction: column
   justify-content: center
   align-items: stretch
@@ -394,10 +397,34 @@ $dot-space: 4px;
   will-change: transform
   box-shadow: 0 8px 15px rgba($black, 0.1)
   overflow: hidden
+
+
+.verte__menu-origin
+  display: none
+  position: absolute
+  z-index: 10
   &--active
     display: flex
   &--static
     position: static
+  &--top
+    bottom: 50px
+  &--bottom
+    top: 50px
+  &--right
+    right: 0
+  &--left
+    left: 0
+  &--center
+    position: fixed
+    top: 0
+    left: 0
+    width: 100vw
+    height: 100vh
+    justify-content: center
+    align-items: center
+    background-color: rgba($black, 0.1)
+    
 
   &:focus
     outline: none

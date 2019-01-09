@@ -2,7 +2,7 @@
 
 ## Default Example
 
-<verte-demo></verte-demo>
+<verte-demo menuPosition="bottom"></verte-demo>
 
 ```vue
 <template>
