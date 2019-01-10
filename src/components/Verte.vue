@@ -37,7 +37,7 @@
           :editable="false"
           v-model="alpha"
         )
-        template(v-if="enableSliders")
+        template(v-if="rgbSliders")
           template(v-if="model === 'hsl'")
             Slider(
               :gradient="[`hsl(0,${hsl.sat}%,${hsl.lum}%)`, `hsl(360,${hsl.sat}%,${hsl.lum}%)`]"
@@ -186,7 +186,7 @@ export default {
       type: Boolean,
       default: true
     },
-    enableSliders: {
+    rgbSliders: {
       type: Boolean,
       default: false
     },
