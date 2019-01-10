@@ -18,6 +18,10 @@
       tabindex="-1"
       :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
     )
+      button.verte__close(@click="closeMenu")
+        svg.verte__icon.verte__icon--small(viewBox="0 0 24 24")
+          title Close Icon
+          path(d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z")
       .verte__draggable(v-if="draggable" @mousedown="dragMenu")
       Picker(
         :mode="picker"
@@ -124,11 +128,9 @@
               type="text"
             )
           button.verte__submit(@click="submit")
+            title Submit Icon
             svg.verte__icon(viewBox="0 0 24 24")
               path(d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z")
-          button.verte__close(@click="closeMenu")
-            svg.verte__icon(viewBox="0 0 24 24")
-              path(d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z")
         .verte__recent(ref="recent")
           a.verte__recent-color(
             role="button"
@@ -398,7 +400,6 @@ $dot-space: 4px;
   background-color: $white
   will-change: transform
   box-shadow: 0 8px 15px rgba($black, 0.1)
-  overflow: hidden
   &:focus
     outline: none
 
@@ -465,7 +466,9 @@ $dot-space: 4px;
 .verte__icon
   width: 20px
   height: 20px
-
+  &--small
+    width: 12px
+    height: 12px
 .verte__input
   padding: 5px
   margin: 0 3px
@@ -484,6 +487,7 @@ $dot-space: 4px;
   font-size: 16px
   margin-bottom: 5px
 .verte__draggable
+  border-radius: $borderRadius $borderRadius 0 0
   height: 8px
   width: 100%
   cursor: grab
@@ -491,8 +495,7 @@ $dot-space: 4px;
   background-size: $dot-space $dot-space
 
 .verte__model,
-.verte__submit,
-.verte__close
+.verte__submit
   position: relative
   display: inline-flex
   justify-content: center
@@ -509,5 +512,25 @@ $dot-space: 4px;
   &:hover
     fill: $blue
     color: $blue
+
+.verte__close
+  position: absolute
+  top: 1px
+  right: 1px
+  z-index: 1
+  display: flex
+  justify-content: center
+  align-items: center
+  padding: 4px
+  cursor: pointer
+  border-radius: 50%
+  border: 0
+  transform: translate(50%, -50%)
+  background-color: rgba($black, 0.4)
+  fill: $white
+  outline: none
+  box-shadow: 1px 1px 1px rgba($black, 0.2)
+  &:hover
+    background-color: rgba($black, 0.6)
 
 </style>
