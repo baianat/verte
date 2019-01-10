@@ -7,6 +7,10 @@
 [![Build Status](https://img.shields.io/travis/baianat/verte.svg?style=flat-square)](https://travis-ci.org/baianat/verte)
 [![Codecov](https://img.shields.io/codecov/c/github/baianat/verte.svg?style=flat-square)](https://codecov.io/github/baianat/verte)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/32d598bdf1094532baf51ac7d89aebfd)](https://www.codacy.com/app/logaretm/verte?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=baianat/verte&amp;utm_campaign=Badge_Grade)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/baianat/verte.svg)](http://isitmaintained.com/project/baianat/verte "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/baianat/verte.svg)](http://isitmaintained.com/project/baianat/verte "Percentage of issues still open")
+[![npm](https://img.shields.io/npm/dm/verte.svg)](https://npm-stat.com/charts.html?package=verte)
+[![npm](https://img.shields.io/npm/v/verte.svg)](https://www.npmjs.com/package/verte)
 
 # Verte
 
