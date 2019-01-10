@@ -18,11 +18,11 @@
       tabindex="-1"
       :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
     )
-      button.verte__close(@click="closeMenu")
+      button.verte__close(v-if="!menuOnly" @click="closeMenu")
         svg.verte__icon.verte__icon--small(viewBox="0 0 24 24")
           title Close Icon
           path(d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z")
-      .verte__draggable(v-if="draggable" @mousedown="dragMenu")
+      .verte__draggable(v-if="draggable && !menuOnly" @mousedown="dragMenu")
       Picker(
         :mode="picker"
         v-model="currentColor"
@@ -172,11 +172,11 @@ export default {
     display: {
       type: String,
       default: 'vertical',
-      validator: makeListValidator('display', ['vertical', 'vertical-widget'])
+      validator: makeListValidator('display', ['picker', 'widget'])
     },
     menuPosition: {
       type: String,
-      default: 'top',
+      default: 'bottom',
       validator: makeListValidator('menuPosition', ['top', 'bottom', 'left', 'right', 'center'])
     },
     recentColors: {
@@ -236,7 +236,7 @@ export default {
       }
     },
     menuOnly () {
-      return this.display === 'vertical-widget';
+      return this.display === 'widget';
     }
   },
   watch: {
@@ -422,6 +422,7 @@ $dot-space: 4px;
     display: flex
   &--static
     position: static
+    z-index: initial
   &--top
     bottom: 50px
   &--bottom
