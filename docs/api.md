@@ -7,18 +7,19 @@
 |`picker`| 'wheel' \| 'square' | 'wheel' | chose between pickers style |
 |`value` | a valid color string |'#000' | the initial color value |
 |`model` | 'rgb' \| 'hex' \| 'hsl' | 'rgb' | the output color model |
-|`menuPosition` | 'top' \| 'bottom' \| 'left' \| 'right' \| 'center' | 'top' | the output color model |
+|`menuPosition` | 'top' \| 'bottom' \| 'left' \| 'right' \| 'center' | 'bottom' | the output color model |
+|`recentColors` | null \| true \| Array | true | set the current recent colors, if set to `true` it will generate random colors (default), or you can disable it by setting it `null` |
 |`display` | String | 'vertical' | controls the layout of the component. [List of allowed values](#display-modes). |
 |`draggable` | Boolean | true | turn on/off dragging the picker menu |
 |`enableAlpha` | Boolean | true | turn on/off the alpha slider |
-|`enableSliders` | Boolean | false | show/hide rgb sliders |
+|`rgbSliders` | Boolean | false | show/hide rgb sliders |
 
 ## Display Modes
 
 Verte currently has two display layouts:
 
-- `vertical`: The component is hidden until the user presses on the input, then it is displayed vertically.
-- `vertical-widget`: The component is always displayed vertically, the trigger input is hidden.
+- `picker`: The component is hidden until the user presses on the input, then it is displayed vertically.
+- `widget`: The component is always displayed vertically, the trigger input is hidden.
 
 We are planning for `horizontal` and `horizontal-widge` in the future. [You can view the different layouts here](/examples.md#layout-customization)
 
