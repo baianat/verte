@@ -1,7 +1,7 @@
 /**
  * Utilities
  */
-export function makeArray (length, valueSource) {
+export function newArray (length, valueSource) {
   let array = [];
   for (let i = 0; i < length; i++) {
     const value = typeof valueSource === 'function' ? valueSource() : valueSource;

@@ -131,11 +131,11 @@
             title Submit Icon
             svg.verte__icon(viewBox="0 0 24 24")
               path(d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z")
-        .verte__recent(ref="recent")
+        .verte__recent(ref="recent" v-if="recentColors")
           a.verte__recent-color(
             role="button"
             href="#"
-            v-for="clr in recentColors.colors"
+            v-for="clr in recentColorsArray"
             :style="`background: ${clr}`"
             @click.prevent="selectColor(clr)"
           )
@@ -146,7 +146,7 @@
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
 import { toRgb, toHex, toHsl, getRandomColor, isValidColor } from 'color-fns';
-import { makeArray, isElementClosest, warn, makeListValidator } from '../utils';
+import { newArray, isElementClosest, warn, makeListValidator } from '../utils';
 
 export default {
   name: 'Verte',
@@ -179,6 +179,9 @@ export default {
       default: 'top',
       validator: makeListValidator('menuPosition', ['top', 'bottom', 'left', 'right', 'center'])
     },
+    recentColors: {
+      default: true
+    },
     enableAlpha: {
       type: Boolean,
       default: true
@@ -200,10 +203,7 @@ export default {
     hsl: toHsl('#000'),
     delta: { x: 0, y: 0 },
     currentModel: '',
-    recentColors: {
-      max: 6,
-      colors: makeArray(6, getRandomColor)
-    }
+    recentColorsArray: null,
   }),
   computed: {
     currentColor: {
@@ -312,7 +312,11 @@ export default {
       this.selectColor(this[this.currentModel]);
     },
     addRecentColor (newColor) {
-      const { colors, max } = this.recentColors;
+      if (!this.recentColors) {
+        return;
+      }
+      const colors = this.recentColorsArray;
+      const max = 6;
       if (colors.includes(newColor)) {
         return;
       }
@@ -348,6 +352,12 @@ export default {
   created () {
     this.selectColor(this.value || '#000', true);
     this.currentModel = this.model;
+    this.recentColorsArray = (() => {
+      if (this.recentColors === true) {
+        return newArray(6, getRandomColor)
+      }
+      return this.recentColors;
+    })()
   },
   mounted () {
     // give sliders time to
