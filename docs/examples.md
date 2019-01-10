@@ -61,6 +61,14 @@ export default {
 <verte menuPosition="left"></verte>
 ```
 
+### Center
+
+<verte-demo menuPosition="center"></verte-demo>
+
+```vue
+<verte menuPosition="center"></verte>
+```
+
 ## Layout Customization
 
 ## Wheel Picker
