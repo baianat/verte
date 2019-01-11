@@ -139,7 +139,7 @@
           a.verte__recent-color(
             role="button"
             href="#"
-            v-for="clr in recentColorsArray"
+            v-for="clr in $_verteStore.recentColors"
             :style="`background: ${clr}`"
             @click.prevent="selectColor(clr)"
           )
@@ -147,10 +147,11 @@
 </template>
 
 <script>
+import { toRgb, toHex, toHsl, isValidColor } from 'color-fns';
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
-import { toRgb, toHex, toHsl, getRandomColor, isValidColor } from 'color-fns';
-import { newArray, isElementClosest, warn, makeListValidator, getEventCords } from '../utils';
+import { initStore } from '../store';
+import { isElementClosest, warn, makeListValidator, getEventCords } from '../utils';
 
 export default {
   name: 'Verte',
@@ -206,10 +207,13 @@ export default {
     hex: toHex('#000'),
     hsl: toHsl('#000'),
     delta: { x: 0, y: 0 },
-    currentModel: '',
-    recentColorsArray: null,
+    currentModel: ''
   }),
   computed: {
+    $_verteStore () {
+      // Should return the store singleton instance.
+      return initStore();
+    },
     currentColor: {
       get () {
         if (!this[this.model] && process.env.NODE_ENV !== 'production') {
@@ -277,7 +281,7 @@ export default {
     handleMenuDrag (event) {
       if (event.button === 2) return;
       event.preventDefault();
-  
+
       const lastMove = Object.assign({}, this.delta);
       const startPosition = getEventCords(event);
 
@@ -302,7 +306,7 @@ export default {
     },
     submit () {
       this.$emit('beforeSubmit', this.currentColor);
-      this.addRecentColor(this.currentColor);
+      this.$_verteStore.addRecentColor(this.currentColor);
       this.$emit('input', this.currentColor);
       this.$emit('submit', this.currentColor);
     },
@@ -315,20 +319,6 @@ export default {
       const normalized = Math.min(Math.max(el.value, el.min), el.max);
       this[this.currentModel][value] = normalized;
       this.selectColor(this[this.currentModel]);
-    },
-    addRecentColor (newColor) {
-      if (!this.recentColors) {
-        return;
-      }
-      const colors = this.recentColorsArray;
-      const max = 6;
-      if (colors.includes(newColor)) {
-        return;
-      }
-      if (colors.length >= max) {
-        colors.shift();
-      }
-      colors.push(newColor);
     },
     toggleMenu () {
       if (this.isMenuActive) {
@@ -355,15 +345,18 @@ export default {
       document.addEventListener('mousedown', this.closeCallback);
     }
   },
+  beforeCreate () {
+    // initialize the store early, _base is the vue constructor.
+    initStore(this.$options._base);
+  },
+  // When used as a target for Vue.use
+  install (Vue, opts) {
+    initStore(Vue, opts);
+    Vue.component('Verte', this); // install self
+  },
   created () {
     this.selectColor(this.value || '#000', true);
     this.currentModel = this.model;
-    this.recentColorsArray = (() => {
-      if (this.recentColors === true) {
-        return newArray(6, getRandomColor)
-      }
-      return this.recentColors;
-    })()
   },
   mounted () {
     // give sliders time to
@@ -419,7 +412,6 @@ $dot-space: 4px;
   &:focus
     outline: none
 
-
 .verte__menu-origin
   display: none
   position: absolute
@@ -446,7 +438,6 @@ $dot-space: 4px;
     justify-content: center
     align-items: center
     background-color: rgba($black, 0.1)
-    
 
   &:focus
     outline: none
@@ -492,7 +483,7 @@ $dot-space: 4px;
   min-width: 0
   text-align: center
   border-width: 0 0 1px 0
-  &::-webkit-inner-spin-button, 
+  &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button
     -webkit-appearance: none
     margin: 0
