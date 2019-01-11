@@ -299,7 +299,7 @@ export default {
       this.$emit('beforeSubmit', this.currentColor);
       this.addRecentColor(this.currentColor);
       this.$emit('input', this.currentColor);
-      this.$emit('submitted', this.currentColor);
+      this.$emit('submit', this.currentColor);
     },
     inputChanged (event, value) {
       const el = event.target;
