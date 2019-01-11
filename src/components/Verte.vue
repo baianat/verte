@@ -22,7 +22,11 @@
         svg.verte__icon.verte__icon--small(viewBox="0 0 24 24")
           title Close Icon
           path(d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z")
-      .verte__draggable(v-if="draggable && !menuOnly" @mousedown="dragMenu")
+      .verte__draggable(
+        v-if="draggable && !menuOnly"
+        @mousedown="handleMenuDrag"
+        @touchstart="handleMenuDrag"
+      )
       Picker(
         :mode="picker"
         v-model="currentColor"
@@ -146,7 +150,7 @@
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
 import { toRgb, toHex, toHsl, getRandomColor, isValidColor } from 'color-fns';
-import { newArray, isElementClosest, warn, makeListValidator } from '../utils';
+import { newArray, isElementClosest, warn, makeListValidator, getEventCords } from '../utils';
 
 export default {
   name: 'Verte',
@@ -270,30 +274,31 @@ export default {
       const indx = models.indexOf(this.currentModel);
       this.currentModel = models[indx + 1] || models[0];
     },
-    dragMenu (event) {
-      if (event.button !== 0) return;
-      const startPosition = {};
-      const endPosition = {};
-      const lastMove = Object.assign({}, this.delta);
-
+    handleMenuDrag (event) {
+      if (event.button === 2) return;
       event.preventDefault();
-      startPosition.x = event.clientX;
-      startPosition.y = event.clientY;
+  
+      const lastMove = Object.assign({}, this.delta);
+      const startPosition = getEventCords(event);
 
-      const mousemoveHandler = (evnt) => {
+      const handleDragging = (evnt) => {
         window.requestAnimationFrame(() => {
-          endPosition.x = evnt.clientX;
-          endPosition.y = evnt.clientY;
+          const endPosition = getEventCords(evnt);
+
           this.delta.x = lastMove.x + endPosition.x - startPosition.x;
           this.delta.y = lastMove.y + endPosition.y - startPosition.y;
         });
       };
-      const mouseupHandler = () => {
-        document.removeEventListener('mousemove', mousemoveHandler);
-        document.removeEventListener('mouseup', mouseupHandler);
+      const handleRelase = () => {
+        document.removeEventListener('mousemove', handleDragging);
+        document.removeEventListener('mouseup', handleRelase);
+        document.removeEventListener('touchmove', handleDragging);
+        document.removeEventListener('touchup', handleRelase);
       };
-      document.addEventListener('mousemove', mousemoveHandler);
-      document.addEventListener('mouseup', mouseupHandler);
+      document.addEventListener('mousemove', handleDragging);
+      document.addEventListener('mouseup', handleRelase);
+      document.addEventListener('touchmove', handleDragging);
+      document.addEventListener('touchup', handleRelase);
     },
     submit () {
       this.$emit('beforeSubmit', this.currentColor);
