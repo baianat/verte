@@ -171,7 +171,7 @@ export default {
     },
     display: {
       type: String,
-      default: 'vertical',
+      default: 'picker',
       validator: makeListValidator('display', ['picker', 'widget'])
     },
     menuPosition: {
