@@ -33,7 +33,7 @@
 <script>
 import Slider from './Slider.vue';
 import { toHsl } from 'color-fns';
-import { getCartesianCoords } from '../utils';
+import { getCartesianCoords, getEventCords } from '../utils';
 
 export default {
   name: 'VertePicker',
@@ -210,10 +210,10 @@ export default {
     handleSelect (event) {
       event.preventDefault();
       this.pickerRect = this.$refs.canvas.getBoundingClientRect();
-      this.selectColor(this.getEventCords(event));
+      this.selectColor(getEventCords(event));
       const tempFunc = (evnt) => {
         window.requestAnimationFrame(() => {
-          this.selectColor(this.getEventCords(evnt))
+          this.selectColor(getEventCords(evnt))
         });
       }
       const handleRelase = () => {
@@ -226,16 +226,6 @@ export default {
       document.addEventListener('touchmove', tempFunc);
       document.addEventListener('mouseup', handleRelase);
       document.addEventListener('touchend', handleRelase);
-    },
-    getEventCords (event) {
-      if (event.type.match(/^touch/i)) {
-        const touch = event.touches[0];
-        return { x: touch.clientX, y: touch.clientY };
-      }
-      if (event.type.match(/^mouse/i)) {
-        return { x: event.clientX, y: event.clientY };
-      }
-      return { x: 0, y: 0};
     }
   },
   mounted () {

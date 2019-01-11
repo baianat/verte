@@ -2,13 +2,13 @@
   .slider(ref="wrapper")
     .slider__track(
       ref="track"
-      v-on="trackSlide ? { mousedown: select, touchstrat: select } : { }"
+      v-on="trackSlide ? { mousedown: select, touchstart: select } : { }"
       )
       .slider__fill(ref="fill")
       .slider__handle(
         v-for="handle in handles"
-        @mousedown.native="select"
-        @touchstart.native="select"
+        @mousedown="select"
+        @touchstart="select"
         :style="`transform: translate(${handle.position}px, 0); background-color: ${handle.color};`"
         )
         .slider__label(v-if="label") {{ handle.value }}
@@ -22,7 +22,7 @@
 
 <script>
 import { mixColors } from 'color-fns';
-import { getClosestValue, debounce } from '../utils';
+import { getClosestValue, debounce, getEventCords } from '../utils';
 
 export default {
   name: 'VerteSlider',
@@ -125,7 +125,7 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       // check if  left mouse is clicked
-      if (event.buttons !== 1) return;
+      if (event.buttons === 2) return;
 
       this.updateWidth();
       this.track.classList.add('slider--dragging');
@@ -150,7 +150,6 @@ export default {
      * dragging motion
      */
     dragging (event) {
-      event.preventDefault();
       const stepValue = this.getStepValue(event);
       if (!this.ticking) {
         window.requestAnimationFrame(() => {
@@ -172,11 +171,9 @@ export default {
       document.removeEventListener('touchend', this.tempRelease);
     },
     getStepValue (event) {
-      const eventX = event.type.includes('mouse')
-        ? event.clientX : event.type.includes('touch')
-          ? event.touches[0].clientX : event;
+      const { x } = getEventCords(event);
 
-      const mouseValue = (eventX - this.currentX);
+      const mouseValue = (x - this.currentX);
       const stepCount = parseInt((mouseValue / this.stepWidth) + 0.5, 10);
       const stepValue = (stepCount * this.step) + this.min;
       if (!this.decimalsCount) {

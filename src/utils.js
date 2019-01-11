@@ -61,3 +61,14 @@ export function makeListValidator (propName, list) {
     return isValid;
   };
 };
+
+export function getEventCords (event) {
+  if (event.type.match(/^touch/i)) {
+    const touch = event.touches[0];
+    return { x: touch.clientX, y: touch.clientY };
+  }
+  if (event.type.match(/^mouse/i)) {
+    return { x: event.clientX, y: event.clientY };
+  }
+  return { x: 0, y: 0 };
+}
