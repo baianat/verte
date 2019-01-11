@@ -335,6 +335,7 @@ export default {
     closeMenu () {
       this.isMenuActive = false;
       document.removeEventListener('mousedown', this.closeCallback);
+      this.$emit('close', this.currentColor);
     },
     openMenu () {
       this.isMenuActive = true;
