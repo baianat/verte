@@ -349,6 +349,11 @@ export default {
     // initialize the store early, _base is the vue constructor.
     initStore(this.$options._base);
   },
+  // When used as a target for Vue.use
+  install (Vue, opts) {
+    initStore(Vue, opts);
+    Vue.component('Verte', this); // install self
+  },
   created () {
     this.selectColor(this.value || '#000', true);
     this.currentModel = this.model;

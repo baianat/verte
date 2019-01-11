@@ -5,10 +5,13 @@ const MAX_COLOR_HISTROY = 6;
 let Vue;
 let store;
 
-export function initStore (_Vue, { recentColors } = {}) {
+export function initStore (_Vue, opts) {
   if (store) {
     return store;
   }
+
+  opts = opts || {};
+  const { recentColors, onRecentColorsChange } = opts;
 
   Vue = _Vue;
   store = new Vue({
@@ -26,6 +29,9 @@ export function initStore (_Vue, { recentColors } = {}) {
         }
 
         this.recentColors.push(newColor);
+        if (onRecentColorsChange) {
+          onRecentColorsChange(this.recentColors);
+        }
       }
     }
   });
