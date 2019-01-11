@@ -6,7 +6,8 @@
   .verte-picker__origin(ref="origin")
     canvas.verte-picker__canvas(
       ref="canvas"
-      @mousedown="handleMouseDown"
+      @mousedown="handleSelect"
+      @touchstart="handleSelect"
     )
     .verte-picker__cursor(
       ref="cursor"
@@ -128,8 +129,7 @@ export default {
         this.currentHue = this.hsl.hue;
       }
     },
-    selectColor (event) {
-      const { x, y } = event;
+    selectColor ({ x, y }) {
       const { left, top } = this.pickerRect;
       const normalized = {
         x: Math.min(Math.max(x - left, 0), this.$refs.canvas.width - 1),
@@ -203,31 +203,40 @@ export default {
       this.ctx.fillStyle = grdWhite;
       this.ctx.fillRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
     },
-    getMouseCords ({ offsetX, offsetY }) {
-      return {
-        x: offsetX,
-        y: offsetY
-      };
-    },
     getCanvasColor ({ x, y }, ctx) {
       const imageData = ctx.getImageData(x, y, 1, 1).data;
       return `rgb(${imageData[0]}, ${imageData[1]}, ${imageData[2]})`;
     },
-    handleMouseDown (event) {
+    handleSelect (event) {
       event.preventDefault();
       this.pickerRect = this.$refs.canvas.getBoundingClientRect();
-      this.selectColor(event);
-      let tempFunc = (evnt) => {
-        window.requestAnimationFrame(() => this.selectColor(evnt));
+      this.selectColor(this.getEventCords(event));
+      const tempFunc = (evnt) => {
+        window.requestAnimationFrame(() => {
+          this.selectColor(this.getEventCords(evnt))
+        });
       }
-      const mouseupHandler = () => {
+      const handleRelase = () => {
         document.removeEventListener('mousemove', tempFunc);
-        document.removeEventListener('mouseup', mouseupHandler);
+        document.removeEventListener('touchmove', tempFunc);
+        document.removeEventListener('mouseup', handleRelase);
+        document.removeEventListener('touchend', handleRelase);
       };
       document.addEventListener('mousemove', tempFunc);
-      document.addEventListener('mouseup', mouseupHandler);
+      document.addEventListener('touchmove', tempFunc);
+      document.addEventListener('mouseup', handleRelase);
+      document.addEventListener('touchend', handleRelase);
+    },
+    getEventCords (event) {
+      if (event.type.match(/^touch/i)) {
+        const touch = event.touches[0];
+        return { x: touch.clientX, y: touch.clientY };
+      }
+      if (event.type.match(/^mouse/i)) {
+        return { x: event.clientX, y: event.clientY };
+      }
+      return { x: 0, y: 0};
     }
-
   },
   mounted () {
     if (this.mode === 'wheel') {
