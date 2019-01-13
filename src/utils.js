@@ -40,6 +40,13 @@ export function getClosestValue (array, value) {
   });
 }
 
+export function getPolarCoords (x, y) {
+  return {
+    r: Math.sqrt((x * x) + (y * y)),
+    theta: Math.atan2(y, x) * 180 / Math.PI
+  };
+}
+
 export function getCartesianCoords (r, theta) {
   return {
     x: r * Math.cos(theta * Math.PI * 2),

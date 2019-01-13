@@ -65,7 +65,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "color-fns": "^0.0.7"
+    "color-fns": "^0.0.9"
   },
   "jest": {
     "setupFiles": [

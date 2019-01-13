@@ -22,7 +22,7 @@
   )
   slider.verte-picker__slider(
     v-if="mode === 'wheel'"
-    :gradient="[`hsl(${hsl.hue},0%,${hsl.lum}%)`, `hsl(${hsl.hue},100%,${hsl.lum}%)`]"
+    :gradient="[`hsl(${currentColor.hue},0%,${currentColor.lum}%)`, `hsl(${currentColor.hue},100%,${currentColor.lum}%)`]"
     :editable="false"
     :max="100"
     v-model="currentSat"
@@ -32,8 +32,8 @@
 
 <script>
 import Slider from './Slider.vue';
-import { toHsl, parseRgb, alpha } from 'color-fns';
-import { getCartesianCoords, getEventCords } from '../utils';
+import { toHsl, Colors } from 'color-fns';
+import { getCartesianCoords, getPolarCoords, getEventCords } from '../utils';
 
 export default {
   name: 'VertePicker',
@@ -52,14 +52,13 @@ export default {
     currentHue: 0,
     currentSat: 0,
     currentColor: '',
-    hsl: {},
     cursor: {},
     preventUpdating: false,
     preventEcho: false
   }),
   watch: {
     // handles external changes.
-    value (val, oldVal) {
+    value (val) {
       if (this.preventUpdating) {
         this.preventUpdating = false;
         return;
@@ -108,67 +107,68 @@ export default {
       this.circle.path.closePath();
       this.updateWheelColors();
     },
+    // this function calls when the color changed from outside the picker
     handleValue (color, muted = false) {
-      this.currentColor = color;
-      this.hsl = toHsl(this.currentColor);
+      const { width, height } = this.pickerRect;
+      this.currentColor = toHsl(color);
       // prvent upadtion picker slider for causing
       // echo udationg to the current color value
       this.preventEcho = true;
 
       if (this.mode === 'wheel') {
-        const r = (100 - this.hsl.lum) * (this.diameter / 200);
+        const r = (100 - this.currentColor.lum) * (this.diameter / 200);
         const radius = this.diameter / 2;
-        const coords = getCartesianCoords(r, this.hsl.hue / 360);
+        const coords = getCartesianCoords(r, this.currentColor.hue / 360);
         this.cursor = { x: coords.x + radius, y: coords.y + radius };
-        this.currentSat = this.hsl.sat;
+        this.currentSat = this.currentColor.sat;
       }
 
       if (this.mode === 'square') {
-        const x = (this.hsl.sat / 100) * (this.$refs.canvas.width);
-        const y = ((100 - this.hsl.lum) / 100) * (this.$refs.canvas.height);
+        const x = (this.currentColor.sat / 100) * width;
+        const y = ((100 - this.currentColor.lum) / 100) * height;
         this.cursor = { x, y };
-        this.currentHue = this.hsl.hue;
+        this.currentHue = this.currentColor.hue;
       }
     },
-    selectColor ({ x, y }) {
-      const { left, top } = this.pickerRect;
+    updateCursorPosition ({ x, y }) {
+      const { left, top, width, height } = this.pickerRect;
       const normalized = {
-        x: Math.min(Math.max(x - left, 0), this.$refs.canvas.width - 1),
-        y: Math.min(Math.max(y - top, 0), this.$refs.canvas.height)
+        x: Math.min(Math.max(x - left, 0), width),
+        y: Math.min(Math.max(y - top, 0), height)
       }
 
-      if (this.mode === 'square') {
-        this.cursor = { x: normalized.x, y: normalized.y };
-      }
       if (
         this.mode === 'wheel'&&
-        this.ctx.isPointInPath(this.circle.path, normalized.x, normalized.y)
+        !this.ctx.isPointInPath(this.circle.path, normalized.x, normalized.y)
       ) {
-        // Todo: handle cursor better
-        this.cursor = { x: normalized.x, y: normalized.y };
+        return;
       }
 
+      this.cursor = normalized;
       this.updateColor();
     },
+    // select color and update it to verte component
+    // this function calls when the color changed from the picker
     updateColor (muted = false) {
       if (this.preventEcho) {
         this.preventEcho = false;
         return;
       }
-      const color = parseRgb(this.getCanvasColor(this.cursor, this.ctx));
-      color.alpha = this.alpha;
-      this.currentColor = color;
+
+      this.currentColor = this.getCanvasColor();
       this.preventUpdating = true;
       this.$emit('change', this.currentColor);
       this.$emit('input', this.currentColor);
     },
     updateWheelColors () {
       if (!this.circle) return;
+      const { width, height } = this.pickerRect;
+
       const x = this.circle.xCords;
       const y = this.circle.yCords;
       const radius = this.circle.radius;
       const sat = this.satSlider ? this.currentSat : 100;
-      this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+      this.ctx.clearRect(0, 0, width, height);
 
       for (let angle = 0; angle < 360; angle += 1) {
         const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
@@ -188,36 +188,63 @@ export default {
       }
     },
     updateSquareColors () {
-      this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+      const { width, height } = this.pickerRect;
+      this.ctx.clearRect(0, 0, width, height);
 
       this.ctx.fillStyle = `hsl(${this.currentHue}, 100%, 50%)`;
-      this.ctx.fillRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+      this.ctx.fillRect(0, 0, width, height);
 
-      let grdBlack = this.ctx.createLinearGradient(0, 0, this.$refs.canvas.width, 0);
+      let grdBlack = this.ctx.createLinearGradient(0, 0, width, 0);
       grdBlack.addColorStop(0, `hsl(0, 0%, 50%)`);
       grdBlack.addColorStop(1, `hsla(0, 0%, 50%, 0)`);
       this.ctx.fillStyle = grdBlack;
-      this.ctx.fillRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+      this.ctx.fillRect(0, 0, width, height);
 
-      let grdWhite = this.ctx.createLinearGradient(0, 0, 0, this.$refs.canvas.height);
+      let grdWhite = this.ctx.createLinearGradient(0, 0, 0, height);
       grdWhite.addColorStop(0, `hsl(0, 0%, 100%)`);
       grdWhite.addColorStop(0.5, `hsla(0, 0%, 100%, 0)`);
       grdWhite.addColorStop(0.5, `hsla(0, 0%, 0%, 0)`);
       grdWhite.addColorStop(1, `hsl(0, 0%, 0%) `);
       this.ctx.fillStyle = grdWhite;
-      this.ctx.fillRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+      this.ctx.fillRect(0, 0, width, height);
     },
-    getCanvasColor ({ x, y }, ctx) {
-      const imageData = ctx.getImageData(x, y, 1, 1).data;
-      return `rgb(${imageData[0]}, ${imageData[1]}, ${imageData[2]})`;
+    getCanvasColor () {
+      const { x, y } = this.cursor;
+      let sat = 0;
+      let lum = 0;
+      let hue = 0;
+
+      if (this.mode === 'wheel') {
+        const radius = this.diameter / 2;
+        const xShitft = x - radius;
+        const yShitft = (y - radius) * -1;
+        const { r, theta } = getPolarCoords(xShitft, yShitft);
+        lum = Math.round((radius - r) * 100 / radius);
+        hue = Math.round(!~Math.sign(theta) ? -theta : 360 - theta);
+        sat = this.currentSat;
+      }
+
+      if (this.mode === 'square') {
+        const { width, height } = this.pickerRect;
+        sat = x * 100 / width;
+        lum = 100 - (y * 100 / height);
+        hue = this.currentHue;
+      }
+    
+      return new Colors.HslColor({
+        alpha: this.alpha,
+        hue,
+        sat,
+        lum
+      });
     },
     handleSelect (event) {
       event.preventDefault();
       this.pickerRect = this.$refs.canvas.getBoundingClientRect();
-      this.selectColor(getEventCords(event));
+      this.updateCursorPosition(getEventCords(event));
       const tempFunc = (evnt) => {
         window.requestAnimationFrame(() => {
-          this.selectColor(getEventCords(evnt))
+          this.updateCursorPosition(getEventCords(evnt))
         });
       }
       const handleRelase = () => {
@@ -233,9 +260,9 @@ export default {
     }
   },
   mounted () {
+    this.pickerRect = this.$refs.canvas.getBoundingClientRect();
     if (this.mode === 'wheel') {
       this.initWheel();
-      this.$refs.origin.style.width = `${this.radius}px`;
     }
     if (this.mode === 'square') {
       this.initSquare();

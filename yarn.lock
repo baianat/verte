@@ -3268,10 +3268,10 @@ color-convert@^1.3.0, color-convert@^1.9.0:
   dependencies:
     color-name "^1.1.1"
 
-color-fns@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/color-fns/-/color-fns-0.0.7.tgz#73c9f5365c2f190fb2dbc01a355023c885292430"
-  integrity sha1-c8n1NlwvGQ+y28AaNVAjyIUpJDA=
+color-fns@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/color-fns/-/color-fns-0.0.9.tgz#6f98f0f2a8d92e5509d6d207f28c2d185a331bda"
+  integrity sha512-MK6vvTdskjMI1C2mD6EGglE+6+xcekWvwwoK7z4uCWVCIAuSUTlpOD6Mf2YNi+bVT45k5VqTfX4jAHI8trj5DA==
 
 color-name@^1.0.0, color-name@^1.1.1:
   version "1.1.3"
