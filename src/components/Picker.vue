@@ -32,7 +32,7 @@
 
 <script>
 import Slider from './Slider.vue';
-import { toHsl } from 'color-fns';
+import { toHsl, parseRgb, alpha } from 'color-fns';
 import { getCartesianCoords, getEventCords } from '../utils';
 
 export default {
@@ -45,6 +45,7 @@ export default {
     edge: { type: Number, default: 250 },
     diameter: { type: Number, default: 180 },
     satSlider: { type: Boolean, default: true },
+    alpha: { type: Number, default: 1 },
     value: { type: String, default: '#fff' }
   },
   data: () => ({
@@ -154,8 +155,11 @@ export default {
         this.preventEcho = false;
         return;
       }
-      this.currentColor = this.getCanvasColor(this.cursor, this.ctx);
+      const color = parseRgb(this.getCanvasColor(this.cursor, this.ctx));
+      color.alpha = this.alpha;
+      this.currentColor = color;
       this.preventUpdating = true;
+      this.$emit('change', this.currentColor);
       this.$emit('input', this.currentColor);
     },
     updateWheelColors () {

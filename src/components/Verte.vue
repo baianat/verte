@@ -29,6 +29,7 @@
       )
       Picker(
         :mode="picker"
+        :alpha="alpha"
         v-model="currentColor"
       )
       .verte__controller
@@ -147,7 +148,7 @@
 </template>
 
 <script>
-import { toRgb, toHex, toHsl, isValidColor } from 'color-fns';
+import { toRgb, toHex, toHsl, isValidColor, alpha } from 'color-fns';
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
 import { initStore } from '../store';
@@ -240,7 +241,8 @@ export default {
         return this[this.model].alpha;
       },
       set (val) {
-        this[this.model].alpha = val;
+        const color = alpha(this[this.model], val);
+        this.selectColor(color);
       }
     },
     menuOnly () {
