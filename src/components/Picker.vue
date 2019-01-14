@@ -219,8 +219,8 @@ export default {
         const xShitft = x - radius;
         const yShitft = (y - radius) * -1;
         const { r, theta } = getPolarCoords(xShitft, yShitft);
-        lum = Math.round((radius - r) * 100 / radius);
-        hue = Math.round(!~Math.sign(theta) ? -theta : 360 - theta);
+        lum = (radius - r) * 100 / radius;
+        hue = !~Math.sign(theta) ? -theta : 360 - theta;
         sat = this.currentSat;
       }
 
@@ -233,9 +233,9 @@ export default {
     
       return new Colors.HslColor({
         alpha: this.alpha,
-        hue,
-        sat,
-        lum
+        hue: Math.round(hue),
+        sat: Math.round(sat),
+        lum: Math.round(lum)
       });
     },
     handleSelect (event) {
