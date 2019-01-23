@@ -222,8 +222,8 @@ export default {
         return this[this.model].alpha;
       },
       set (val) {
-        const color = alpha(this[this.model], val);
-        this.selectColor(color);
+        this[this.model].alpha = val
+        this.selectColor(this[this.model]);
       }
     },
     menuOnly () {
