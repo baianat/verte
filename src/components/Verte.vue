@@ -122,7 +122,7 @@
             role="button"
             href="#"
             v-for="clr in $_verteStore.recentColors"
-            :style="`background: ${clr}`"
+            :style="`color: ${clr}`"
             @click.prevent="selectColor(clr)"
           )
 
@@ -439,8 +439,19 @@ $dot-space: 4px;
     width: 27px
     height: 27px
     border-radius: 50%
-    background-color: $black
+    background-color: $white
     box-shadow: 0 2px 4px rgba($black, 0.1)
+    background-image: $checkerboard
+    background-size: 6px 6px
+    background-position: 0 0, 3px -3px, 0 3px, -3px 0px
+    overflow: hidden
+    &:after
+      content: ''
+      display: block
+      width: 100%
+      height: 100%
+      background-color: currentColor
+
 
 .verte__value
   padding: 0.6em

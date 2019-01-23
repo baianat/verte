@@ -351,7 +351,7 @@ export default {
   height: 8px
   background: $white
   will-change: transfom
-  background-image: linear-gradient(45deg, $gray 25%, transparent 25%), linear-gradient(45deg, transparent 75%, $gray 75%), linear-gradient(-45deg, $gray 25%, transparent 25%), linear-gradient(-45deg, transparent 75%, $gray 75%)
+  background-image: $checkerboard
   background-size: 6px 6px
   background-position: 0 0, 3px -3px, 0 3px, -3px 0px
   border-radius: 10px
