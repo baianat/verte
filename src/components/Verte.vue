@@ -9,6 +9,10 @@
     )
     slot
       svg.verte__icon(viewBox="0 0 24 24")
+        pattern#checkerboard(width="6" height="6" patternUnits="userSpaceOnUse" fill="FFF")
+          rect(fill="#7080707f" x="0" width="3" height="3" y="0")
+          rect(fill="#7080707f" x="3" width="3" height="3" y="3")
+        circle(cx="12" cy="12" r="12" fill="url(#checkerboard)")
         circle(cx="12" cy="12" r="12")
   .verte__menu-origin(
     :class="[`verte__menu-origin--${menuPosition}`, { 'verte__menu-origin--static': menuOnly, 'verte__menu-origin--active': isMenuActive }]"
