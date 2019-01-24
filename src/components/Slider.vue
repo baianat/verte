@@ -112,11 +112,12 @@ export default {
         handle.style.color = gradient[0];
       });
     },
+    handleResize () {
+      this.updateWidth();
+      this.updateValue(this.currentValue, true);
+    },
     initEvents () {
-      window.addEventListener('resize', () => {
-        this.updateWidth();
-        this.updateValue(this.currentValue, true);
-      });
+      window.addEventListener('resize', this.handleResize);
     },
     /**
      * fire select events
@@ -302,7 +303,10 @@ export default {
       this.updateWidth();
       this.updateValue(undefined, true);
     });
-  }
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.handleResize);
+  },
 };
 </script>
 
