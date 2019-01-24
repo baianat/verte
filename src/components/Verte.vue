@@ -22,7 +22,7 @@
       tabindex="-1"
       :style="`transform: translate(${delta.x}px, ${delta.y}px)`"
     )
-      button.verte__close(v-if="!menuOnly" @click="closeMenu")
+      button.verte__close(v-if="!menuOnly" @click="closeMenu" type="button")
         svg.verte__icon.verte__icon--small(viewBox="0 0 24 24")
           title Close Icon
           path(d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z")
@@ -62,7 +62,7 @@
 
         //- verte inputs
         .verte__inputs
-          button.verte__model(@click="switchModel") {{currentModel}}
+          button.verte__model(@click="switchModel" type="button") {{currentModel}}
           template(v-if="currentModel === 'hsl'")
             input.verte__input(
               @change="inputChanged($event, 'hue')"
@@ -113,7 +113,7 @@
               :value="hex"
               type="text"
             )
-          button.verte__submit(@click="submit")
+          button.verte__submit(@click="submit" type="button")
             title Submit Icon
             svg.verte__icon(viewBox="0 0 24 24")
               path(d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z")
