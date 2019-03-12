@@ -16,6 +16,13 @@
 
 A Complete Vue.js Color Picker Component
 
+## Features
+
+- Multiple Color Models support: RGB, HSL, and HEX.
+- SSR Friendly.
+- Small file size, only 7kb gzipped.
+- Two way binding support.
+
 ## Getting Started
 
 ### Installation

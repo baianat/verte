@@ -117,11 +117,11 @@
             title Submit Icon
             svg.verte__icon(viewBox="0 0 24 24")
               path(d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z")
-        .verte__recent(ref="recent" v-if="recentColors")
+        .verte__recent(ref="recent" v-if="showHistory")
           a.verte__recent-color(
             role="button"
             href="#"
-            v-for="clr in $_verteStore.recentColors"
+            v-for="clr in historySource"
             :style="`color: ${clr}`"
             @click.prevent="selectColor(clr)"
           )
@@ -129,10 +129,10 @@
 </template>
 
 <script>
-import { toRgb, toHex, toHsl, isValidColor, alpha } from 'color-fns';
+import { toRgb, toHex, toHsl, isValidColor } from 'color-fns';
 import Picker from './Picker.vue';
 import Slider from './Slider.vue';
-import { initStore } from '../store';
+import { initStore, MAX_COLOR_HISTROY } from '../store';
 import { isElementClosest, warn, makeListValidator, getEventCords } from '../utils';
 
 export default {
@@ -166,8 +166,13 @@ export default {
       default: 'bottom',
       validator: makeListValidator('menuPosition', ['top', 'bottom', 'left', 'right', 'center'])
     },
-    recentColors: {
+    showHistory: {
+      type: Boolean,
       default: true
+    },
+    colorHistory: {
+      type: Array,
+      default: null
     },
     enableAlpha: {
       type: Boolean,
@@ -189,12 +194,20 @@ export default {
     hex: toHex('#000'),
     hsl: toHsl('#000'),
     delta: { x: 0, y: 0 },
-    currentModel: ''
+    currentModel: '',
+    internalColorHistory: []
   }),
   computed: {
     $_verteStore () {
       // Should return the store singleton instance.
       return initStore();
+    },
+    historySource () {
+      if (this.colorHistory) {
+        return this.internalColorHistory;
+      }
+
+      return this.$_verteStore.recentColors;
     },
     currentColor: {
       get () {
@@ -222,7 +235,7 @@ export default {
         return this[this.model].alpha;
       },
       set (val) {
-        this[this.model].alpha = val
+        this[this.model].alpha = val;
         this.selectColor(this[this.model]);
       }
     },
@@ -243,7 +256,38 @@ export default {
         this.$emit('input', this.currentColor);
       },
       deep: true
+    },
+    colorHistory (val) {
+      if (this.internalColorHistory !== val) {
+        this.internalColorHistory = [...val];
+      }
     }
+  },
+  beforeCreate () {
+    // initialize the store early, _base is the vue constructor.
+    initStore(this.$options._base);
+  },
+  // When used as a target for Vue.use
+  install (Vue, opts) {
+    initStore(Vue, opts);
+    Vue.component('Verte', this); // install self
+  },
+  created () {
+    if (this.colorHistory) {
+      this.internalColorHistory = [...this.colorHistory];
+    }
+
+    this.selectColor(this.value || '#000', true);
+    this.currentModel = this.model;
+  },
+  mounted () {
+    // give sliders time to
+    // calculate its visible width
+    this.$nextTick(() => {
+      this.isLoading = false;
+      if (this.menuOnly) return;
+      this.isMenuActive = false;
+    });
   },
   methods: {
     selectColor (color, muted = false) {
@@ -289,9 +333,22 @@ export default {
     },
     submit () {
       this.$emit('beforeSubmit', this.currentColor);
-      this.$_verteStore.addRecentColor(this.currentColor);
+      this.addColorToHistory(this.currentColor);
       this.$emit('input', this.currentColor);
       this.$emit('submit', this.currentColor);
+    },
+    addColorToHistory (color) {
+      if (this.colorHistory) {
+        if (this.internalColorHistory.length >= MAX_COLOR_HISTROY) {
+          this.internalColorHistory.pop();
+        }
+
+        this.internalColorHistory.unshift(color);
+        this.$emit('update:colorHistory', this.internalColorHistory);
+        return;
+      }
+
+      this.$_verteStore.addRecentColor(this.currentColor);
     },
     inputChanged (event, value) {
       const el = event.target;
@@ -327,28 +384,6 @@ export default {
       };
       document.addEventListener('mousedown', this.closeCallback);
     }
-  },
-  beforeCreate () {
-    // initialize the store early, _base is the vue constructor.
-    initStore(this.$options._base);
-  },
-  // When used as a target for Vue.use
-  install (Vue, opts) {
-    initStore(Vue, opts);
-    Vue.component('Verte', this); // install self
-  },
-  created () {
-    this.selectColor(this.value || '#000', true);
-    this.currentModel = this.model;
-  },
-  mounted () {
-    // give sliders time to
-    // calculate its visible width
-    this.$nextTick(() => {
-      this.isLoading = false;
-      if (this.menuOnly) return;
-      this.isMenuActive = false;
-    });
   }
 };
 </script>
@@ -451,7 +486,6 @@ $dot-space: 4px;
       width: 100%
       height: 100%
       background-color: currentColor
-
 
 .verte__value
   padding: 0.6em

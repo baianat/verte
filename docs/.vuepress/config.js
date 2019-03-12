@@ -2,6 +2,7 @@ const sidebars = {
   guide: [
     '',
     'getting-started',
+    'color-history',
     'binding'
   ],
   api: 'api',
