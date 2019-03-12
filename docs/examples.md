@@ -121,10 +121,10 @@ Display the component vertically using a trigger button and allow dragging.
 
 Display the component vertically using a trigger button and allow dragging.
 
-<verte-demo value="#f0f" display="widget" :recentColors="null"></verte-demo>
+<verte-demo value="#f0f" display="widget" :showHistory="false"></verte-demo>
 
 ```vue
-<verte display="widget" :recentColors="null"></verte>
+<verte display="widget" :showHistory="null"></verte>
 ```
 
 <style>
