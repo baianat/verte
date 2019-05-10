@@ -8,7 +8,8 @@
 |`value` | a valid color string |'#000' | the initial color value |
 |`model` | 'rgb' \| 'hex' \| 'hsl' | 'rgb' | the output color model |
 |`menuPosition` | 'top' \| 'bottom' \| 'left' \| 'right' \| 'center' | 'bottom' | the output color model |
-|`recentColors` | null \| true \| Array | true | set the current recent colors, if set to `true` it will generate random colors (default), or you can disable it by setting it `null` |
+|`showHistory` | boolean | true | show a list of the recent colors at the bottom of the picker |
+| `colorHistory` | `string[]` | `null` | a list of strings representing color values. If provided it will isolate the picker from other pickers and it will maintain its own list. |
 |`display` | String | 'vertical' | controls the layout of the component. [List of allowed values](#display-modes). |
 |`draggable` | Boolean | true | turn on/off dragging the picker menu |
 |`enableAlpha` | Boolean | true | turn on/off the alpha slider |

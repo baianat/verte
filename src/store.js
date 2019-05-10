@@ -1,7 +1,7 @@
 import { getRandomColor } from 'color-fns';
 import { newArray } from './utils';
 
-const MAX_COLOR_HISTROY = 6;
+export const MAX_COLOR_HISTROY = 6;
 let Vue;
 let store;
 
@@ -25,10 +25,10 @@ export function initStore (_Vue, opts) {
         }
 
         if (this.recentColors.length >= MAX_COLOR_HISTROY) {
-          this.recentColors.shift();
+          this.recentColors.pop();
         }
 
-        this.recentColors.push(newColor);
+        this.recentColors.unshift(newColor);
         if (onRecentColorsChange) {
           onRecentColorsChange(this.recentColors);
         }
