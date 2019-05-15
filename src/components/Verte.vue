@@ -412,6 +412,10 @@ $dot-space: 4px;
 
   &:focus
     outline: 0
+    cursor: pointer
+
+  &:hover
+    cursor: pointer
 
   svg
     width: 100%
