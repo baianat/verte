@@ -1,3 +1,7 @@
+---
+sidebar: auto
+---
+
 # Examples
 
 ## Default Example
