@@ -79,7 +79,7 @@ export default {
 
 <verte-demo picker="wheel"></verte-demo>
 
-```
+```vue
   <verte picker="wheel"></verte>
 ```
 
