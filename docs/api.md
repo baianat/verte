@@ -54,3 +54,4 @@ The guide icon color and fill style will change to the current selected color, i
 |  Name | Payload Type | Description |
 |:------|:------------:|:------------|
 |`input`| `string`     | Emits a string representation of the model for the selected color value |
+|`close`| `Boolean`    | Emitted when user close color picker dialog and returns model for the selected value |
