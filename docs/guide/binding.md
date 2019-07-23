@@ -4,7 +4,7 @@ Verte supports two-way binding using `v-model` to bind the color value to your c
 
 ```vue
 <template>
-  <verte v-model="color" :picker="wheel" :model="rgb"></verte>
+  <verte v-model="color" picker="wheel" model="rgb"></verte>
 </template>
 
 <script>
