@@ -32,6 +32,8 @@
         @touchstart="handleMenuDrag"
       )
       Picker(
+        :width="picker-width"
+        :height="picker-height"
         :mode="picker"
         :alpha="alpha"
         v-model="currentColor"
@@ -142,6 +144,8 @@ export default {
     Slider
   },
   props: {
+    "picker-width": Number,
+    "picker-height": Number,
     picker: {
       type: String,
       default: 'square',
