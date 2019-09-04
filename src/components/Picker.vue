@@ -42,7 +42,8 @@ export default {
   },
   props: {
     mode: { type: String, default: 'square' },
-    edge: { type: Number, default: 250 },
+    width: { type: Number, default: 250 },
+    height: { type: Number, default: 150 },
     diameter: { type: Number, default: 180 },
     satSlider: { type: Boolean, default: true },
     alpha: { type: Number, default: 1 },
@@ -77,9 +78,8 @@ export default {
   methods: {
     initSquare () {
       // setup canvas
-      const edge = this.edge;
-      this.$refs.canvas.width = edge;
-      this.$refs.canvas.height = edge - 100;
+      this.$refs.canvas.width = this.width;
+      this.$refs.canvas.height = this.height;
       this.ctx = this.$refs.canvas.getContext('2d');
       this.updateSquareColors();
     },
@@ -135,10 +135,10 @@ export default {
       const normalized = {
         x: Math.min(Math.max(x - left, 0), width),
         y: Math.min(Math.max(y - top, 0), height)
-      }
+      };
 
       if (
-        this.mode === 'wheel'&&
+        this.mode === 'wheel' &&
         !this.ctx.isPointInPath(this.circle.path, normalized.x, normalized.y)
       ) {
         return;
@@ -230,7 +230,7 @@ export default {
         lum = 100 - (y * 100 / height);
         hue = this.currentHue;
       }
-    
+
       return new Colors.HslColor({
         alpha: this.alpha,
         hue: Math.round(hue),
@@ -244,9 +244,9 @@ export default {
       this.updateCursorPosition(getEventCords(event));
       const tempFunc = (evnt) => {
         window.requestAnimationFrame(() => {
-          this.updateCursorPosition(getEventCords(evnt))
+          this.updateCursorPosition(getEventCords(evnt));
         });
-      }
+      };
       const handleRelase = () => {
         document.removeEventListener('mousemove', tempFunc);
         document.removeEventListener('touchmove', tempFunc);
