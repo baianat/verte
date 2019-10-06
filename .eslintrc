@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "standard",
+    "plugin:vue/essential",
+    "plugin:jest/recommended"
+  ],
+  "plugins": [
+    "jest"
+  ],
+  "rules": {
+    "semi": [
+      "error",
+      "always"
+    ]
+  }
+}

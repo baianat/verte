@@ -1,0 +1,9 @@
+language: node_js
+node_js: '9'
+cache: yarn
+install:
+  - npm install -g codecov
+  - yarn
+after_success:
+  - yarn cover
+  - bash <(curl -s https://codecov.io/bash)

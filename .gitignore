@@ -1,0 +1,8 @@
+node_modules
+.vscode
+docs/.vuepress/dist
+.vscode
+dist
+*.log
+coverage
+yarn-error.*
