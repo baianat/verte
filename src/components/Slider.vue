@@ -277,8 +277,9 @@ export default {
         this.handles[this.activeHandle].value = normalized;
         this.handles[this.activeHandle].position = positionPercentage * this.width;
         this.currentValue = normalized;
-        this.$refs.input.value = this.currentValue;
-
+        if (this.$refs.input) {
+          this.$refs.input.value = this.currentValue;
+        }
         if (this.gradient) {
           const color = this.getHandleColor(positionPercentage);
           this.handles[this.activeHandle].color = color.toString();
@@ -306,7 +307,7 @@ export default {
   },
   destroyed () {
     window.removeEventListener('resize', this.handleResize);
-  },
+  }
 };
 </script>
 
@@ -325,7 +326,6 @@ export default {
     .slider-label
       visibility: visible
       opacity: 1
-
 
 .slider__input
   margin-bottom: 0
