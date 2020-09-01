@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Slider is a Vue instance 1`] = `
+"<div class=\\"slider slider--editable\\">
+  <div class=\\"slider__track\\">
+    <div class=\\"slider__fill\\"></div>
+  </div><input type=\\"number\\" class=\\"slider__input\\">
+</div>"
+`;
