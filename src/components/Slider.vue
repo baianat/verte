@@ -1,5 +1,5 @@
 <template lang="pug">
-  .slider(ref="wrapper")
+  .verte__slider(ref="wrapper")
     .slider__track(
       ref="track"
       v-on="trackSlide ? { mousedown: select, touchstart: select } : { }"
@@ -313,7 +313,7 @@ export default {
 <style lang="sass">
 @import '../sass/variables';
 
-.slider
+.verte__slider
   position: relative
   display: flex
   align-items: center
