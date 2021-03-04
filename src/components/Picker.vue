@@ -247,6 +247,7 @@ export default {
           this.updateCursorPosition(getEventCords(evnt))
         });
       }
+      tempFunc(event)
       const handleRelase = () => {
         document.removeEventListener('mousemove', tempFunc);
         document.removeEventListener('touchmove', tempFunc);
