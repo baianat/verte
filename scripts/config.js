@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const replace = require('rollup-plugin-replace');
-const vue = require('rollup-plugin-vue').default;
+const vue = require('rollup-plugin-vue');
 const resolve = require('rollup-plugin-node-resolve');
 const css = require('rollup-plugin-css-only');
 const buble = require('rollup-plugin-buble');
@@ -51,7 +51,7 @@ function genConfig (options) {
       plugins: [
         replace({ __VERSION__: version }),
         css({ output: 'dist/verte.css' }),
-        vue({ css: false }),
+        vue(),
         resolve(),
         buble()
       ]

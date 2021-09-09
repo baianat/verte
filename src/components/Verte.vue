@@ -389,10 +389,10 @@ export default {
 </script>
 
 <style lang="sass">
-@import '../sass/variables';
+@import '../sass/variables'
 
-$dot-size: 2px;
-$dot-space: 4px;
+$dot-size: 2px
+$dot-space: 4px
 
 .verte
   position: relative

@@ -306,12 +306,12 @@ export default {
   },
   destroyed () {
     window.removeEventListener('resize', this.handleResize);
-  },
+  }
 };
 </script>
 
 <style lang="sass">
-@import '../sass/variables';
+@import '../sass/variables'
 
 .slider
   position: relative
@@ -325,7 +325,6 @@ export default {
     .slider-label
       visibility: visible
       opacity: 1
-
 
 .slider__input
   margin-bottom: 0
