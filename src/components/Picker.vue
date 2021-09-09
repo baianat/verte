@@ -135,10 +135,10 @@ export default {
       const normalized = {
         x: Math.min(Math.max(x - left, 0), width),
         y: Math.min(Math.max(y - top, 0), height)
-      }
+      };
 
       if (
-        this.mode === 'wheel'&&
+        this.mode === 'wheel' &&
         !this.ctx.isPointInPath(this.circle.path, normalized.x, normalized.y)
       ) {
         return;
@@ -230,7 +230,7 @@ export default {
         lum = 100 - (y * 100 / height);
         hue = this.currentHue;
       }
-    
+
       return new Colors.HslColor({
         alpha: this.alpha,
         hue: Math.round(hue),
@@ -244,9 +244,9 @@ export default {
       this.updateCursorPosition(getEventCords(event));
       const tempFunc = (evnt) => {
         window.requestAnimationFrame(() => {
-          this.updateCursorPosition(getEventCords(evnt))
+          this.updateCursorPosition(getEventCords(evnt));
         });
-      }
+      };
       const handleRelase = () => {
         document.removeEventListener('mousemove', tempFunc);
         document.removeEventListener('touchmove', tempFunc);
@@ -275,7 +275,7 @@ export default {
 </script>
 
 <style lang="sass">
-@import '../sass/variables';
+@import '../sass/variables'
 
 .verte-picker
   width: 100%
