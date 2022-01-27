@@ -353,6 +353,10 @@ export default {
     inputChanged (event, value) {
       const el = event.target;
       if (this.currentModel === 'hex') {
+        if (typeof el.value !== 'object' && el.value.indexOf('#') !== 0) {
+          el.value = '#' + el.value;
+        }
+
         this.selectColor(el.value);
         return;
       }
