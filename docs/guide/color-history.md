@@ -44,5 +44,5 @@ You could allow sharing between some verte components using `.sync` modifier:
 ```
 
 ::: tip
-When providing the `colorHistory` prop, the Vete store does not handle any changes to the history, also the `onRecentColorsChange` handler will no longer fire. So you might need to handle persisting the color histroy using `watch` and conventional Vue patterns.
+When providing the `colorHistory` prop, the Verte store does not handle any changes to the history, also the `onRecentColorsChange` handler will no longer fire. So you might need to handle persisting the color histroy using `watch` and conventional Vue patterns.
 :::
